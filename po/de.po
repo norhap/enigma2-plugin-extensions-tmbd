@@ -1,0 +1,334 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: tmbd\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-08-29 17:52+0300\n"
+"PO-Revision-Date: 2015-05-01 18:33+0200\n"
+"Last-Translator: Dimitrij <Dima-73@inbox.lv>\n"
+"Language-Team: Frogman <OpenPLi>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: de_DE\n"
+"X-Generator: Poedit 1.7.5\n"
+
+msgid " (%s times)\n"
+msgstr " (%s Mal)\n"
+
+msgid " User Rating: "
+msgstr "Bewertung:"
+
+msgid " min."
+msgstr " Min."
+
+msgid " times"
+msgstr " Mal"
+
+msgid "%d bytes"
+msgstr "%d bytes"
+
+msgid "%s eit-file removed!"
+msgstr "%s eit-Datei gelöscht!"
+
+msgid "%s meta-file removed!"
+msgstr "%s meta-Datei gelöscht!"
+
+msgid "%s poster removed!"
+msgstr "%s Poster gelöscht!"
+
+msgid "/ Duration: "
+msgstr "/ Dauer: "
+
+msgid "0 min."
+msgstr "0 Min."
+
+msgid "< empty >"
+msgstr "< leer >"
+
+msgid "< text >"
+msgstr "< Text >"
+
+msgid "Activate Poster Preview"
+msgstr "Aktiviere Poster Voransicht"
+
+msgid "Actors"
+msgstr "Schauspieler"
+
+msgid "Actors:"
+msgstr "Schauspieler:"
+
+msgid "Add \"Lookup in TMBD\" Info Button to GraphMultiEpg"
+msgstr "\"In TMBD suchen\" über Info Button im GraphMultiEpg"
+
+msgid "Add \"Lookup in TMBD\" Info Button to multi-EPG"
+msgstr "\"In TMBD suchen\" über Info Button im Multi-EPG"
+
+msgid "Add \"Lookup in TMBD\" Info Button to single-EPG"
+msgstr "\"In TMBD suchen\" über Info Button im Einzel-EPG"
+
+msgid "All posters for movie"
+msgstr "Alle Poster für Filme"
+
+msgid "All posters removed!"
+msgstr "Alle Poster gelöscht!"
+
+msgid "Appeared: "
+msgstr "Erschienen: "
+
+msgid "Best resolution for first found"
+msgstr "Beste Auflösung"
+
+msgid "Cancel"
+msgstr "Abbrechen"
+
+msgid "Change Poster Preview position"
+msgstr "Ändere Position Poster-Voransicht"
+
+msgid "Channel Selection"
+msgstr "Kanal-Auswahl"
+
+msgid "Check status Internet"
+msgstr "Teste Internetverbindung"
+
+msgid "Close Player with exit-key"
+msgstr "Player mit Exit-Taste beenden"
+
+msgid "Close plugin EXIT Button"
+msgstr "Plugin beenden über EXIT-Button"
+
+msgid "Close plugin?"
+msgstr "Plugin schließen?"
+
+msgid "Country"
+msgstr "Land"
+
+msgid "Country:"
+msgstr "Land:"
+
+msgid "Current poster and info"
+msgstr "Aktuelles Poster und Info"
+
+msgid "Deactivate Poster Preview"
+msgstr "Deaktiviere Poster Voransicht"
+
+msgid "Details for: %s"
+msgstr "Details für: %s"
+
+msgid "Director"
+msgstr "Regisseur"
+
+msgid "Edit text to search for"
+msgstr "Editiere Suchtext"
+
+msgid "Enter text to search for"
+msgstr "Eingabe Suchtext"
+
+msgid "Exit"
+msgstr "Verlassen"
+
+msgid "Extended search filter"
+msgstr "Erweiterter Suchfilter"
+
+msgid "Genre"
+msgstr "Genre"
+
+msgid "Genre:"
+msgstr "Genre:"
+
+msgid "Install YTTrailer..."
+msgstr "Installiere YTTrailer..."
+
+msgid "Large poster"
+msgstr "Große Poster"
+
+msgid "Lookup in TMBD"
+msgstr "Nachschlagen in TMBD"
+
+msgid "Manual input"
+msgstr "Manuelle Eingabe"
+
+msgid "Max. results in list-mode"
+msgstr "Max. Ergebnisse im List-Modus"
+
+msgid "No"
+msgstr "Nein"
+
+msgid "No connect to www.themoviedb.org"
+msgstr "Keine Verbindung zu www.themoviedb.org"
+
+msgid "Not available"
+msgstr "Nicht verfügbar"
+
+msgid "Not available...\n"
+msgstr "Nicht verfügbar...\n"
+
+msgid "Nothing found for: %s"
+msgstr "Nichts gefunden für: %s"
+
+msgid "OK"
+msgstr "OK"
+
+msgid "Only current info"
+msgstr "Nur aktuelle Info"
+
+msgid "Only current poster"
+msgstr "Nur aktuelles Poster"
+
+msgid "Open VirtualKeyBoard"
+msgstr "Öffne VirtualKeyBoard"
+
+msgid "Please select the matching entry:"
+msgstr "Bitte den passenden Eintrag wählen:"
+
+msgid "Poster %s saved!"
+msgstr "Poster %s gespeichert!"
+
+msgid "Poster Preview"
+msgstr "Poster Voransicht"
+
+msgid "Producers"
+msgstr "Produzenten"
+
+msgid "Query details from the Internet Movie Database"
+msgstr "Details von der Internet Movie Database abfragen"
+
+msgid "Remove all posters?"
+msgstr "Lösche alle Poster?"
+
+msgid ""
+"Remove current poster and info for:\n"
+"%s ?"
+msgstr ""
+"Lösche aktuelles Poster und Info für:\n"
+"%s ?"
+
+msgid "Remove poster / info"
+msgstr "Lösche Poster / Info"
+
+msgid "Save"
+msgstr "Speichern"
+
+msgid "Save info / poster"
+msgstr "Speichern Info / Poster"
+
+msgid ""
+"Save poster and info for:\n"
+" %s ?"
+msgstr ""
+"Speichere Poster und Info für:\n"
+" %s ?"
+
+msgid "Search Trailer"
+msgstr "Suche Trailer"
+
+msgid "Search results for: %s"
+msgstr "Suchergebnisse für: %s"
+
+msgid "Select action:"
+msgstr "Wähle Aktion:"
+
+msgid "Select from Favourites"
+msgstr "Wähle aus den Favoriten"
+
+msgid "Select the search language"
+msgstr "Wähle die Sprache der Suche"
+
+msgid "Select your skins"
+msgstr "Wähle den Skin"
+
+msgid "Settings"
+msgstr "Einstellungen"
+
+msgid "Settings TMBD Details Plugin..."
+msgstr "Einstellungen TMBD Details Plugin..."
+
+msgid "Setup menu"
+msgstr "Einstellungsmenü"
+
+msgid "Show info for all types of movies"
+msgstr "Zeige Info für alle Filmarten"
+
+msgid "Show movie details"
+msgstr "Zeige Filmdetails"
+
+msgid "Show plugin in channel selection menu"
+msgstr "Zeige Plugin im Kanalauswahl-Menü"
+
+msgid "Show plugin in extensions menu"
+msgstr "Zeige Plugin in Erweiterungsmenü"
+
+msgid "Show search results"
+msgstr "Zeige Suchergebnisse"
+
+msgid "Small poster"
+msgstr "Kleine Poster"
+
+msgid "Studios"
+msgstr "Studios"
+
+msgid "TMBD Details"
+msgstr "TMBD Details"
+
+msgid ""
+"TMBD Details Plugin\n"
+"Developer: Nikolasi,vlamo,Dima73\n"
+"(c)2012"
+msgstr ""
+"TMBD Details Plugin\n"
+"Developer: Nikolasi,vlamo,Dima73\n"
+"(c)2012"
+
+msgid "TMBD Details Plugin..."
+msgstr "TMBD Details Plugin..."
+
+msgid "TMBD Details:current event"
+msgstr "TMBD Details:aktuelle ereignis"
+
+msgid "TMBD Plugin"
+msgstr "TMBD Plugin"
+
+msgid "Text editing"
+msgstr "Text bearbeiten"
+
+msgid "The Internet Movie Database"
+msgstr "Die  Internet Movie Datenbank"
+
+msgid "Total results: %s"
+msgstr "Gesamtergebnisse: %s"
+
+msgid "User Rating"
+msgstr "Bewertung"
+
+msgid "Votes"
+msgstr "Abgestimmt"
+
+msgid "What exactly do you want to delete?"
+msgstr "Was genau soll gelöscht werden?"
+
+msgid "Write event to new eit-file:\n"
+msgstr "Schreibe Sendung in eine neue eit-Datei:\n"
+
+msgid "Write to new meta-file for:\n"
+msgstr "Schreibe neue meta-Datei für:\n"
+
+msgid ""
+"YTTrailer is not installed.\n"
+"Install YTTrailer now?"
+msgstr ""
+"YTTrailer ist nicht installiert.\n"
+"Installiere YTTrailer jetzt?"
+
+msgid "Yes"
+msgstr "Ja"
+
+msgid "Yes,but write new meta-file"
+msgstr "Ja, aber schreibe neue meta-Datei"
+
+msgid "ask user"
+msgstr "Benutzer fragen"
+
+msgid "close"
+msgstr "Schließen"
+
+msgid "no user rating yet"
+msgstr "Keine Bewertungen"

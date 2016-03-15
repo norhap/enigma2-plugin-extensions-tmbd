@@ -1,0 +1,598 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: TMBD\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-05-01 20:49+0300\n"
+"PO-Revision-Date: 2015-05-03 15:34+0200\n"
+"Last-Translator: Dimitrij <Dima-73@inbox.lv>\n"
+"Language-Team: OpenPLi\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.7.5\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: TMBD\n"
+
+msgid " (%s times)\n"
+msgstr " (%s fois)\n"
+
+msgid " (%s votes)\n"
+msgstr " (%s votes)\n"
+
+msgid " User Rating: "
+msgstr " Evaluation utilisateur: "
+
+msgid " min."
+msgstr " min."
+
+msgid " times"
+msgstr " fois"
+
+msgid "\"TMBD Details: current event\" quick button"
+msgstr "\"TMBD Details: évènement courant\" bouton rapide"
+
+msgid "%d bytes"
+msgstr "%d bytes"
+
+msgid ""
+"%s\n"
+"Profile: %s\n"
+"Select event for search:"
+msgstr ""
+"%s\n"
+"Profile: %s\n"
+"Choisir l'évènement à chercher:"
+
+msgid "%s eit-file removed!"
+msgstr "%s fichier eit supprimé!"
+
+msgid "%s meta-file removed!"
+msgstr "%s fichier meta supprimé!"
+
+msgid "%s poster removed!"
+msgstr "%s affiche enlevée!"
+
+msgid "/ Duration: "
+msgstr "/ Durée: "
+
+msgid "/media/hdd"
+msgstr "/media/hdd"
+
+msgid "/media/usb"
+msgstr "/media/usb"
+
+msgid "0 min."
+msgstr "0 min."
+
+msgid "1080p"
+msgstr "1080p"
+
+msgid "720p"
+msgstr "720p"
+
+msgid "< empty >"
+msgstr "< vide >"
+
+msgid "< text >"
+msgstr "< texte >"
+
+msgid "Activate Poster Preview"
+msgstr "Activer prévisualtion de l'affiche"
+
+msgid "Actors"
+msgstr "Acteurs"
+
+msgid "Actors:"
+msgstr "Acteurs:"
+
+msgid "Add \"Lookup in TMBD\" Info Button to GraphMultiEpg"
+msgstr "Le bouton Info lance \"Rechercher sur TMBD\" dans GraphMultiEpg"
+
+msgid "Add \"Lookup in TMBD\" Info Button to multi-EPG"
+msgstr "Le bouton Info lance \"Rechercher sur TMBD\" dans Multi-EPG"
+
+msgid "Add \"Lookup in TMBD\" Info Button to single-EPG"
+msgstr "Le bouton Info lance \"Rechercher sur TMBD\" dans Single-EPG"
+
+msgid "Add \"Search event in TMBD\"  to event menu"
+msgstr "Ajouter \"Rechercher évènement sur TMBD\" au menu évènement"
+
+msgid "Add \"open plugin VCS\" Info/EPG Button to nStreamVOD"
+msgstr "Ajouter sur le bouton Info/EPG \"ouvrir le plugin VCS\" à nStreamVOD"
+
+msgid "Add \"search in TMBD\" Info/EPG Button to nStreamVOD"
+msgstr "Ajouter sur le bouton Info/EPG \"recherche dans TMSB\" à nStreamVOD"
+
+msgid "Add yt-trailer to context menu EPG"
+msgstr "Ajouter yt-trailer au menu contextuel EPG"
+
+msgid "Age"
+msgstr "Age"
+
+msgid "Age:"
+msgstr "Age:"
+
+msgid "All posters for movie"
+msgstr "Toutes les affiches pour film"
+
+msgid "All posters removed!"
+msgstr "Toutes les affiches ont été enlevées!"
+
+msgid "Appeared"
+msgstr "Date"
+
+msgid "Appeared: "
+msgstr "Date: "
+
+msgid "Behavior after searching trailers"
+msgstr "Comportement après rechercher des bandes-annonces"
+
+msgid "Best resolution for first found"
+msgstr "Meilleur résolution pour le premier trouvé"
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Certification"
+msgstr "Certification"
+
+msgid "Change Poster Preview position"
+msgstr "Modicier la position de la prévisualisation de l'affiche"
+
+msgid "Change profile"
+msgstr "Changer de profil"
+
+msgid "Channel Selection"
+msgstr "Sélection chaîne"
+
+msgid "Check status Internet"
+msgstr "Vérifier le statut d'internet"
+
+msgid "Choice database to search"
+msgstr "Choisir la base de données à interroger"
+
+msgid "Choice profile in search"
+msgstr "Choisir le profil de recherche"
+
+msgid "Choice profile in search:"
+msgstr "Choisir le profil de recherche:"
+
+msgid "Choose action:"
+msgstr "Choisir action:"
+
+msgid "Close Player with exit-key"
+msgstr "Fermer le lecteur avec la touche EXIT"
+
+msgid "Close plugin EXIT Button"
+msgstr "Fermer le plugin avec le bouton EXIT"
+
+msgid "Close plugin?"
+msgstr "Fermer TMBD Details?"
+
+msgid "Country"
+msgstr "Pays"
+
+msgid "Country:"
+msgstr "Pays:"
+
+msgid "Current poster and info"
+msgstr "Affiche actuelle et info"
+
+msgid "Data processing method for Kinopoisk.ru"
+msgstr "Methode de recherche pour KinoPoisk.ru"
+
+msgid "Deactivate Poster Preview"
+msgstr "Désactiver la prévisualisation de l'affiche"
+
+msgid "Details for: %s"
+msgstr "Détails pour: %s"
+
+msgid "Director"
+msgstr "Réalisateur"
+
+msgid "Duration"
+msgstr "Durée"
+
+msgid "EPGSelection (context menu)"
+msgstr "EPGSelection (menu contextuel)"
+
+msgid "EPGSelection/EventView/EventInfo plugins"
+msgstr "EPGSelection/EventView/EventInfo plugins"
+
+msgid "Edit text to search for"
+msgstr "Editez le texte à rechercher"
+
+msgid "Enter or choose event for search ..."
+msgstr "Entrer ou choisir l'évènement à rechercher..."
+
+msgid "Enter text for search YT-Trailer:"
+msgstr "Entrer le texte à chercher sur YT-Trailer:"
+
+msgid "Enter text to search for"
+msgstr "Entrez le texte à rechercher"
+
+msgid "Event mode for search"
+msgstr "Mode de recherche pour les évènements"
+
+msgid "EventView (context menu)/EventInfo plugins"
+msgstr "EventView (menu contextuel)/EventInfo plugins"
+
+msgid "Exit"
+msgstr "Quitter"
+
+msgid "Extended search filter"
+msgstr "Filtre de recherche étendu"
+
+msgid "GREEN"
+msgstr "VERT"
+
+msgid "Genre"
+msgstr "Genre"
+
+msgid "Genre:"
+msgstr "Genre:"
+
+msgid "HELP"
+msgstr "HELP"
+
+msgid "Install YTTrailer..."
+msgstr "Installer YTTrailer..."
+
+msgid "Install packages library lmxl"
+msgstr "Installer la librairie des packages lmxl"
+
+msgid ""
+"Kinopoisk.ru\n"
+"Developer: Dima73(Dimitrij) 2012/2014"
+msgstr ""
+"KinoPoisk.ru\n"
+"Développeur: Dima73(Dimitrij) 2012/2014"
+
+msgid "Large poster"
+msgstr "Grande affiche"
+
+msgid ""
+"Library lmxl is not installed!\n"
+"Try to install the library again or change the method of processing data in "
+"the settings menu."
+msgstr ""
+"La librairie lmxl n'est pas installée!\n"
+"Essayez d'installer la librairie à nouveau ou changez la méthode pour "
+"traitre les données dans le menu de configuration."
+
+msgid "List: kinopoisk.ru / themoviedb.org"
+msgstr "Liste: KinoPoisk.ru / TheMovieDb.org"
+
+msgid "List: themoviedb.org / kinopoisk.ru"
+msgstr "Liste: TheMovieDb.org / KinoPoisk.ru"
+
+msgid "Lookup in TMBD"
+msgstr "Recherche avec TMBD"
+
+msgid "Manual input"
+msgstr "Recherche manuelle"
+
+msgid "Manual search"
+msgstr "Recherche manuelle"
+
+msgid "Max. results in list-mode"
+msgstr "Résultats max. en mode liste"
+
+msgid "NONE"
+msgstr "AUCUN"
+
+msgid "Next: %s"
+msgstr "Suivant: %s"
+
+msgid "No"
+msgstr "Non"
+
+msgid "No HD streaming"
+msgstr "Pas de streaming HD"
+
+msgid "No connect to kinopoisk.ru..."
+msgstr "Pas de connexion à kinopoisk.ru..."
+
+msgid "No connect to www.themoviedb.org"
+msgstr "Pas de connexion à www.TheMovieDb.org"
+
+msgid "Not found network connection..."
+msgstr "Aucun connexion réseau trouvée..."
+
+msgid "Nothing found for: %s"
+msgstr "Rien trouvé pour: %s"
+
+msgid "Nothing found for: %s or no answer in kinopoisk.ru"
+msgstr "Rien de trouvé pour: %s aucune réponse de KinoPoisk.ru"
+
+msgid "Now: %s"
+msgstr "Maintenant: %s"
+
+msgid "OK"
+msgstr "OK"
+
+msgid "Only current info"
+msgstr "Seulement l'info courante"
+
+msgid "Only current poster"
+msgstr "Seulement l'affiche courante"
+
+msgid "Only poster"
+msgstr "Seulement l'affiche"
+
+msgid "Open VirtualKeyBoard"
+msgstr "Ouvrir VirtualKeyBoard avec pour valeur par défaut"
+
+msgid "Open plugin if there is no event"
+msgstr "Ouvrir le plugin s'il n'y a pas d'évènement"
+
+msgid "Open yt-trailer setup"
+msgstr "Ouvrir la configuration de YT-Trailer"
+
+msgid "Option for all images"
+msgstr "Option pour toutes les images"
+
+msgid "Option only python 2.7 images"
+msgstr "Option pour les images en python 2.7"
+
+msgid "Please select the matching entry:"
+msgstr "Merci de choisir l'entrée correspondante:"
+
+msgid "Poster %s saved!"
+msgstr "Affiche %s sauvegardée!"
+
+msgid "Poster Preview"
+msgstr "Prévisualisation affiche"
+
+msgid "Poster Preview (TMBD)"
+msgstr "Prévisualisation affiche (TMB)"
+
+msgid "Press OK"
+msgstr "Appui sur OK"
+
+msgid "Problems with YT-Feeds!"
+msgstr "Problèmes avec YT-Feeds!"
+
+msgid "Producers"
+msgstr "Producteurs"
+
+msgid "Profile movielist context menu"
+msgstr "Profil menu contextuel liste des films"
+
+msgid "Profile: kinopoisk.ru"
+msgstr "Profil: KinoPoisk.ru"
+
+msgid "Profile: themoviedb.org"
+msgstr "Profil: TheMovieDb.org"
+
+msgid "Query details from the Internet Movie Database"
+msgstr "Rechercher les détails depuis internet sur The Internet Movie Database"
+
+msgid "RADIO"
+msgstr "RADIO"
+
+msgid "RED"
+msgstr "ROUGE"
+
+msgid "Remove all posters?"
+msgstr "Supprimer toutes les affiches?"
+
+msgid ""
+"Remove current poster and info for:\n"
+"%s ?"
+msgstr ""
+"Enlever l'affiche courante et les informations pour:\n"
+"%s ?"
+
+msgid "Remove poster / info"
+msgstr "Supprimer affiche / info"
+
+msgid "Roles duplicated"
+msgstr "Rôles dupliqués"
+
+msgid "Roles duplicated:"
+msgstr "Rôles dupliqués:"
+
+msgid "Save"
+msgstr "Sauvegarder"
+
+msgid "Save info / poster"
+msgstr "Sauvegarder info/affiche"
+
+msgid ""
+"Save poster and info for:\n"
+" %s ?"
+msgstr ""
+"Sauvegarder affichet et info pour:\n"
+" %s ?"
+
+msgid "Search Trailer"
+msgstr "Bande-annonce"
+
+msgid "Search event in TMBD"
+msgstr "Rechercher évènement sur TMBD "
+
+msgid "Search for movie in TMBD"
+msgstr "Rechercher un film pour TMBD"
+
+msgid "Search in kinopoisk.ru ,please wait ..."
+msgstr "Rechercher sur KinoPoisk.ru, merci de patienter..."
+
+msgid "Search in themoviedb.org ,please wait ..."
+msgstr "Rechercher sur TheMovieDb.org, merci de patienter..."
+
+msgid "Search movie in TMBD"
+msgstr "Rechercher film sur TMBD"
+
+msgid "Search results for: %s"
+msgstr "Résultats de recherche pour: %s"
+
+msgid "Search yt-trailer for event"
+msgstr "Rechercher l'évènement sur yt-trailer"
+
+msgid "Select Profile"
+msgstr "Choisir un profil"
+
+msgid "Select action:"
+msgstr "Choisir une action:"
+
+msgid "Select folder for covers"
+msgstr "Choisir le folder pour les posters"
+
+msgid "Select from Favourites"
+msgstr "Choisir vos favoris"
+
+msgid "Select the search language"
+msgstr "Définir  la langue de recherche et des descriptions"
+
+msgid "Select your skins"
+msgstr "Choisir votre thème"
+
+msgid "Settings"
+msgstr "Paramètres"
+
+msgid "Settings TMBD Details Plugin..."
+msgstr "Paramètrer le plugin TMBD Details..."
+
+msgid "Setup menu"
+msgstr "Recherche description et affiche depuis TheMovieDb.org"
+
+msgid "Show \"TMBD Details: current event\" in extensions menu"
+msgstr "Afficher \"TMBD Details: évènement courant\" dans les extensions"
+
+msgid "Show info for all types of movies"
+msgstr "Afficher les infos pour tous les types de films"
+
+msgid "Show movie details"
+msgstr "Détails du film"
+
+msgid "Show plugin in channel selection context menu"
+msgstr "Afficher le plugin dans le menu contextuel de la liste des chaînes"
+
+msgid "Show search results"
+msgstr "Résultats de recherche"
+
+msgid "Small poster"
+msgstr "Petite affiche"
+
+msgid "Studios"
+msgstr "Studios"
+
+msgid "TEXT"
+msgstr "TEXT"
+
+msgid "TMBD Details"
+msgstr "TMBD Details"
+
+msgid ""
+"TMBD Details Plugin\n"
+"Developer: Nikolasi,vlamo,Dima73\n"
+"(c)2012"
+msgstr ""
+"Plugin TMBD Details\n"
+"Developer: Nikolasi,vlamo,Dima73\n"
+"(c)2012"
+
+msgid "TMBD Details:current event"
+msgstr "TMBD Details: évènement courant"
+
+msgid "TMBD details for event"
+msgstr "TMBD Details pour l'évènement"
+
+msgid "TV"
+msgstr "TV"
+
+msgid "Text editing"
+msgstr "Editer texte"
+
+msgid "The Internet Movie Database"
+msgstr "The Internet Movie Database"
+
+msgid "Total results: %s"
+msgstr "Résultats total: %s"
+
+msgid "Unknown error!"
+msgstr "Erreur inconnue!"
+
+msgid "User Rating"
+msgstr "Avis utilisateur"
+
+msgid "Votes"
+msgstr "Votes"
+
+msgid "What exactly do you want to delete?"
+msgstr "Que voulez-vous vraiment effacer?"
+
+msgid "Write event to new eit-file:\n"
+msgstr "Ecriture des informations dans un nouveau fichier eit:\n"
+
+msgid "Write to new meta-file for:\n"
+msgstr "Ecriture d'un nouveau fichier meta pour:\n"
+
+msgid "YELLOW"
+msgstr "JAUNE"
+
+msgid "YT Trailer-List"
+msgstr "YT Trailer-Liste"
+
+msgid "YT-Trailer Setup"
+msgstr "YT-Trailer Configuration"
+
+msgid "Yes"
+msgstr "Oui"
+
+msgid "Yes,but write new meta-file"
+msgstr "Oui, mais écriture d'un nouveau fichier meta"
+
+msgid "ask user"
+msgstr "Demander à l'utilisateur"
+
+msgid "choice now/next event"
+msgstr "Choisir évènement Maintenant / Suivant"
+
+msgid "close"
+msgstr "Fermer"
+
+msgid "disabled"
+msgstr "désactivé"
+
+msgid "kinopoisk.ru"
+msgstr "KinoPoisk.ru"
+
+msgid "kinopoisk.ru (only russian language)"
+msgstr "KinoPoisk.ru (seulement en russe)"
+
+msgid "leave movie player..."
+msgstr "quitter le lecteur de film..."
+
+msgid "no user rating yet"
+msgstr "aucun avis d'utilisateur"
+
+msgid "only current event"
+msgstr "Seulement l'évènement en cours"
+
+msgid "only current profile"
+msgstr "Seulement le profil en cours"
+
+msgid "open plugin VCS"
+msgstr "ouvrir le plugin VCS"
+
+msgid "run first"
+msgstr "éxècuter en premier"
+
+msgid "search in TMBD"
+msgstr "chercher sur TMBD"
+
+msgid "show VCS..."
+msgstr "afficher VCS..."
+
+msgid "show list"
+msgstr "afficher liste"
+
+msgid "standard info"
+msgstr "info standard"
+
+msgid "themoviedb.org"
+msgstr "TheMovieDb.org"
