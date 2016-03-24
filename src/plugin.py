@@ -76,7 +76,7 @@ from os import system as os_system, path as os_path
 import kinopoisk, urllib2
 import tmbdYTTrailer
 
-plugin_version = "6.9"
+plugin_version = "7.0"
 
 epg_furtherOptions = False
 if hasattr(EPGSelection, "furtherOptions"):
@@ -179,7 +179,7 @@ SKIN = """
 		<widget name="preview" position="0,0" size="130,200" zPosition="2" alphatest="blend"/>
 	</screen>"""
 
-
+_session = None
 eventname = ""
 baseGraphMultiEPG__init__ = None
 
@@ -2892,8 +2892,9 @@ class MovielistPreview():
 		self.mayShow = True
 		self.working = False
 		self.path = config.plugins.tmbd.cover_dir.value + 'covers/'
+
 	def gotSession(self, session):
-		if not self.dialog:
+		if not self.dialog and session:
 			self.dialog = session.instantiateDialog(MovielistPreviewScreen)
 
 	def changeVisibility(self):
@@ -2904,19 +2905,21 @@ class MovielistPreview():
 		config.plugins.tmbd.enabled.save()
 
 	def showPreview(self, movie):
+		if not self.dialog:
+			self.gotSession(_session)
+			if not self.dialog:
+				return
 		if self.working == False:
 			self.dialog.hide()
 			if movie and self.mayShow and config.plugins.tmbd.enabled.value:
-                                png2 = os.path.split(movie)[1] 
-                                if movie.endswith(".ts"):
-			             if fileExists("%s.meta"%(movie)):
-				            readmetafile = open("%s.meta"%(movie), "r")
-				            servicerefname = readmetafile.readline()[0:-1]
-				            eventname = readmetafile.readline()[0:-1]
-				            readmetafile.close()                                        
-                                            png2 = eventname
-				     else:
-                                            png2 = os.path.split(movie)[1]   
+				png2 = os.path.split(movie)[1]
+				if movie.endswith(".ts"):
+					if fileExists("%s.meta"%(movie)):
+						readmetafile = open("%s.meta"%(movie), "r")
+						servicerefname = readmetafile.readline()[0:-1]
+						eventname = readmetafile.readline()[0:-1]
+						readmetafile.close()
+						png2 = eventname
 				png = self.path + png2 + ".jpg"
 				if fileExists(png):
 					self.working = True
@@ -2930,6 +2933,10 @@ class MovielistPreview():
 					self.dialog.hide()
 
 	def showPreviewCallback(self, picInfo=None):
+		if not self.dialog:
+			self.gotSession(_session)
+			if not self.dialog:
+				return
 		if picInfo:
 			ptr = self.picload.getData()
 			if ptr != None:
@@ -2942,10 +2949,18 @@ class MovielistPreview():
 		self.working = False
 
 	def hideDialog(self):
+		if not self.dialog:
+			self.gotSession(_session)
+			if not self.dialog:
+				return
 		self.mayShow = False
 		self.dialog.hide()
 
 	def showDialog(self):
+		if not self.dialog:
+			self.gotSession(_session)
+			if not self.dialog:
+				return
 		self.mayShow = True
 		self.dialog.show()
 
@@ -3485,8 +3500,10 @@ def tmbdInfoBar__init__(self, session):
 
 def sessionstart(reason, **kwargs):
 	if reason == 0:
+		global _session, def_SelectionEventInfo_updateEventInfo
+		if _session is None:
+			_session = kwargs["session"]
 		movielistpreview.gotSession(kwargs["session"])
-		global def_SelectionEventInfo_updateEventInfo
 		if def_SelectionEventInfo_updateEventInfo is None:
 			def_SelectionEventInfo_updateEventInfo = SelectionEventInfo.updateEventInfo
 			SelectionEventInfo.updateEventInfo = new_SelectionEventInfo_updateEventInfo
