@@ -16,7 +16,7 @@ import traceback
 import codecs
 #from optparse import OptionParser
 
-kinopoisk_date = "30.12.2014"
+kinopoisk_date = "09.06.2016"
 title = "The kinopoisk.ru Query"
 author = "Alex Vasilyev / mod Dima73"
 usage_examples = ""
@@ -153,7 +153,7 @@ def get_page(address,  data=0,  title=''):
         
         if data == 0:
             #address = u'http://s.kinopoisk.ru' + address+urllib.quote(title.encode('utf8'))
-            address = u'http://s.kinopoisk.ru' + address+urllib.quote(title.encode('cp1251'))
+            address = u'http://www.kinopoisk.ru' + address+urllib.quote(title.encode('cp1251'))
         else:
             #address = u'http://www.kinopoisk.ru' + address+urllib.quote(title.encode('utf8'))
             address = u'http://www.kinopoisk.ru' + address+urllib.quote(title.encode('cp1251'))
@@ -214,12 +214,11 @@ def search_poster(uid):
 def search_title(title):
     if not LMXL:
         return None
-    #data = get_page("/index.php?first=no&kp_query=",  0, getText(title))
-    data = get_page("/index.php?first=no&kp_query=",  0, title.decode('utf8'))
+    data = get_page("/index.php?first=no&what=&kp_query=",  1, title.decode('utf8'))
     doc = html.document_fromstring(data)
     search_results = []
     #Проверяем ту ли страницу (т.е. страницу с результатами поиска) мы получили
-    regexp= re.compile(unicode("Скорее всего, вы ищете", "utf8"), re.DOTALL)
+    regexp= re.compile(unicode("Скорее всего, вы ищете:", "utf8"), re.DOTALL)
     result = regexp.search(data)
     #if result == None:
         #Если не ту, то парсим страницу фильма на которую нас перенаправил кинопоиск
@@ -252,7 +251,7 @@ def search_title(title):
             except: 
                 title = 'none'
             try:
-                id = '\nid:%s' % (titleInfo[0].attrib["href"].split("/")[-4])
+                id = '\nid:%s' % (titleInfo[0].attrib["data-id"])
             except:
                 id = '\nid:n/a'
             #try:
