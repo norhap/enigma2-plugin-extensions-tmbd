@@ -1,11 +1,6 @@
-# -*- coding: utf-8 -*-
-from os import environ as os_environ
-#from urlparse import parse_qs
 import re
 from urllib2 import Request, URLError, HTTPError, urlopen as urlopen2, quote as urllib2_quote, unquote as urllib2_unquote
-#import htmlentitydefs
 import urllib
-#import gettext
 from socket import gaierror, error
 import httplib, urllib, re
 import urllib2
@@ -15,8 +10,6 @@ import os, socket
 import sys
 import traceback
 import codecs
-#from optparse import OptionParser
-from BeautifulSoup import BeautifulSoup
 from httplib import HTTPConnection, CannotSendRequest, BadStatusLine, HTTPException
 std_headers = {'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2',
  'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.7',
@@ -255,7 +248,12 @@ def normilize_string(processingstring):
          '<br />': '',
          '\r': '',
          '\n': '',
-         '  ': ' '}
+         '  ': ' ',
+         '&ndash;': '\xe2\x80\x93',
+         '</i>': '',
+         '<i>': '',
+         '<span>': '',
+         '</span>': ''}
         for i in range(len(symbols_to_remove)):
             processingstring = string.replace(processingstring, symbols_to_remove.items()[i][0], symbols_to_remove.items()[i][1])
 
@@ -266,7 +264,6 @@ def normilize_string(processingstring):
 
 def singleValue(content, matchstring):
     result = ''
-    matchstring = unicode(matchstring, 'utf8')
     regexp = re.compile(matchstring, re.DOTALL)
     result = regexp.search(content)
     if result != None:
@@ -278,8 +275,6 @@ def singleValue(content, matchstring):
 
 def multiValue(content, matchstring, matchstring2):
     result = ''
-    matchstring = unicode(matchstring, 'utf8')
-    matchstring2 = unicode(matchstring2, 'utf8')
     regexp = re.compile(matchstring, re.DOTALL)
     result = regexp.search(content)
     regexp = re.compile(matchstring2, re.DOTALL)
@@ -298,42 +293,205 @@ def multiValue(content, matchstring, matchstring2):
 
 
 def search_title(title):
-    title = title.decode('utf8')
+    yearitem = ''
+    titleitem = ''
+    iditem = ''
+    genres = ''
+    search = ''
+    title = title.replace(' ', '%20').decode('utf8')
     print title
-    url = 'http://s.kinopoisk.ru/index.php?first=no&kp_query=' + title.encode('cp1251')
+    url = 'http://www.kinopoisk.ru/index.php?first=no&what=&kp_query=' + title.encode('cp1251')
     watchrequest = Request(url, None, std_headers)
     try:
         watchvideopage = urlopen2(watchrequest)
     except (URLError, HTTPException, socket.error) as err:
         print '[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err)
 
-    content = watchvideopage.read().decode('cp1251')
+    content = watchvideopage.read().decode('cp1251').encode('utf-8')
     watchvideopage.close()
     search_results = []
-    content_results = content[content.find('\xd0\xa1\xd0\xba\xd0\xbe\xd1\x80\xd0\xb5\xd0\xb5 \xd0\xb2\xd1\x81\xd0\xb5\xd0\xb3\xd0\xbe, \xd0\xb2\xd1\x8b \xd0\xb8\xd1\x89\xd0\xb5\xd1\x82\xd0\xb5'):content.find('\xd0\x9d\xd0\xb0\xd0\xb9\xd0\xb4\xd0\xb5\xd0\xbd\xd0\xbd\xd1\x8b\xd0\xb5 \xd0\xb8\xd0\xbc\xd0\xb5\xd0\xbd\xd0\xb0')]
+    content_results = content[content.find('\xd0\xa1\xd0\xba\xd0\xbe\xd1\x80\xd0\xb5\xd0\xb5 \xd0\xb2\xd1\x81\xd0\xb5\xd0\xb3\xd0\xbe, \xd0\xb2\xd1\x8b \xd0\xb8\xd1\x89\xd0\xb5\xd1\x82\xd0\xb5:'):content.find('search_results search_results_last')]
     if content_results:
-        soup_results = BeautifulSoup(content_results)
-        #print soup_results.prettify()
-        result = soup_results.findAll('div', attrs={'class': re.compile('element')})
-        results = '%s' % result
-        yearitems = re.compile('<span class="year">(.*?)</span>').findall(results)
-        titleitems = re.compile('<p class="name"><a href="/level/1/film/.*?sr/1/">(.*?)</a>').findall(results)
-        iditems = re.compile('<p class="name"><a href="/level/1/film/(.*?)/sr/1/">').findall(results)
+        results = CrewRoleList(content_results)
+        yearitems = re.compile('<p class="name"><a href="/level/1/film/.*?/sr/1/" .*? data-type=".*?">.*?</a> <span class="year">(.*?)</span></p>').findall(content_results)
+        titleitems = re.compile('<p class="name"><a href="/level/1/film/.*?/sr/1/" .*? data-type=".*?">(.*?)</a> <span class="year">.*?</span></p>').findall(content_results)
+        iditems = re.compile('<p class="name"><a href="/level/1/film/(.*?)/sr/1/" .*? data-type=".*?">.*?</a> <span class="year">.*?</span></p>').findall(content_results)
+        genres = re.compile('<span class="genres">(.*?)</span>').findall(results)
         for titleitem in titleitems:
-            search_results.append(normilize_string(titleitem.encode('utf-8')))
+            search_results.append(normilize_string(titleitem))
 
         i = 0
         for yearitem in yearitems:
             if i < len(yearitems):
-                search_results[i] = search_results[i] + '(' + yearitem.encode('utf-8') + ' \xd0\xb3\xd0\xbe\xd0\xb4)'
+                search_results[i] = search_results[i] + '(' + normilize_string(yearitem) + ' \xd0\xb3\xd0\xbe\xd0\xb4),'
             i += 1
 
-        r = 0
         l = 0
         for iditem in iditems:
             if l < len(iditems):
-                search_results[l] = search_results[l] + ' ,' + 'id:' + iditem.encode('utf-8')
+                search_results[l] = search_results[l] + '\n genres:' + genres[l] + 'end' + '\n\n' + 'id:' + iditem + 'end'
             l += 1
+
+    else:
+        try:
+            genres = ','.join(multiValue(content, '<tr><td class="type">\xd0\xb6\xd0\xb0\xd0\xbd\xd1\x80</td>(.*?)</tr>', '<a href=".*?>(.*?)</a>'))
+            genres = '\n genres:' + genres + 'end'
+        except:
+            genres = '\n genres:end'
+
+        try:
+            titleitem = normilize_string(singleValue(content, '<h1 class="moviename-big" itemprop="name">(.*?)</h1>'))
+        except:
+            titleitem = ''
+
+        try:
+            yearitem = ','.join(multiValue(content, '<td class="type">\xd0\xb3\xd0\xbe\xd0\xb4</td>(.*?)</div></td>', '<a href=".*?" title=".*?">(.*?)</a>'))
+            yearitem = '(%s \xd0\xb3\xd0\xbe\xd0\xb4),' % yearitem
+        except:
+            yearitem = ''
+
+        try:
+            iditem = singleValue(content, '<link rel="canonical" href="http://www.kinopoisk.ru/film/(.*?)/" />')
+            iditem = '\n\nid:%send' % iditem
+        except:
+            iditem = '\n\nid: end'
+
+        search = '%s%s%s%s' % (titleitem,
+         yearitem,
+         genres,
+         iditem)
+        search_results.append(search)
+    return search_results
+
+
+def CrewRoleList2(file):
+    if file:
+        return file.replace('<br />', '').replace('     ', '').replace('\n', '').replace('<b>', '').replace('</b>', '')
+
+
+def CrewRoleList(file):
+    if file:
+        return file.replace('<br />', '<span class="genres">').replace('     ', '').replace('\n', '').replace('\t', '')
+
+
+def search_title2(title):
+    yearitem = ''
+    titleitem = ''
+    iditem = ''
+    rating = ''
+    director = ''
+    titleengle = ''
+    countri = ''
+    iditem = ''
+    search = ''
+    runtime = ''
+    time = ''
+    title = title.replace(' ', '%20').decode('utf8')
+    print title
+    url = 'http://www.kinopoisk.ru/index.php?first=no&what=&kp_query=' + title.encode('cp1251')
+    watchrequest = Request(url, None, std_headers)
+    try:
+        watchvideopage = urlopen2(watchrequest)
+    except (URLError, HTTPException, socket.error) as err:
+        print '[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err)
+
+    content = watchvideopage.read().decode('cp1251').encode('utf-8')
+    watchvideopage.close()
+    search_results = []
+    content_results = content[content.find('\xd0\xa1\xd0\xba\xd0\xbe\xd1\x80\xd0\xb5\xd0\xb5 \xd0\xb2\xd1\x81\xd0\xb5\xd0\xb3\xd0\xbe, \xd0\xb2\xd1\x8b \xd0\xb8\xd1\x89\xd0\xb5\xd1\x82\xd0\xb5:'):content.find('search_results search_results_last')]
+    if content_results:
+        titleitems = re.compile('<p class="name"><a href="/level/1/film/.*?/sr/1/" .*? data-type=".*?">(.*?)</a> <span class="year">.*?</span></p>').findall(content_results)
+        titleengles = re.compile('<span class="gray">(.*?)</span>').findall(content_results)
+        directors = re.compile('<span class="gray">.*? <i class="director">.*? <a class=".*?" .*? data-type=".*?">(.*?)</a>').findall(content_results)
+        countris = re.compile('<span class="gray">(.*?) <i class="director">.*? <a class=".*?" .*? data-type=".*?">.*?</a>').findall(content_results)
+        iditems = re.compile('<p class="name"><a href="/level/1/film/(.*?)/sr/1/" .*? data-type="film">.*?</a> <span class="year">.*?</span></p>').findall(content_results)
+        ratings = re.compile('<div class="rating.*?>(.*?)</div>').findall(content_results)
+        for titleitem in titleitems:
+            search_results.append(normilize_string(titleitem.replace('</a>', '').replace(' <span class="year">', '(').replace('</span>', ' \xd0\xb3\xd0\xbe\xd0\xb4),').replace('</p>', '')))
+
+        k = 0
+        for titleengle in titleengles:
+            if titleengle == '':
+                titleengle = '\xd0\x9d\xd0\xb5\xd1\x82 \xd0\xbd\xd0\xb0\xd0\xb7\xd0\xb2\xd0\xb0\xd0\xbd\xd0\xb8\xd1\x8f'
+            if k < len(titleengles):
+                search_results[k] = search_results[k] + '\n' + normilize_string(titleengle)
+            k += 1
+
+        d = 0
+        for director in directors:
+            if d < len(directors):
+                search_results[d] = search_results[d] + '\n' + countris[d] + '\xd1\x80\xd0\xb5\xd0\xb6. ' + normilize_string(director)
+            d += 1
+
+        l = 0
+        for iditem in iditems:
+            if l < len(iditems):
+                search_results[l] = search_results[l] + '\n\n' + 'id:' + iditem + 'end'
+            l += 1
+
+        e = 0
+        for rating in ratings:
+            if e < len(ratings):
+                search_results[e] = search_results[e] + '\n' + 'rating:' + rating + 'ends'
+            e += 1
+
+    else:
+        try:
+            titleitem = normilize_string(singleValue(content, '<h1 class="moviename-big" itemprop="name">(.*?)</h1>'))
+        except:
+            titleitem = ''
+
+        try:
+            director = normilize_string(','.join(multiValue(content, '<tr><td class="type">\xd1\x80\xd0\xb5\xd0\xb6\xd0\xb8\xd1\x81\xd1\x81\xd0\xb5\xd1\x80</td>(.*?)</tr>', '<a href=".*?>(.*?)</a>')))
+            director = '\xd1\x80\xd0\xb5\xd0\xb6. %s' % director
+        except:
+            director = ''
+
+        try:
+            countri = ','.join(multiValue(content, '<td class="type">\xd1\x81\xd1\x82\xd1\x80\xd0\xb0\xd0\xbd\xd0\xb0</td>(.*?)</tr>', '<a href=".*?>(.*?)</a>'))
+            countri = '\n%s ,' % countri
+        except:
+            countri = ''
+
+        try:
+            time = string.split(singleValue(content, '<td class="time" id="runtime">(.*?)</td>'))
+            runtime = time[0] + ' \xd0\xbc\xd0\xb8\xd0\xbd.'
+        except:
+            runtime = ''
+
+        try:
+            yearitem = ','.join(multiValue(content, '<td class="type">\xd0\xb3\xd0\xbe\xd0\xb4</td>(.*?)</div></td>', '<a href=".*?" title=".*?">(.*?)</a>'))
+            yearitem = '(%s \xd0\xb3\xd0\xbe\xd0\xb4),' % yearitem
+        except:
+            yearitem = ''
+
+        try:
+            titleengle = normilize_string(singleValue(content, '<span itemprop="alternativeHeadline">(.*?)</span>'))
+            titleengle = '\n%s, ' % titleengle
+        except:
+            titleengle = ''
+
+        try:
+            rating = singleValue(content, '<div class="div1"><meta itemprop="ratingValue" content="(.*?)" />')
+            rating = '\nrating:%sends' % rating
+        except:
+            rating = '\nrating:  ends'
+
+        try:
+            iditem = singleValue(content, '<link rel="canonical" href="http://www.kinopoisk.ru/film/(.*?)/" />')
+            iditem = '\n\nid:%send' % iditem
+        except:
+            iditem = '\n\nid: end'
+
+        search = '%s%s%s%s%s%s%s%s' % (titleitem,
+         yearitem,
+         titleengle,
+         runtime,
+         countri,
+         director,
+         iditem,
+         rating)
+        search_results.append(search)
     return search_results
 
 
@@ -345,9 +503,9 @@ def search_data(id):
     except (URLError, HTTPException, socket.error) as err:
         print '[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err)
 
-    data = watchvideopage.read().decode('cp1251')
-    watchvideopage.close()
+    data = watchvideopage.read().decode('cp1251').encode('utf-8')
     content_results = '%s' % data
+    watchvideopage.close()
     try:
         filmdata = {'title': '',
          'countries': '',
@@ -361,46 +519,56 @@ def search_data(id):
          'plot': '',
          'runtime': ''}
         try:
-            filmdata['title'] = normilize_string(singleValue(data, '<h1 class="moviename-big" itemprop="name">(.*?)</h1>'))
+            filmdata['title'] = normilize_string(singleValue(data, '<title>(.*?)</title>'))
         except:
             filmdata['title'] = ''
+
         try:
             filmdata['directors'] = normilize_string(','.join(multiValue(data, '<tr><td class="type">\xd1\x80\xd0\xb5\xd0\xb6\xd0\xb8\xd1\x81\xd1\x81\xd0\xb5\xd1\x80</td>(.*?)</tr>', '<a href=".*?>(.*?)</a>')))
         except:
             filmdata['directors'] = ''
+
         try:
-            filmdata['countries'] = ','.join(multiValue(data, '<td class="type"   >\xd1\x81\xd1\x82\xd1\x80\xd0\xb0\xd0\xbd\xd0\xb0</td>(.*?)</tr>', '<a href=".*?>(.*?)</a>'))
+            filmdata['countries'] = ','.join(multiValue(data, '<td class="type">\xd1\x81\xd1\x82\xd1\x80\xd0\xb0\xd0\xbd\xd0\xb0</td>(.*?)</tr>', '<a href=".*?>(.*?)</a>'))
         except:
             filmdata['countries'] = ''
+
         try:
-            filmdata['year'] = singleValue(data, '<td class="type"   >\xd0\xb3\xd0\xbe\xd0\xb4</td>.*?<a href=.*?>(.*?)</a>')
+            filmdata['year'] = ','.join(multiValue(data, '<td class="type">\xd0\xb3\xd0\xbe\xd0\xb4</td>(.*?)</div></td>', '<a href=".*?" title=".*?">(.*?)</a>'))
         except:
             filmdata['year'] = ''
+
         try:
             filmdata['genre'] = ','.join(multiValue(data, '<tr><td class="type">\xd0\xb6\xd0\xb0\xd0\xbd\xd1\x80</td>(.*?)</tr>', '<a href=".*?>(.*?)</a>'))
         except:
             filmdata['genre'] = ''
+
         try:
             filmdata['user_rating'] = singleValue(data, '<div class="div1"><meta itemprop="ratingValue" content="(.*?)" />')
         except:
             filmdata['user_rating'] = ''
+
         try:
             filmdata['rating_count'] = normilize_string(singleValue(data, '<span class="ratingCount" itemprop="ratingCount">(.*?)</span>'))
         except:
             filmdata['rating_count'] = ''
+
         try:
             filmdata['plot'] = normilize_string(singleValue(data, '<tr><td colspan=3 style="padding: 10px.*?description">(.*?)</div></span>'))
         except:
             filmdata['plot'] = ''
+
         try:
             runtime = string.split(singleValue(data, '<td class="time" id="runtime">(.*?)</td>'))
             filmdata['runtime'] = runtime[0]
         except:
             filmdata['runtime'] = ''
+
         try:
-            filmdata['cast'] = normilize_string(','.join(multiValue(data, '<div id="actorList" class="clearfix  ">(.*?)<li itemprop="actors"><a href="/film/.*?>...</a></li>', '<a href="/name.*? itemprop="name">(.*?)</a>')))
+            filmdata['cast'] = normilize_string(','.join(multiValue(data, '<h4>\xd0\x92 \xd0\xb3\xd0\xbb\xd0\xb0\xd0\xb2\xd0\xbd\xd1\x8b\xd1\x85 \xd1\x80\xd0\xbe\xd0\xbb\xd1\x8f\xd1\x85:</h4>(.*?)</a></li></ul>', '<a href="/name/.*?/">(.*?)</a>')))
         except:
             filmdata['cast'] = ''
+
         try:
             movierating = string.split(singleValue(data, '<td class="type">\xd1\x80\xd0\xb5\xd0\xb9\xd1\x82\xd0\xb8\xd0\xbd\xd0\xb3 MPAA</td>.*?<img src.*?alt=(.*?) border=0>'))
             if len(movierating) > 0:
@@ -411,6 +579,207 @@ def search_data(id):
             filmdata['movie_rating'] = ''
 
         return filmdata
-
     except:
         print_exception(traceback.format_exc())
+
+
+def search_comets(id):
+    url = 'http://www.kinopoisk.ru/level/1/film/' + id
+    watchrequest = Request(url, None, std_headers)
+    try:
+        watchvideopage = urlopen2(watchrequest)
+    except (URLError, HTTPException, socket.error) as err:
+        print '[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err)
+
+    content = watchvideopage.read().decode('cp1251').encode('utf-8')
+    watchvideopage.close()
+    search_results = []
+    content_results = content[content.find('<p class="more_random">'):content.find('\xd0\x94\xd0\xbb\xd1\x8f \xd1\x82\xd0\xbe\xd0\xb3\xd0\xbe \xd1\x87\xd1\x82\xd0\xbe\xd0\xb1\xd1\x8b \xd0\xb4\xd0\xbe\xd0\xb1\xd0\xb0\xd0\xb2\xd0\xb8\xd1\x82\xd1\x8c \xd1\x80\xd0\xb5\xd1\x86\xd0\xb5\xd0\xbd\xd0\xb7\xd0\xb8\xd1\x8e \xd0\xbd\xd0\xb0 \xd1\x84\xd0\xb8\xd0\xbb\xd1\x8c\xd0\xbc, \xd0\xbd\xd0\xb5\xd0\xbe\xd0\xb1\xd1\x85\xd0\xbe\xd0\xb4\xd0\xb8\xd0\xbc\xd0\xbe')]
+    if content_results:
+        results = CrewRoleList2(content_results)
+        names = normilize_string(singleValue(results, '<p class="profile_name"><s></s><a href=".*?" itemprop="name">(.*?)</a></p>'))
+        titleitems = normilize_string(singleValue(results, '<span class="_reachbanner_" itemprop="reviewBody">(.*?)</span></p> </div>'))
+        iditems = normilize_string(singleValue(results, '<p class="sub_title" id=".*?">(.*?)</p>'))
+        search = '%s\n\n%s\n\n%s' % (names, iditems, titleitems)
+        search_results.append(search)
+    return search_results
+
+
+def search_poster(id):
+    url = 'http://www.kinopoisk.ru/level/17/film/%s' % id
+    watchrequest = Request(url, None, std_headers)
+    try:
+        watchvideopage = urlopen2(watchrequest)
+    except (URLError, HTTPException, socket.error) as err:
+        print '[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err)
+
+    data = watchvideopage.read().decode('cp1251').encode('utf-8')
+    coveritems = []
+    watchvideopage.close()
+    if '<table class="fotos' in data:
+        coveritems = multiValue(data, '<table class="fotos.*?">(.*?)</table>', '<a href="(.*?)">')
+        Coverart = coveritems[0]
+        url2 = 'http://www.kinopoisk.ru%s' % Coverart
+        watchrequest2 = Request(url2, None, std_headers)
+        try:
+            watchvideopage2 = urlopen2(watchrequest2)
+        except (URLError, HTTPException, socket.error) as err:
+            print '[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err)
+
+        data2 = watchvideopage2.read().decode('cp1251').encode('utf-8')
+        coveritem = ''
+        coveritem = singleValue(data2, '<img style=".*?" id="image" src="(.*?)".*?/>')
+        watchvideopage2.close()
+    else:
+        coveritem = 'None'
+    return coveritem
+
+
+def poster_save(id):
+    url2 = 'http://www.kinopoisk.ru%s' % id
+    watchrequest2 = Request(url2, None, std_headers)
+    try:
+        watchvideopage2 = urlopen2(watchrequest2)
+    except (URLError, HTTPException, socket.error) as err:
+        print '[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err)
+
+    data2 = watchvideopage2.read().decode('cp1251').encode('utf-8')
+    coveritem = ''
+    coveritem = singleValue(data2, '<img style=".*?" id="image" src="(.*?)".*?/>')
+    watchvideopage2.close()
+    return coveritem
+
+
+def poster_viem(id):
+    url = 'http://www.kinopoisk.ru/level/17/film/%s' % id
+    watchrequest = Request(url, None, std_headers)
+    try:
+        watchvideopage = urlopen2(watchrequest)
+    except (URLError, HTTPException, socket.error) as err:
+        print '[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err)
+
+    data = watchvideopage.read().decode('cp1251').encode('utf-8')
+    search_results = []
+    watchvideopage.close()
+    if '<table class="fotos' in data:
+        content_results = singleValue(data, '<table class="fotos.*?">(.*?)</table>')
+        if content_results:
+            results = CrewRoleList3(content_results)
+            idposters = re.compile('<a href="(.*?)" target="_blank" title="\xd0\x9e\xd1\x82\xd0\xba\xd1\x80\xd1\x8b\xd1\x82\xd1\x8c \xd0\xb2 \xd0\xbd\xd0\xbe\xd0\xb2\xd0\xbe\xd0\xbc \xd0\xbe\xd0\xba\xd0\xbd\xd0\xb5"></a>').findall(content_results)
+            imageslinks = re.compile('<img  src="(.*?)".*?/></a>').findall(content_results)
+            imagessaizes = re.compile('<span class="genre">(.*?)</span>').findall(results)
+            for imagessaize in imagessaizes:
+                search_results.append('size:' + imagessaize)
+
+            i = 0
+            for idposter in idposters:
+                if i < len(idposters):
+                    search_results[i] = search_results[i] + '\n\n (' + idposter + ')'
+                i += 1
+
+            l = 0
+            for imageslink in imageslinks:
+                if l < len(imageslinks):
+                    search_results[l] = search_results[l] + '\n link:' + imageslink + 'end'
+                l += 1
+
+    return search_results
+
+
+def search_tmbd(title):
+    url = 'http://www.themoviedb.org/search?query=%s' % title
+    watchrequest = Request(url, None, std_headers)
+    try:
+        watchvideopage = urlopen2(watchrequest)
+    except (URLError, HTTPException, socket.error) as err:
+        print '[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err)
+
+    data = watchvideopage.read()
+    search_results = []
+    watchvideopage.close()
+    if '<div class="search_results movie ">' in data:
+        content_results = singleValue(data, '<div class="search_results movie ">(.*?)<div class="search_results collection hide">')
+        if content_results:
+            iditems = re.compile('<a id=".*?" class="result" href="(.*?)" title=".*?" alt=".*?">').findall(content_results)
+            years = re.compile('<span class="release_date"> (.*?) <span class=".*?"></span></span>').findall(content_results)
+            directors = re.compile('<span class="genres">(.*?)</span>').findall(content_results)
+            images = re.compile('<img class="poster lazyload" data-src="(.*?)" .*? alt=".*?">').findall(content_results)
+            titleitems = re.compile('<a id=".*?" class="result" href=".*?" title="(.*?)" alt=".*?">').findall(content_results)
+            for titleitem in titleitems:
+                search_results.append(titleitem)
+
+            d = 0
+            for director in directors:
+                if d < len(directors):
+                    search_results[d] = search_results[d] + '\n year: ' + years[d] + '\n \xd1\x80\xd0\xb5\xd0\xb6. ' + director
+                d += 1
+
+            l = 0
+            for iditem in iditems:
+                if l < len(iditems):
+                    search_results[l] = search_results[l] + '\n' + 'id:' + iditem + 'end'
+                l += 1
+
+            e = 0
+            for image in images:
+                if e < len(images):
+                    search_results[e] = search_results[e] + '\n' + 'image:' + image + 'ends'
+                e += 1
+
+    return search_results
+
+
+def poster_viemtmbd(id):
+    url = 'http://www.themoviedb.org%s' % id
+    watchrequest = Request(url, None, std_headers)
+    try:
+        watchvideopage = urlopen2(watchrequest)
+    except (URLError, HTTPException, socket.error) as err:
+        print '[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err)
+
+    data = watchvideopage.read()
+    search_results = []
+    watchvideopage.close()
+    if '<div id="images">' in data:
+        content_results = singleValue(data, '<div id="images">(.*?)</div>')
+        if content_results:
+            idposters = re.compile('<img itemprop=".*?" class=".*?" id=".*?" src="(.*?)" width=".*?" height=".*?" />').findall(content_results)
+            imagessaizes = re.compile('<img itemprop=".*?" class=".*?" id="(.*?)" src=".*?" width=".*?" height=".*?" />').findall(content_results)
+            for imagessaize in imagessaizes:
+                search_results.append('image:' + imagessaize)
+
+            l = 0
+            for idposter in idposters:
+                if l < len(idposters):
+                    search_results[l] = search_results[l] + '\n link:' + idposter + 'end'
+                l += 1
+
+    return search_results
+
+
+def CrewRoleList3(file):
+    if file:
+        return file.replace('<b><i>', '<span class="genre">').replace('</i>', '</span>').replace('&times;', 'x')
+
+
+def search_postermp3(url):
+    watchrequest = Request(url, None, std_headers)
+    try:
+        watchvideopage = urlopen2(watchrequest)
+    except (URLError, HTTPException, socket.error) as err:
+        print '[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err)
+
+    data = watchvideopage.read()
+    search_results = []
+    cover = ''
+    watchvideopage.close()
+    if 'src="' in data:
+        coveritems = re.compile('src="(.*?)"').findall(data)
+        for coveritem in coveritems:
+            if 'http://' in coveritem:
+                if '&imgurl=' in coveritem:
+                    search_results.append(singleValue(coveritem, '&imgurl=(.*?)&w='))
+                else:
+                    search_results.append(coveritem)
+
+    return search_results

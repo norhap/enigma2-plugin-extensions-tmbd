@@ -76,7 +76,7 @@ from os import system as os_system, path as os_path
 import kinopoisk, urllib2
 import tmbdYTTrailer
 
-plugin_version = "7.0"
+plugin_version = "7.1"
 
 epg_furtherOptions = False
 if hasattr(EPGSelection, "furtherOptions"):
@@ -1760,7 +1760,7 @@ class KinoRu(Screen):
 		<widget font="Regular;20" halign="left" name="ratinglabel" foregroundColor="#00f0b400" position="770,34" size="210,23" transparent="1" />
 		<widget font="Regular;20" name="voteslabel" halign="left" position="770,57" size="330,23" foregroundColor="#00f0b400" transparent="1" />
 		<widget alphatest="blend" name="poster" position="30,60" size="285,398" />
-		<widget name="menu" position="20,270" foregroundColor="#00f0b400" scrollbarMode="showOnDemand" size="1100,190" zPosition="1"  selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/button1080x25.png" />
+		<widget name="menu" position="20,270" foregroundColor="#00f0b400" scrollbarMode="showOnDemand" size="1100,200" zPosition="1"  selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/button1080x25.png" />
 		<widget name="detailslabel" position="325,230" size="570,23" font="Regular;20" transparent="1" />  
 		<widget font="Regular;20" name="castlabel" position="320,350" size="760,160" transparent="1" />
 		<widget font="Regular;20" name="extralabel" position="320,80" size="760,285" transparent="1" />
@@ -1789,7 +1789,7 @@ class KinoRu(Screen):
 		<widget font="Regular;20" halign="left" name="ratinglabel" foregroundColor="#00f0b400" position="770,34" size="210,23" transparent="1" />
 		<widget font="Regular;20" name="voteslabel" halign="left" position="770,57" size="330,23" foregroundColor="#00f0b400" transparent="1" />
 		<widget alphatest="blend" name="poster" position="30,80" size="110,170" />
-		<widget name="menu" position="20,270" foregroundColor="#00f0b400" scrollbarMode="showOnDemand" size="1100,190" zPosition="1"  selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/button1080x25.png" />
+		<widget name="menu" position="20,270" foregroundColor="#00f0b400" scrollbarMode="showOnDemand" size="1100,200" zPosition="1"  selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/button1080x25.png" />
 		<widget name="detailslabel" position="325,230" size="570,23" font="Regular;20" transparent="1" />  
 		<widget font="Regular;20" name="castlabel" position="20,295" size="1064,195" transparent="1" />
 		<widget font="Regular;20" name="extralabel" position="164,77" size="920,220" transparent="1" />
@@ -1818,7 +1818,7 @@ class KinoRu(Screen):
 		<widget font="Regular;20" halign="left" name="ratinglabel" foregroundColor="#00f0b400" position="770,34" size="210,23" transparent="1" />
 		<widget font="Regular;20" name="voteslabel" halign="left" position="770,57" size="330,23" foregroundColor="#00f0b400" transparent="1" />
 		<widget alphatest="blend" name="poster" position="30,60" size="285,398" />
-		<widget name="menu" position="20,270" foregroundColor="#00f0b400" scrollbarMode="showOnDemand" size="1100,190" zPosition="1"  selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/button1080x25.png" />
+		<widget name="menu" position="20,270" foregroundColor="#00f0b400" scrollbarMode="showOnDemand" size="1100,200" zPosition="1"  selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/button1080x25.png" />
 		<widget name="detailslabel" position="325,230" size="570,23" font="Regular;20" transparent="1" />  
 		<widget font="Regular;20" name="castlabel" position="320,350" size="760,160" transparent="1" />
 		<widget font="Regular;20" name="extralabel" position="320,80" size="760,285" transparent="1" />
@@ -1847,7 +1847,7 @@ class KinoRu(Screen):
 		<widget font="Regular;20" halign="left" name="ratinglabel" foregroundColor="#00f0b400" position="770,34" size="210,23" transparent="1" />
 		<widget font="Regular;20" name="voteslabel" halign="left" position="770,57" size="330,23" foregroundColor="#00f0b400" transparent="1" />
 		<widget alphatest="blend" name="poster" position="30,80" size="110,170" />
-		<widget name="menu" position="20,270" foregroundColor="#00f0b400" scrollbarMode="showOnDemand" size="1100,190" zPosition="1"  selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/button1080x25.png" />
+		<widget name="menu" position="20,270" foregroundColor="#00f0b400" scrollbarMode="showOnDemand" size="1100,200" zPosition="1"  selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/button1080x25.png" />
 		<widget name="detailslabel" position="325,230" size="570,23" font="Regular;20" transparent="1" />  
 		<widget font="Regular;20" name="castlabel" position="20,295" size="1064,195" transparent="1" />
 		<widget font="Regular;20" name="extralabel" position="164,77" size="920,220" transparent="1" />
@@ -1893,7 +1893,7 @@ class KinoRu(Screen):
 	<widget name="stars" position="340,40" size="210,21" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/starsbar_filled.png" transparent="1" />
 	</screen>"""  
 
-	def __init__(self, session, eventName, callbackNeeded=False, movielist = False):
+	def __init__(self, session, eventName, callbackNeeded=False, movielist=False):
 		Screen.__init__(self, session)
 		self.skin = self.chooseSkin()
 		self.eventName = eventName
@@ -2310,6 +2310,8 @@ class KinoRu(Screen):
 
 	def search_poster(self, id):
 		if id:
+			if id.endswith("end"):
+				id = id[:-3]
 			#url = 'http://st.kinopoisk.ru/images/film_big/%s.jpg' % (id)
 			url = 'http://st.kinopoisk.ru/images/film/%s.jpg' % (id)
 			user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.53.11 (KHTML, like Gecko) Version/5.1.3 Safari/534.53.10'

@@ -472,7 +472,7 @@ msgid "Settings"
 msgstr "Настройки"
 
 msgid "Settings TMBD Details Plugin..."
-msgstr "Настройки плагина TMBD..."
+msgstr "Настройки плагина TMBD:"
 
 msgid "Setup menu"
 msgstr "Меню настроек"
