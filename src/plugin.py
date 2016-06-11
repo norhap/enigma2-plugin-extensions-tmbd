@@ -76,7 +76,7 @@ from os import system as os_system, path as os_path
 import kinopoisk, urllib2
 import tmbdYTTrailer
 
-plugin_version = "7.1"
+plugin_version = "7.2"
 
 epg_furtherOptions = False
 if hasattr(EPGSelection, "furtherOptions"):
@@ -1402,25 +1402,13 @@ class TMBD(Screen):
 		ret and ret[1]()
 
 	def searchYttrailer3(self):
-		#if fileExists(resolveFilename(SCOPE_PLUGINS, "Extensions/YTTrailer/plugin.pyc")) or fileExists(resolveFilename(SCOPE_PLUGINS, "Extensions/YTTrailer/plugin.pyo")):
 		self.searchYttrailer()
-		#else:
-		#	if fileExists(resolveFilename(SCOPE_PLUGINS, "Extensions/TMBD/enigma2-plugin-extensions-yttrailer_2.0_all.ipk")):
-		#		self.session.openWithCallback(self.yesNo, MessageBox, _("YTTrailer is not installed.\nInstall YTTrailer now?"), MessageBox.TYPE_YESNO, default = False)
-		#	else:
-		#		self.session.openWithCallback(self.workingFinished, MessageBox, _("YTTrailer is not installed. Please install YTTrailer."), MessageBox.TYPE_INFO, timeout=5)
 
 	def searchYttrailer2(self):
 		if self.movielist and self.curResult:
 			self.saveresult()
 		else:
-			#if fileExists(resolveFilename(SCOPE_PLUGINS, "Extensions/YTTrailer/plugin.pyc")) or fileExists(resolveFilename(SCOPE_PLUGINS, "Extensions/YTTrailer/plugin.pyo")):
 			self.searchYttrailer()
-			#else:
-			#	if fileExists(resolveFilename(SCOPE_PLUGINS, "Extensions/TMBD/enigma2-plugin-extensions-yttrailer_2.0_all.ipk")):
-			#		self.session.openWithCallback(self.yesNo, MessageBox, _("YTTrailer is not installed.\nInstall YTTrailer now?"), MessageBox.TYPE_YESNO, default = False)
-			#	else:
-			#		self.session.openWithCallback(self.workingFinished, MessageBox, _("YTTrailer is not installed. Please install YTTrailer."), MessageBox.TYPE_INFO, timeout=5)
 
 	def yesNo(self, answer):
 		if answer is True:
@@ -1432,12 +1420,6 @@ class TMBD(Screen):
 			self.session.open(Console, _("Install YTTrailer..."), [cmd])
 
 	def searchYttrailer(self):
-		#try:
-		#	from Plugins.Extensions.YTTrailer.plugin import YTTrailerList, baseEPGSelection__init__
-		#except ImportError as ie:
-		#	pass
-		#if baseEPGSelection__init__ is None:
-		#	return
 		if self.curResult:
 			current = self["menu"].l.getCurrentSelection()
 			if current:
@@ -2439,7 +2421,10 @@ class KinoRu(Screen):
 				return
 			current = self["menu"].l.getCurrentSelection()
 			if current:
-				namedetals2 = self['menu'].l.getCurrentSelection()[0]
+				try:
+					namedetals2 = current.split(',')[0]
+				except:
+					namedetals2 = current[0]
 				namedetals2 = namedetals2[:-6]
 				namedetals2 = namedetals2.replace('\n','')
 				if movie2.endswith(".ts"):
@@ -2493,7 +2478,10 @@ class KinoRu(Screen):
 			return
 		current = self["menu"].l.getCurrentSelection()
 		if current:
-			namedetals = self['menu'].l.getCurrentSelection()[0]
+			try:
+				namedetals = current.split(',')[0]
+			except:
+				namedetals = current[0]
 			if self.countrie:
 				Extratext = "%s %s\n" % (_("Country:"), self.countrie)
 			if self.genres:
@@ -2649,25 +2637,13 @@ class KinoRu(Screen):
 		ret and ret[1]()
 
 	def searchYttrailer3(self):
-		#if fileExists(resolveFilename(SCOPE_PLUGINS, "Extensions/YTTrailer/plugin.pyc")) or fileExists(resolveFilename(SCOPE_PLUGINS, "Extensions/YTTrailer/plugin.pyo")):
 		self.searchYttrailer()
-		#else:
-		#	if fileExists(resolveFilename(SCOPE_PLUGINS, "Extensions/TMBD/enigma2-plugin-extensions-yttrailer_2.0_all.ipk")):
-		#		self.session.openWithCallback(self.yesNo, MessageBox, _("YTTrailer is not installed.\nInstall YTTrailer now?"), MessageBox.TYPE_YESNO, default = False)
-		#	else:
-		#		self.session.openWithCallback(self.workingFinished, MessageBox, ("YTTrailer is not installed. Please install YTTrailer."), MessageBox.TYPE_INFO, timeout=5)		
 
 	def searchYttrailer2(self):
 		if self.movielist and self.curResult and self.curInfos:
 			self.saveresult()
 		else:
-		#	if fileExists(resolveFilename(SCOPE_PLUGINS, "Extensions/YTTrailer/plugin.pyc")) or fileExists(resolveFilename(SCOPE_PLUGINS, "Extensions/YTTrailer/plugin.pyo")):
 			self.searchYttrailer()
-		#	else:
-		#		if fileExists(resolveFilename(SCOPE_PLUGINS, "Extensions/TMBD/enigma2-plugin-extensions-yttrailer_2.0_all.ipk")):
-		#			self.session.openWithCallback(self.yesNo, MessageBox, _("YTTrailer is not installed.\nInstall YTTrailer now?"), MessageBox.TYPE_YESNO, default = False)
-		#		else:
-		#			self.session.openWithCallback(self.workingFinished, MessageBox, ("YTTrailer is not installed. Please install YTTrailer."), MessageBox.TYPE_INFO, timeout=5)
 
 	def yesNo(self, answer):
 		if answer is True:
@@ -2679,16 +2655,13 @@ class KinoRu(Screen):
 			self.session.open(Console, _("Install YTTrailer..."), [cmd])
 
 	def searchYttrailer(self):
-		#try:
-		#	from Plugins.Extensions.YTTrailer.plugin import YTTrailerList, baseEPGSelection__init__
-		#except ImportError as ie:
-		#	pass
-		#if baseEPGSelection__init__ is None:
-		#	return
 		if self.curResult:
 			current = self["menu"].l.getCurrentSelection()
 			if current:
-				namedetals = self['menu'].l.getCurrentSelection()[0]
+				try:
+					namedetals = current.split(',')[0]
+				except:
+					namedetals = current[0]
 				namedetals = namedetals.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-')
 				namedetals = namedetals[:-6]
 				self.session.open(tmbdYTTrailer.TmbdYTTrailerList, namedetals)
