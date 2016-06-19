@@ -121,9 +121,10 @@ class TmbdYTTrailerList(Screen, tmbdYTTrailer):
 		tmbdYTTrailer.__init__(self, session)
 		self.session = session
 		self.eventName = eventname
-		self['actions'] = ActionMap(['WizardActions'],
+		self['actions'] = ActionMap(['WizardActions', 'MenuActions'],
 		{
 			'ok': self.okPressed,
+			'menu': self.menuPressed,
 			'back': self.close
 		}, -2)
 		self['list'] = List([])
@@ -136,7 +137,7 @@ class TmbdYTTrailerList(Screen, tmbdYTTrailer):
 		self.thumbnailTaimer.timeout.callback.append(self.updateThumbnails)
 		self.onLayoutFinish.append(self.startRun)
 
-	def startRun(self):
+	def startRun(self, manual=False):
 		self.setTitle(_('YT Trailer-List'))
 		if not self.eventName:
 			self.close()
@@ -144,11 +145,22 @@ class TmbdYTTrailerList(Screen, tmbdYTTrailer):
 		if self.feeds:
 			self['list'].setList(self.feeds)
 			self.createThumbnails()
-		else:
+		elif not manual:
 			# I hope that happens rarely, so set up timer only here
 			self.errorTaimer = eTimer()
 			self.errorTaimer.timeout.callback.append(self.errorTaimerStop)
 			self.errorTaimer.start(1)
+
+	def menuPressed(self):
+		self.session.openWithCallback(self.setSearchString, VirtualKeyBoard, title = _("Enter text for search YT-Trailer:"))
+
+	def setSearchString(self, ret=None):
+		if ret and ret != '':
+			self.eventName = ret
+			self.picloads = {}
+			self.thumbnails = {}
+			self['list'].setList([])
+			self.startRun(True)
 
 	def createThumbnails(self):
 		for entry in self.feeds:
@@ -310,7 +322,7 @@ class TmbdYTTrailerSetup(ConfigListScreen, Screen):
 		self.setTitle(_('YT-Trailer Setup'))
 
 	def keySearch(self):
-		self.session.openWithCallback(self.setSearchString,VirtualKeyBoard, title = _("Enter text for search YT-Trailer:"))
+		self.session.openWithCallback(self.setSearchString, VirtualKeyBoard, title = _("Enter text for search YT-Trailer:"))
 
 	def setSearchString(self, ret = None):
 		if ret and ret != '':
