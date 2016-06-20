@@ -348,7 +348,7 @@ msgid "Option for all images"
 msgstr "Вариант для всех имиджей"
 
 msgid "Option only python 2.7 images"
-msgstr "Вариант только для имиджей на python 2.7"
+msgstr "Вариант c использованием пакета lmxl"
 
 msgid "Please select the matching entry:"
 msgstr "Пожалуйста, выберите из списка:"

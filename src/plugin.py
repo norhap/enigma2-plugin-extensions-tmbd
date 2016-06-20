@@ -1,23 +1,4 @@
 # -*- coding: UTF-8 -*-
-###############################################################################
-# TMBD details plugin for enigma2
-#
-# Coded by Nikolasi and Dimitrij 2013/2015
-#
-# This module is free software; you can redistribute it and/or modify it under
-# the terms of the GNU Lesser General Public License as published by the Free
-# Software Foundation; either version 2 of the License, or (at your option) any
-# later version.
-#
-# This program is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
-# details.
-#
-# You should have received a copy of the GNU Lesser General Public License along
-# with this program; if not, write to the Free Software Foundation, Inc., 59
-# Temple Place, Suite 330, Boston, MA 0.1.2-1307 USA
-###############################################################################
 
 from . import _
 from Plugins.Plugin import PluginDescriptor
@@ -76,7 +57,7 @@ from os import system as os_system, path as os_path
 import kinopoisk, urllib2
 import tmbdYTTrailer
 
-plugin_version = "7.2"
+plugin_version = "7.3"
 
 epg_furtherOptions = False
 if hasattr(EPGSelection, "furtherOptions"):
@@ -125,6 +106,12 @@ TMBDInfoBarKeys = [
 	["Help",_("HELP"),["KEY_HELP"]],
 ]
 
+def cutName(eventName=""):
+	if eventName:
+		eventName = eventName.replace('"', '').replace('Х/Ф', '').replace('М/Ф', '').replace('Х/ф', '').replace('.', '').replace(' | ', '')
+		eventName = eventName.replace('(18+)', '').replace('18+', '').replace('(16+)', '').replace('16+', '').replace('(12+)', '').replace('12+', '').replace('(7+)', '').replace('7+', '').replace('(6+)', '').replace('6+', '').replace('(0+)', '').replace('0+', '').replace('+', '')
+		return eventName
+	return ""
 
 def GetLanguageCode():
 	lang = config.plugins.tmbd.locale.value
@@ -216,8 +203,7 @@ def GraphMultiEPG__init__(self, session, services, zapFunc=None, bouquetChangeCB
 			if cur and cur[0] is not None:
 				name2 = cur[0].getEventName()
 				name3 = name2.split("(")[0].strip()
-				eventname = name3.replace('"', '').replace('Х/Ф', '').replace('М/Ф', '').replace('Х/ф', '').replace('.', '').replace(' | ', '')
-				eventname = eventname.replace('(18+)', '').replace('18+', '').replace('(16+)', '').replace('16+', '').replace('(12+)', '').replace('12+', '').replace('(7+)', '').replace('7+', '').replace('(6+)', '').replace('6+', '').replace('(0+)', '').replace('0+', '').replace('+', '')
+				eventname = cutName(name3)
 				if config.plugins.tmbd.profile.value == "0":
 					self.session.open(TMBD, eventname, False)
 				else:
@@ -288,8 +274,7 @@ def AnswernStreamVOD(self, ret):
 					try:
 						from Plugins.Extensions.TMBD.plugin import TMBD
 						from Plugins.Extensions.TMBD.plugin import KinoRu
-						eventname = event.replace('"', '').replace('Х/Ф', '').replace('М/Ф', '').replace('Х/ф', '').replace('.', '').replace(' | ', '')
-						eventname = eventname.replace('(18+)', '').replace('18+', '').replace('(16+)', '').replace('16+', '').replace('(12+)', '').replace('12+', '').replace('(7+)', '').replace('7+', '').replace('(6+)', '').replace('6+', '').replace('(0+)', '').replace('0+', '').replace('+', '')
+						eventname = cutName(event)
 						if config.plugins.tmbd.profile.value == "0":
 							self.session.open(TMBD, eventname, False)
 						else:
@@ -362,8 +347,7 @@ def EPGSelection__init__(self, session, service=None, zapFunc=None, eventid=None
 			if cur[0] is not None:
 				name2 = cur[0].getEventName()
 				name3 = name2.split("(")[0].strip()
-				eventname = name3.replace('"', '').replace('Х/Ф', '').replace('М/Ф', '').replace('Х/ф', '').replace('.', '').replace(' | ', '')
-				eventname = eventname.replace('(18+)', '').replace('18+', '').replace('(16+)', '').replace('16+', '').replace('(12+)', '').replace('12+', '').replace('(7+)', '').replace('7+', '').replace('(6+)', '').replace('6+', '').replace('(0+)', '').replace('0+', '').replace('+', '')
+				eventname = cutName(name3)
 				if config.plugins.tmbd.profile.value == "0":
 					self.session.open(TMBD, eventname, False)
 				else:
@@ -382,8 +366,7 @@ def EPGSelection__init__(self, session, service=None, zapFunc=None, eventid=None
 			if cur[0] is not None:
 				name2 = cur[0].getEventName()
 				name3 = name2.split("(")[0].strip()
-				eventname = name3.replace('"', '').replace('Х/Ф', '').replace('М/Ф', '').replace('Х/ф', '').replace('.', '').replace(' | ', '')
-				eventname = eventname.replace('(18+)', '').replace('18+', '').replace('(16+)', '').replace('16+', '').replace('(12+)', '').replace('12+', '').replace('(7+)', '').replace('7+', '').replace('(6+)', '').replace('6+', '').replace('(0+)', '').replace('0+', '').replace('+', '')
+				eventname = cutName(name3)
 				if config.plugins.tmbd.profile.value == "0":
 					self.session.open(TMBD, eventname, False)
 				else:
@@ -433,9 +416,8 @@ def showServiceInformations2(self, eventName="", profile = False):
 		if event != None:
 			try:
 				epg_name = event.getEventName() or ''
-				eventName = epg_name.replace('"', '').replace('Х/Ф', '').replace('М/Ф', '').replace('Х/ф', '').replace('.', '').replace(' | ', '')
-				eventName = eventName.replace('(18+)', '').replace('18+', '').replace('(16+)', '').replace('16+', '').replace('(12+)', '').replace('12+', '').replace('(7+)', '').replace('7+', '').replace('(6+)', '').replace('6+', '').replace('(0+)', '').replace('0+', '').replace('+', '')
-				eventname = eventName
+				eventname = cutName(epg_name)
+				eventName = eventname
 				if config.plugins.tmbd.menu_profile.value == "0":
 					if config.plugins.tmbd.profile.value == "0":
 						self.session.open(TMBD, eventName)
@@ -502,16 +484,12 @@ class TMBDEPGSelection(EPGSelection):
 	def zapTo(self):
 		global eventname
 		eventname = ""
-		name2 = ""
-		name3 = ""
 		cur = self["list"].getCurrent()
-		evt = cur[0]
+		evt = cur and cur[0]
 		if evt != None:
-			sref = cur[1]
-			name2 = evt.getEventName()
-			name3 = name2.split("(")[0].strip()
-			eventname = name3.replace('"', '').replace('Х/Ф', '').replace('М/Ф', '').replace('Х/ф', '').replace('.', '').replace(' | ', '')
-			eventname = eventname.replace('0+', '').replace('(0+)', '').replace('6+', '').replace('(6+)', '').replace('7+', '').replace('(7+)', '').replace('12+', '').replace('(12+)', '').replace('16+', '').replace('(16+)', '').replace('18+', '').replace('(18+)', '').replace('+', '')
+			event = evt.getEventName()
+			name = event.split("(")[0].strip()
+			eventname = cutName(name)
 		if self.openPlugin:
 			if config.plugins.tmbd.profile.value == "0":
 				self.session.open(TMBD, eventname)
@@ -2756,8 +2734,7 @@ class KinoRu(Screen):
 				self.eventName = event.getEventName()
 		if self.eventName:
 			title = self.eventName.split("(")[0].strip()
-			title = title.replace('"', '').replace('Х/Ф', '').replace('М/Ф', '').replace('Х/ф', '').replace('.', '').replace(' | ', '')
-			title = title.replace('(18+)', '').replace('18+', '').replace('(16+)', '').replace('16+', '').replace('(12+)', '').replace('12+', '').replace('(7+)', '').replace('7+', '').replace('(6+)', '').replace('6+', '').replace('(0+)', '').replace('0+', '').replace('+', '')
+			title = cutName(title)
 			try:
 				results = kinopoisk.search_title(title)
 			except:
@@ -3156,11 +3133,11 @@ class EventChoiseList:
 		event_now = info and info.getEvent(0)	# 0 = now
 		if event_now:
 			eventName = event_now.getEventName().split("(")[0].strip()
-			eventname_now = eventName.replace('"', '').replace('Х/Ф', '').replace('М/Ф', '').replace('Х/ф', '').replace('.', '').replace('18+', '').replace('(16+)', '').replace('16+', '').replace('(12+)', '').replace('12+', '').replace('(7+)', '').replace('7+', '').replace('(6+)', '').replace('6+', '').replace('(0+)', '').replace('0+', '').replace(' | ', '').replace('+', '')
+			eventname_now = cutName(eventName)
 		event_next = info and info.getEvent(1)	# 1 = next
 		if event_next:
 			eventName = event_next.getEventName().split("(")[0].strip()
-			eventname_next = eventName.replace('"', '').replace('Х/Ф', '').replace('М/Ф', '').replace('Х/ф', '').replace('.', '').replace('18+', '').replace('(16+)', '').replace('16+', '').replace('(12+)', '').replace('12+', '').replace('(7+)', '').replace('7+', '').replace('(6+)', '').replace('6+', '').replace('(0+)', '').replace('0+', '').replace(' | ', '').replace('+', '')
+			eventname_next = cutName(eventName)
 		if event_now and event_next:
 			keyslist = [ ]
 			eventlist = [
@@ -3245,8 +3222,7 @@ class MovielistProfileList(Screen):
 
 def eventinfo(session, eventName="", **kwargs):
 	if eventName != "":
-		eventName = eventName.replace('"', '').replace('Х/Ф', '').replace('М/Ф', '').replace('Х/ф', '').replace('.', '').replace(' | ', '')
-		eventName = eventName.replace('(18+)', '').replace('18+', '').replace('(16+)', '').replace('16+', '').replace('(12+)', '').replace('12+', '').replace('(7+)', '').replace('7+', '').replace('(6+)', '').replace('6+', '').replace('(0+)', '').replace('0+', '').replace('+', '')
+		eventName = cutName(eventName)
 		if config.plugins.tmbd.profile.value == "0":
 			session.open(TMBD, eventName)
 		else:
@@ -3305,8 +3281,7 @@ def main3(session, eventName="", **kwargs):
 	if config.plugins.tmbd.ext_menu_event.value == "0":
 		if event:
 			eventName = event.getEventName().split("(")[0].strip()
-			eventname = eventName.replace('"', '').replace('Х/Ф', '').replace('М/Ф', '').replace('Х/ф', '').replace('.', '').replace(' | ', '')
-			eventname = eventname.replace('(18+)', '').replace('18+', '').replace('(16+)', '').replace('16+', '').replace('(12+)', '').replace('12+', '').replace('(7+)', '').replace('7+', '').replace('(6+)', '').replace('6+', '').replace('(0+)', '').replace('0+', '').replace('+', '')
+			eventname = cutName(eventName)
 			if config.plugins.tmbd.profile.value == "0":
 				session.open(TMBD, eventname)
 			else:
@@ -3362,8 +3337,7 @@ class TMBDInfoBar:
 		if config.plugins.tmbd.ext_menu_event.value == "0":
 			if event:
 				eventName = event.getEventName().split("(")[0].strip()
-				eventname = eventName.replace('"', '').replace('Х/Ф', '').replace('М/Ф', '').replace('Х/ф', '').replace('.', '').replace(' | ', '')
-				eventname = eventname.replace('(18+)', '').replace('18+', '').replace('(16+)', '').replace('16+', '').replace('(12+)', '').replace('12+', '').replace('(7+)', '').replace('7+', '').replace('(6+)', '').replace('6+', '').replace('(0+)', '').replace('0+', '').replace('+', '')
+				eventname = cutName(eventName)
 				if config.plugins.tmbd.profile.value == "0":
 					self.session.open(TMBD, eventname)
 				else:
@@ -3393,11 +3367,12 @@ class TMBDInfoBar:
 		event_now = info and info.getEvent(0)	# 0 = now
 		if event_now:
 			eventName = event_now.getEventName().split("(")[0].strip()
-			eventname_now = eventName.replace('"', '').replace('Х/Ф', '').replace('М/Ф', '').replace('Х/ф', '').replace('.', '').replace('18+', '').replace('(16+)', '').replace('16+', '').replace('(12+)', '').replace('12+', '').replace('(7+)', '').replace('7+', '').replace('(6+)', '').replace('6+', '').replace('(0+)', '').replace('0+', '').replace(' | ', '').replace('+', '')
+			eventname_now = cutName(eventName)
+
 		event_next = info and info.getEvent(1)	# 1 = next
 		if event_next:
 			eventName = event_next.getEventName().split("(")[0].strip()
-			eventname_next = eventName.replace('"', '').replace('Х/Ф', '').replace('М/Ф', '').replace('Х/ф', '').replace('.', '').replace('18+', '').replace('(16+)', '').replace('16+', '').replace('(12+)', '').replace('12+', '').replace('(7+)', '').replace('7+', '').replace('(6+)', '').replace('6+', '').replace('(0+)', '').replace('0+', '').replace(' | ', '').replace('+', '')
+			eventname_next = cutName(eventName)
 		if event_now and event_next:
 			keyslist = [ ]
 			eventlist = [
@@ -3518,8 +3493,7 @@ def epgfurther(session, selectedevent, **kwargs):
 	except:
 		eventName = ""
 	if eventName != "":
-		eventName = eventName.replace('"', '').replace('Х/Ф', '').replace('М/Ф', '').replace('Х/ф', '').replace('.', '').replace(' | ', '')
-		eventName = eventName.replace('(18+)', '').replace('18+', '').replace('(16+)', '').replace('16+', '').replace('(12+)', '').replace('12+', '').replace('(7+)', '').replace('7+', '').replace('(6+)', '').replace('6+', '').replace('(0+)', '').replace('0+', '').replace('+', '')
+		eventName = cutName(eventName)
 		if config.plugins.tmbd.profile.value == "0":
 			session.open(TMBD, eventName)
 		else:
@@ -3528,8 +3502,7 @@ def epgfurther(session, selectedevent, **kwargs):
 def yteventinfo(session, eventName="", **kwargs):
 	if session is None: return
 	if eventName != "":
-		eventName = eventName.replace('"', '').replace('Х/Ф', '').replace('М/Ф', '').replace('Х/ф', '').replace('.', '').replace(' | ', '')
-		eventName = eventName.replace('(18+)', '').replace('18+', '').replace('(16+)', '').replace('16+', '').replace('(12+)', '').replace('12+', '').replace('(7+)', '').replace('7+', '').replace('(6+)', '').replace('6+', '').replace('(0+)', '').replace('0+', '').replace('+', '')
+		eventName = cutName(eventName)
 		if config.plugins.tmbd.yt_start.value == "0":
 			session.open(tmbdYTTrailer.TmbdYTTrailerList, eventName)
 		else:
@@ -3542,8 +3515,7 @@ def yteventinfo(session, eventName="", **kwargs):
 		if event_now:
 			event = event_now.getEventName() or ''
 			eventName = event.split("(")[0].strip()
-			eventName = eventName.replace('"', '').replace('Х/Ф', '').replace('М/Ф', '').replace('Х/ф', '').replace('.', '').replace(' | ', '')
-			eventName = eventName.replace('(18+)', '').replace('18+', '').replace('(16+)', '').replace('16+', '').replace('(12+)', '').replace('12+', '').replace('(7+)', '').replace('7+', '').replace('(6+)', '').replace('6+', '').replace('(0+)', '').replace('0+', '').replace('+', '')
+			eventName = cutName(eventName)
 			if config.plugins.tmbd.yt_start.value == "0":
 				session.open(tmbdYTTrailer.TmbdYTTrailerList, eventName)
 			else:
@@ -3556,8 +3528,7 @@ def ytfurther(session, selectedevent, **kwargs):
 	except:
 		eventName = ""
 	if eventName != "":
-		eventName = eventName.replace('"', '').replace('Х/Ф', '').replace('М/Ф', '').replace('Х/ф', '').replace('.', '').replace(' | ', '')
-		eventName = eventName.replace('(18+)', '').replace('18+', '').replace('(16+)', '').replace('16+', '').replace('(12+)', '').replace('12+', '').replace('(7+)', '').replace('7+', '').replace('(6+)', '').replace('6+', '').replace('(0+)', '').replace('0+', '').replace('+', '')
+		eventName = cutName(eventName)
 		if config.plugins.tmbd.yt_start.value == "0":
 			session.open(tmbdYTTrailer.TmbdYTTrailerList, eventName)
 		else:
