@@ -2069,7 +2069,7 @@ class KinoRu(Screen):
 			self["titlelabel"].pageDown()
 		if self.Page == 1:
 			self["castlabel"].pageDown()
-					
+
 	def scrollLabelPageUp(self):
 		self["extralabel"].pageUp()
 
@@ -2472,6 +2472,8 @@ class KinoRu(Screen):
 				descrip += " %s %s /" % (_("Age:"), self.age)
 			if self.rating and self.votes:
 				descrip += _(" User Rating: ") + self.rating + _(" (%s votes)\n") % (self.votes)
+			if self.director:
+				descrip += "%s: %s\n" % (_("Director"), self.director)
 			if self.cast:
 				descrip += " %s %s\n" % (_("Actors:"), self.cast)
 			if self.duplicated:
