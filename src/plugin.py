@@ -14,8 +14,7 @@ from Screens.MovieSelection import MovieSelection, SelectionEventInfo
 #from Screens import MovieSelection as myMovieSelection
 from Screens.MessageBox import MessageBox
 from Screens.ChoiceBox import ChoiceBox
-from Screens.ChannelSelection import ChannelContextMenu, OFF, MODE_TV
-from Screens.ChannelSelection import service_types_tv
+from Screens.ChannelSelection import ChannelContextMenu, OFF, MODE_TV, service_types_tv
 from Components.ChoiceList import ChoiceEntryComponent
 from Tools.BoundFunction import boundFunction
 from Components.ActionMap import ActionMap, HelpableActionMap
@@ -40,12 +39,10 @@ from Components.Sources.ServiceEvent import ServiceEvent
 from Components.Sources.Event import Event
 from Components.config import config, ConfigSubsection, ConfigYesNo, ConfigText, getConfigListEntry, ConfigSelection, ConfigInteger
 from Tools.Directories import fileExists, resolveFilename, SCOPE_PLUGINS, SCOPE_SKIN_IMAGE
-from os import environ as os_environ
-from os import environ, listdir
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from ServiceReference import ServiceReference
-import re
-import os, sys
+from Screens.EventView import EventViewSimple
+import os, sys, re 
 import gettext, random
 import tmdb, urllib
 import array, struct, fcntl
@@ -53,7 +50,6 @@ from socket import socket, AF_INET, SOCK_STREAM, SOCK_DGRAM, SHUT_RDWR
 from event import Event, ShortEventDescriptor, ExtendedEventDescriptor
 from time import strftime, localtime, mktime
 from meta import MetaParser, getctime, fileSize
-from os import system as os_system, path as os_path
 import kinopoisk, urllib2
 import tmbdYTTrailer
 
@@ -218,7 +214,6 @@ def GraphMultiEPG__init__(self, session, services, zapFunc=None, bouquetChangeCB
 				"down":    (downPressed,  _("Go to next service"))
 				}, -1)
 
-
 basenStreamVOD__init__ = None
 def nStreamVODInit():
 	global basenStreamVOD__init__
@@ -311,19 +306,17 @@ def new_SelectionEventInfo_updateEventInfo(self):
 def_MovieSelection_showEventInformation = None
 	
 def new_MovieSelection_showEventInformation(self):
-	from Screens.EventView import EventViewSimple
-	from ServiceReference import ServiceReference
 	evt = self["list"].getCurrentEvent()
 	if not evt:
-		import os;
 		l = self["list"].l.getCurrentSelection()
-		serviceref = l[0];
-		pathname = serviceref and serviceref.getPath() or '';
-		if len(pathname) > 2 and os.path.exists(pathname[:-2]+'eit'):
-			serviceref = eServiceReference(serviceref.toString());
-			serviceref.type = eServiceReference.idDVB;
-			info = eServiceCenter.getInstance().info(serviceref);
-			evt = info and info.getEvent(serviceref);
+		if l is not None:
+			serviceref = l[0]
+			pathname = serviceref and serviceref.getPath() or ''
+			if len(pathname) > 2 and os.path.exists(pathname[:-2]+'eit'):
+				serviceref = eServiceReference(serviceref.toString())
+				serviceref.type = eServiceReference.idDVB
+				info = eServiceCenter.getInstance().info(serviceref)
+				evt = info and info.getEvent(serviceref)
 	if evt:
 		self.session.open(EventViewSimple, evt, ServiceReference(self.getCurrent()))
 
@@ -681,7 +674,7 @@ class TMBD(Screen):
 		link = "down"
 		for iface in self.get_iface_list():
 			if "lo" in iface: continue
-			if os_path.exists("/sys/class/net/%s/operstate"%(iface)):
+			if os.path.exists("/sys/class/net/%s/operstate"%(iface)):
 				fd = open("/sys/class/net/%s/operstate"%(iface), "r")
 				link = fd.read().strip()
 				fd.close()
@@ -1974,7 +1967,7 @@ class KinoRu(Screen):
 		link = "down"
 		for iface in self.get_iface_list():
 			if "lo" in iface: continue
-			if os_path.exists("/sys/class/net/%s/operstate"%(iface)):
+			if os.path.exists("/sys/class/net/%s/operstate"%(iface)):
 				fd = open("/sys/class/net/%s/operstate"%(iface), "r")
 				link = fd.read().strip()
 				fd.close()
