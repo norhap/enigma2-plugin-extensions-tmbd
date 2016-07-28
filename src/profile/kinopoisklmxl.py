@@ -366,7 +366,7 @@ def search_data(uid):
                 filmdata['duplicate'] = duplicated.replace('показать всех', '').replace('»', '')
             except:
                 filmdata['duplicate'] = ''
-        descNodes = doc.xpath("//div[@class='brand_words']")
+        descNodes = doc.xpath("//div[@class='brand_words film-synopsys']")
         if len(descNodes):
             try:
                 filmdata['plot'] = normilize_string(descNodes[0].text)
