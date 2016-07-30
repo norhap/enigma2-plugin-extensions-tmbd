@@ -2839,6 +2839,8 @@ class MovielistPreview():
 		self.mayShow = True
 		self.working = False
 		self.path = config.plugins.tmbd.cover_dir.value + 'covers/'
+		self.picload = ePicLoad()
+		self.picload.PictureData.get().append(self.showPreviewCallback)
 
 	def gotSession(self, session):
 		if not self.dialog and session:
@@ -2850,14 +2852,15 @@ class MovielistPreview():
 		else:
 			config.plugins.tmbd.enabled.value = True
 		config.plugins.tmbd.enabled.save()
+		self.hideDialog()
 
 	def showPreview(self, movie):
 		if not self.dialog:
 			self.gotSession(_session)
 			if not self.dialog:
 				return
-		if self.working == False:
-			self.dialog.hide()
+		self.dialog.hide()
+		if not self.working:
 			if movie and self.mayShow and config.plugins.tmbd.enabled.value:
 				png2 = os.path.split(movie)[1]
 				if movie.endswith(".ts"):
@@ -2871,28 +2874,21 @@ class MovielistPreview():
 				if fileExists(png):
 					self.working = True
 					sc = AVSwitch().getFramebufferScale()
-					self.picload = ePicLoad()
-					self.picload.PictureData.get().append(self.showPreviewCallback)
 					size = config.plugins.tmbd.size.value.split("x")
 					self.picload.setPara((int(size[0]), int(size[1]), sc[0], sc[1], False, 1, "#00000000"))
 					self.picload.startDecode(png)
-				else:
-					self.dialog.hide()
 
 	def showPreviewCallback(self, picInfo=None):
 		if not self.dialog:
 			self.gotSession(_session)
 			if not self.dialog:
 				return
+		self.dialog.hide()
 		if picInfo:
 			ptr = self.picload.getData()
-			if ptr != None:
+			if ptr != None and self.working:
 				self.dialog["preview"].instance.setPixmap(ptr)
 				self.dialog.show()
-			else:
-				self.dialog.hide()
-		else:
-			self.dialog.hide()
 		self.working = False
 
 	def hideDialog(self):
@@ -2902,6 +2898,7 @@ class MovielistPreview():
 				return
 		self.mayShow = False
 		self.dialog.hide()
+		self.working = False
 
 	def showDialog(self):
 		if not self.dialog:
@@ -2910,6 +2907,7 @@ class MovielistPreview():
 				return
 		self.mayShow = True
 		self.dialog.show()
+		self.working = True
 
 movielistpreview = MovielistPreview()
 
@@ -3095,6 +3093,8 @@ def selectionChanged(instance):
 	if curr and isinstance(curr, eServiceReference):
 		movielistpreview.showPreview(curr.getPath())
 		movie2 = curr.getPath()
+	else:
+		movielistpreview.hideDialog()
 MovieList.selectionChanged = selectionChanged
 
 Hide = MovieSelection.hide
@@ -3108,7 +3108,6 @@ def showMovieSelection(instance):
 	Show(instance)
 	movielistpreview.showDialog()
 MovieSelection.show = showMovieSelection
-
 
 class EventChoiseList:
 	def __init__(self, session):
