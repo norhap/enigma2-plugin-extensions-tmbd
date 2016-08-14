@@ -16,7 +16,7 @@ import traceback
 import codecs
 #from optparse import OptionParser
 
-kinopoisk_date = "09.06.2016"
+kinopoisk_date = "14.08.2016"
 title = "The kinopoisk.ru Query"
 author = "Alex Vasilyev / mod Dima73"
 usage_examples = ""
@@ -366,7 +366,7 @@ def search_data(uid):
                 filmdata['duplicate'] = duplicated.replace('показать всех', '').replace('»', '')
             except:
                 filmdata['duplicate'] = ''
-        descNodes = doc.xpath("//div[@class='brand_words film-synopsys']")
+        descNodes = doc.xpath("//div[@class='brand_words film-synopsys' or @class='brand_words']['description']")
         if len(descNodes):
             try:
                 filmdata['plot'] = normilize_string(descNodes[0].text)

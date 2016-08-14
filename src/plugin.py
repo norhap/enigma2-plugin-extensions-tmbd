@@ -53,7 +53,7 @@ from meta import MetaParser, getctime, fileSize
 import kinopoisk, urllib2
 import tmbdYTTrailer
 
-plugin_version = "7.3"
+plugin_version = "7.4"
 
 epg_furtherOptions = False
 if hasattr(EPGSelection, "furtherOptions"):
