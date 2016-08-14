@@ -2898,7 +2898,6 @@ class MovielistPreview():
 				return
 		self.mayShow = False
 		self.dialog.hide()
-		self.working = False
 
 	def showDialog(self):
 		if not self.dialog:
@@ -2907,7 +2906,6 @@ class MovielistPreview():
 				return
 		self.mayShow = True
 		self.dialog.show()
-		self.working = True
 
 movielistpreview = MovielistPreview()
 
