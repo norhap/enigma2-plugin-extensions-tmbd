@@ -2770,12 +2770,21 @@ class KinoRu(Screen):
 		self["titlelabel"].setText("")
 		current = self["menu"].getCurrent()
 		if current and self.curResult:
+			genre = ''
 			try:
-				genre = current[2]
+				genre = current.split('genres:')[1]
 			except:
 				genre = ''
-			if genre != '':
-				self["titlelabel"].setText("%s" % (genre))
+			if genre:
+				genre = genre.replace('end', '')
+			else:
+				try:
+					genre = current[2]
+				except:
+					pass
+			if len(genre) == 1:
+				genre = ''
+			self["titlelabel"].setText("%s" % (genre))
 
 	def KinoRuPoster(self):
 		if not self.curResult:
