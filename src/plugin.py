@@ -8,18 +8,14 @@ from enigma import ePicLoad, eServiceReference, eTimer, eServiceCenter, getDeskt
 from Screens.Screen import Screen
 from Screens.EpgSelection import EPGSelection
 from Components.PluginComponent import plugins
-from Screens.InfoBarGenerics import InfoBarSeek, InfoBarCueSheetSupport
-from Screens.ChannelSelection import SimpleChannelSelection
 from Screens.MovieSelection import MovieSelection, SelectionEventInfo
-#from Screens import MovieSelection as myMovieSelection
 from Screens.MessageBox import MessageBox
 from Screens.ChoiceBox import ChoiceBox
-from Screens.ChannelSelection import ChannelContextMenu, OFF, MODE_TV, service_types_tv
+from Screens.ChannelSelection import ChannelContextMenu, SimpleChannelSelection, OFF, MODE_TV, service_types_tv
 from Components.ChoiceList import ChoiceEntryComponent
 from Tools.BoundFunction import boundFunction
-from Components.ActionMap import ActionMap, HelpableActionMap
+from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigList, ConfigListScreen
-from Components.PluginComponent import plugins
 from Components.Pixmap import Pixmap
 from Components.Label import Label
 from Components.ScrollLabel import ScrollLabel
@@ -27,33 +23,24 @@ from Components.Button import Button
 from Components.AVSwitch import AVSwitch
 from Components.MenuList import MenuList
 from Components.MovieList import MovieList
-from Components.Language import language
 from Components.Input import Input
-from Components.ServiceEventTracker import InfoBarBase
 from Screens.Console import Console
 from Screens.InputBox import InputBox
 from Components.ProgressBar import ProgressBar
 from Components.Sources.StaticText import StaticText
-from Components.EpgList import EPGList, EPG_TYPE_SINGLE, EPG_TYPE_MULTI
-from Components.Sources.ServiceEvent import ServiceEvent
-from Components.Sources.Event import Event
 from Components.config import config, ConfigSubsection, ConfigYesNo, ConfigText, getConfigListEntry, ConfigSelection, ConfigInteger
-from Tools.Directories import fileExists, resolveFilename, SCOPE_PLUGINS, SCOPE_SKIN_IMAGE
+from Tools.Directories import fileExists, resolveFilename, SCOPE_PLUGINS
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from ServiceReference import ServiceReference
 from Screens.EventView import EventViewSimple
-import os, sys, re 
-import gettext, random
-import tmdb, urllib
-import array, struct, fcntl
+import os, sys, re, gettext, random, tmdb, urllib, array, struct, fcntl, shutil
 from socket import socket, AF_INET, SOCK_STREAM, SOCK_DGRAM, SHUT_RDWR
 from event import Event, ShortEventDescriptor, ExtendedEventDescriptor
 from time import strftime, localtime, mktime
 from meta import MetaParser, getctime, fileSize
-import kinopoisk, urllib2
-import tmbdYTTrailer
+import kinopoisk, urllib2, tmbdYTTrailer
 
-plugin_version = "7.4"
+plugin_version = "7.5"
 
 epg_furtherOptions = False
 if hasattr(EPGSelection, "furtherOptions"):
@@ -87,7 +74,6 @@ TMDB_LANGUAGE_CODES = {
   'cz': 'cze'
 }
 
-
 SIOCGIFCONF = 0x8912
 BYTES = 4096
 
@@ -115,33 +101,26 @@ def GetLanguageCode():
 
 config.plugins.tmbd = ConfigSubsection()
 config.plugins.tmbd.locale = ConfigText(default="ru", fixed_size = False)
-config.plugins.tmbd.skins = ConfigSelection(default = "0", choices = [
-                        ("0", _("Small poster")), ("1", _("Large poster"))])
+config.plugins.tmbd.skins = ConfigSelection(default = "0", choices = [("0", _("Small poster")), ("1", _("Large poster"))])
 config.plugins.tmbd.enabled = ConfigYesNo(default=True)
-config.plugins.tmbd.virtual_text = ConfigSelection(default = "0", choices = [
-                         ("0", _("< empty >")), ("1", _("< text >"))])
+config.plugins.tmbd.virtual_text = ConfigSelection(default = "0", choices = [("0", _("< empty >")), ("1", _("< text >"))])
 config.plugins.tmbd.menu = ConfigYesNo(default=True)
-config.plugins.tmbd.menu_profile = ConfigSelection(default = "0", choices = [
-                        ("0", _("only current profile")), ("1", _("List: themoviedb.org / kinopoisk.ru")), ("2", _("List: kinopoisk.ru / themoviedb.org"))])
+config.plugins.tmbd.menu_profile = ConfigSelection(default = "0", choices = [("0", _("only current profile")), ("1", _("List: themoviedb.org / kinopoisk.ru")), ("2", _("List: kinopoisk.ru / themoviedb.org"))])
 config.plugins.tmbd.add_tmbd_to_epg = ConfigYesNo(default=False)
 config.plugins.tmbd.add_tmbd_to_multi = ConfigYesNo(default=False)
 config.plugins.tmbd.add_tmbd_to_graph = ConfigYesNo(default=False)
 config.plugins.tmbd.add_ext_menu = ConfigYesNo(default=False)
-config.plugins.tmbd.ext_menu_event = ConfigSelection(default = "0", choices = [
-                        ("0", _("only current event")), ("1", _("choice now/next event"))])
+config.plugins.tmbd.ext_menu_event = ConfigSelection(default = "0", choices = [("0", _("only current event")), ("1", _("choice now/next event"))])
 config.plugins.tmbd.no_event = ConfigYesNo(default=False)
 config.plugins.tmbd.test_connect = ConfigYesNo(default=False)
-config.plugins.tmbd.exit_key = ConfigSelection(default = "0", choices = [
-                        ("0", _("close")), ("1", _("ask user"))])
-config.plugins.tmbd.profile = ConfigSelection(default = "0", choices = [
-                        ("0", _("themoviedb.org")), ("1", _("kinopoisk.ru (only russian language)"))])
+config.plugins.tmbd.exit_key = ConfigSelection(default = "0", choices = [("0", _("close")), ("1", _("ask user"))])
+config.plugins.tmbd.profile = ConfigSelection(default = "0", choices = [("0", _("themoviedb.org")), ("1", _("kinopoisk.ru (only russian language)"))])
 config.plugins.tmbd.position_x = ConfigInteger(default=100)
 config.plugins.tmbd.position_y = ConfigInteger(default=100)
 config.plugins.tmbd.new_movieselect = ConfigYesNo(default=True)
 config.plugins.tmbd.size = ConfigSelection(choices=["285x398", "185x278", "130x200", "104x150"], default="130x200")
 config.plugins.tmbd.hotkey = ConfigSelection([(x[0],x[1]) for x in TMBDInfoBarKeys], "none")
-config.plugins.tmbd.movielist_profile = ConfigSelection(default = "1", choices = [
-                        ("0", _("only current profile")), ("1", _("List: themoviedb.org / kinopoisk.ru")), ("2", _("List: kinopoisk.ru / themoviedb.org"))])
+config.plugins.tmbd.movielist_profile = ConfigSelection(default = "1", choices = [("0", _("only current profile")), ("1", _("List: themoviedb.org / kinopoisk.ru")), ("2", _("List: kinopoisk.ru / themoviedb.org"))])
 config.plugins.tmbd.kinopoisk_data = ConfigSelection(choices = [("1", _("Press OK"))], default = "1")
 config.plugins.tmbd.yt_setup = ConfigSelection(choices = [("1", _("Press OK"))], default = "1")
 config.plugins.tmbd.add_tmbd_to_nstreamvod = ConfigYesNo(default=False)
@@ -151,152 +130,22 @@ if epg_furtherOptions:
 	config.plugins.tmbd.yt_event_menu = ConfigSelection(default="3", choices = [("0", _("disabled")),("1", _("EPGSelection (context menu)")), ("2", _("EventView (context menu)/EventInfo plugins")), ("3", _("EPGSelection/EventView/EventInfo plugins"))])
 else:
 	config.plugins.tmbd.yt_event_menu = ConfigSelection(default="2", choices = [("0", _("disabled")), ("2", _("EventView (context menu)/EventInfo plugins"))])
-config.plugins.tmbd.yt_start = ConfigSelection(default = "0", choices = [
-                        ("0", _("show list")), ("1", _("run first"))])
+config.plugins.tmbd.yt_start = ConfigSelection(default = "0", choices = [("0", _("show list")), ("1", _("run first"))])
 config.plugins.tmbd.cover_dir = ConfigText(default="/media/hdd/", fixed_size = False)
 
-
-SKIN = """
-	<screen position="0,0" size="130,200" zPosition="10" flags="wfNoBorder" backgroundColor="#ff000000" >
-		<widget name="background" position="0,0" size="130,200" zPosition="1" backgroundColor="#00000000" />
-		<widget name="preview" position="0,0" size="130,200" zPosition="2" alphatest="blend"/>
-	</screen>"""
+try:
+	screenWidth = getDesktop(0).size().width()
+except:
+	screenWidth = 720
 
 _session = None
 eventname = ""
-baseGraphMultiEPG__init__ = None
-
-def GraphMultiEPGInit():
-	global baseGraphMultiEPG__init__
-	try:
-		from Plugins.Extensions.GraphMultiEPG.GraphMultiEpg import GraphMultiEPG
-	except ImportError:
-		return
-	if baseGraphMultiEPG__init__ is None:
-		baseGraphMultiEPG__init__ = GraphMultiEPG.__init__
-	GraphMultiEPG.__init__ = GraphMultiEPG__init__
-
-def GraphMultiEPG__init__(self, session, services, zapFunc=None, bouquetChangeCB=None, bouquetname=""):
-	try:
-		baseGraphMultiEPG__init__(self, session, services, zapFunc, bouquetChangeCB, bouquetname)
-	except:
-		baseGraphMultiEPG__init__(self, session, services, zapFunc, bouquetChangeCB)
-	if config.plugins.tmbd.add_tmbd_to_graph.value:
-		def upPressed():
-			try:
-				self["list"].moveTo(eListbox.moveUp)
-			except:
-				pass
-		def downPressed():
-			try:
-				self["list"].moveTo(eListbox.moveDown)
-			except:
-				pass
-		def showTMBD():
-			from Plugins.Extensions.TMBD.plugin import TMBD
-			from Plugins.Extensions.TMBD.plugin import KinoRu
-			cur = self["list"].getCurrent()
-			if cur and cur[0] is not None:
-				name2 = cur[0].getEventName()
-				name3 = name2.split("(")[0].strip()
-				eventname = cutName(name3)
-				if config.plugins.tmbd.profile.value == "0":
-					self.session.open(TMBD, eventname, False)
-				else:
-					self.session.open(KinoRu, eventname, False)
-		self["tmbd_actions"] = HelpableActionMap(self, "EPGSelectActions",
-				{
-					"info": (showTMBD, _("Lookup in TMBD")),
-				}, -1)
-		self["tmbdActions"] = HelpableActionMap(self, "WizardActions",
-				{
-				"up":      (upPressed, _("Go to previous service")),
-				"down":    (downPressed,  _("Go to next service"))
-				}, -1)
-
-basenStreamVOD__init__ = None
-def nStreamVODInit():
-	global basenStreamVOD__init__
-	try:
-		from Plugins.Extensions.nStreamVOD.plugin import nPlaylist
-	except ImportError:
-		pass
-	else:
-		if basenStreamVOD__init__ is None:
-			basenStreamVOD__init__ = nPlaylist.__init__
-			nPlaylist.__init__ = nPlaylist__init__
-			nPlaylist.AnswernStreamVOD = AnswernStreamVOD
-
-def nPlaylist__init__(self, session):
-	try:
-		basenStreamVOD__init__(self, session)
-		if config.plugins.tmbd.add_tmbd_to_nstreamvod.value:
-			def SelectionInfo():
-				from Screens.ChoiceBox import ChoiceBox
-				if config.plugins.tmbd.add_vcs_to_nstreamvod.value:
-					list = [
-						(_("search in TMBD"), "tmbd"),
-						(_("standard info"), "info"),
-						(_("open plugin VCS"), "vcs"),
-					]
-				else:
-					list = [
-						(_("search in TMBD"), "tmbd"),
-						(_("standard info"), "info"),
-					]
-				self.session.openWithCallback(self.AnswernStreamVOD,ChoiceBox,title= _("Select action:"), list = list)
-			self["tmbd_actions"] = HelpableActionMap(self, "EPGSelectActions",
-					{
-						"info": SelectionInfo,
-					}, -1)
-	except:
-		pass
-
-def AnswernStreamVOD(self, ret):
-	ret = ret and ret[1]
-	if ret:
-		if ret == "tmbd":
-			try:
-				selected_channel = self.channel_list[self.mlist.getSelectionIndex()]
-			except:
-				selected_channel = None
-			if selected_channel is not None:
-				try:
-					event = selected_channel[1]
-				except:
-					event = None
-				if event is not None and event != "":
-					try:
-						from Plugins.Extensions.TMBD.plugin import TMBD
-						from Plugins.Extensions.TMBD.plugin import KinoRu
-						eventname = cutName(event)
-						if config.plugins.tmbd.profile.value == "0":
-							self.session.open(TMBD, eventname, False)
-						else:
-							self.session.open(KinoRu, eventname, False)
-					except:
-						pass
-		elif ret == "info":
-			try:
-				self.show_more_info()
-			except:
-				pass
-		elif ret == "vcs":
-			try:
-				from Plugins.Extensions.VCS.plugin import show_choisebox
-				show_choisebox(self.session)
-			except:
-				pass
-		else:
-			pass
 
 def_SelectionEventInfo_updateEventInfo = None
-
 def new_SelectionEventInfo_updateEventInfo(self):
 	serviceref = self.getCurrent()
 	if config.plugins.tmbd.new_movieselect.value:
 		if serviceref and serviceref.type == eServiceReference.idUser+1:
-			import os
 			pathname = serviceref.getPath()
 			if len(pathname) > 2 and os.path.exists(pathname[:-2]+'eit'):
 				serviceref = eServiceReference(serviceref.toString())
@@ -304,7 +153,7 @@ def new_SelectionEventInfo_updateEventInfo(self):
 	self["Service"].newService(serviceref)
 
 def_MovieSelection_showEventInformation = None
-	
+
 def new_MovieSelection_showEventInformation(self):
 	evt = self["list"].getCurrentEvent()
 	if not evt:
@@ -319,56 +168,6 @@ def new_MovieSelection_showEventInformation(self):
 				evt = info and info.getEvent(serviceref)
 	if evt:
 		self.session.open(EventViewSimple, evt, ServiceReference(self.getCurrent()))
-
-baseEPGSelection__init__ = None
-def EPGSelectionInit():
-	global baseEPGSelection__init__
-	if baseEPGSelection__init__ is None:
-		baseEPGSelection__init__ = EPGSelection.__init__
-	EPGSelection.__init__ = EPGSelection__init__
-
-def EPGSelection__init__(self, session, service=None, zapFunc=None, eventid=None, bouquetChangeCB=None, serviceChangeCB=None, EPGtype=None, StartBouquet=None , StartRef=None, bouquets=None):
-	try:
-		baseEPGSelection__init__(self, session, service, zapFunc, eventid, bouquetChangeCB, serviceChangeCB)
-	except:
-		baseEPGSelection__init__(self, session, service, zapFunc, eventid, bouquetChangeCB, serviceChangeCB,EPGtype, StartBouquet, StartRef, bouquets)
-	if self.type == EPG_TYPE_SINGLE and config.plugins.tmbd.add_tmbd_to_epg.value:
-		def redPressed():
-			from Plugins.Extensions.TMBD.plugin import TMBD
-			from Plugins.Extensions.TMBD.plugin import KinoRu
-			cur = self["list"].getCurrent()
-			if cur[0] is not None:
-				name2 = cur[0].getEventName()
-				name3 = name2.split("(")[0].strip()
-				eventname = cutName(name3)
-				if config.plugins.tmbd.profile.value == "0":
-					self.session.open(TMBD, eventname, False)
-				else:
-					self.session.open(KinoRu, eventname, False)
-
-		self["tmbdActions"] = ActionMap(["EPGSelectActions"],
-				{
-					"info": redPressed,
-				})
-
-	elif self.type == EPG_TYPE_MULTI and config.plugins.tmbd.add_tmbd_to_multi.value:
-		def KeyInfoPressed():
-			from Plugins.Extensions.TMBD.plugin import TMBD
-			from Plugins.Extensions.TMBD.plugin import KinoRu
-			cur = self["list"].getCurrent()
-			if cur[0] is not None:
-				name2 = cur[0].getEventName()
-				name3 = name2.split("(")[0].strip()
-				eventname = cutName(name3)
-				if config.plugins.tmbd.profile.value == "0":
-					self.session.open(TMBD, eventname, False)
-				else:
-					self.session.open(KinoRu, eventname, False)
-
-		self["Tmbdactions"] = ActionMap(["EPGSelectActions"],
-				{
-					"info": KeyInfoPressed,
-				})
 
 baseChannelContextMenu__init__ = None
 def TMBDChannelContextMenuInit():
@@ -398,10 +197,8 @@ def TMBDChannelContextMenu__init__(self, session, csel):
 				else:
 					callFunction = self.profileContextMenuCallback 
 					self["menu"].list.insert(1, ChoiceEntryComponent(text = (_("TMBD Details"), boundFunction(callFunction,1))))
-			else:
-				pass
 
-def showServiceInformations2(self, eventName="", profile = False):
+def showServiceInformations2(self, eventName="", profile=False):
 		global eventname
 		s = self.csel.servicelist.getCurrent()  
 		info = s and eServiceCenter.getInstance().info(s)
@@ -421,19 +218,20 @@ def showServiceInformations2(self, eventName="", profile = False):
 						self.session.open(KinoRu, eventName)
 					else:
 						self.session.open(TMBD, eventName)
-			except ImportError as ie:
+			except:
 				pass
+		self.close()
 
 def profileContextMenuCallback(self, add):
 	if config.plugins.tmbd.menu_profile.value == "1":
 		options = [
-				(_("themoviedb.org"), boundFunction(self.showServiceInformations2, profile = False)),
-				(_("kinopoisk.ru"), boundFunction(self.showServiceInformations2, profile = True)),
+				(_("themoviedb.org"), boundFunction(self.showServiceInformations2, profile=False)),
+				(_("kinopoisk.ru"), boundFunction(self.showServiceInformations2, profile=True)),
 			]
 	elif config.plugins.tmbd.menu_profile.value == "2":
 		options = [
-				(_("kinopoisk.ru"), boundFunction(self.showServiceInformations2, profile = True)),
-				(_("themoviedb.org"), boundFunction(self.showServiceInformations2, profile = False)),
+				(_("kinopoisk.ru"), boundFunction(self.showServiceInformations2, profile=True)),
+				(_("themoviedb.org"), boundFunction(self.showServiceInformations2, profile=False)),
 			]
 	self.session.openWithCallback(self.profileMenuCallback, ChoiceBox, title= _("Choice profile in search:"), list = options)
 
@@ -444,31 +242,21 @@ class TMBDChannelSelection(SimpleChannelSelection):
 	def __init__(self, session):
 		SimpleChannelSelection.__init__(self, session, _("Channel Selection"))
 		self.skinName = "SimpleChannelSelection"
-
-		self["ChannelSelectEPGActions"] = ActionMap(["ChannelSelectEPGActions"],
-			{
-				"showEPGList": self.channelSelected
-			}
-		)
+		self["ChannelSelectEPGActions"] = ActionMap(["ChannelSelectEPGActions"],{"showEPGList": self.channelSelected})
 
 	def channelSelected(self):
 		ref = self.getCurrentSelection()
 		if (ref.flags & 7) == 7:
 			self.enterPath(ref)
 		elif not (ref.flags & eServiceReference.isMarker):
-			self.session.openWithCallback(
-				self.epgClosed,
-				TMBDEPGSelection,
-				ref,
-				openPlugin = False
-			)
+			self.session.openWithCallback(self.epgClosed, TMBDEPGSelection, ref, openPlugin=False)
 
-	def epgClosed(self, ret = None):
+	def epgClosed(self, ret=None):
 		if ret:
 			self.close(ret)
 
 class TMBDEPGSelection(EPGSelection):
-	def __init__(self, session, ref, openPlugin = True):
+	def __init__(self, session, ref, openPlugin=True):
 		EPGSelection.__init__(self, session, ref)
 		self.skinName = "EPGSelection"
 		self["key_red"].setText(_("Lookup in TMBD"))
@@ -521,6 +309,7 @@ class TMBD(Screen):
 		<widget backgroundColor="#a08500" font="Regular;20" foregroundColor="#00bab329" halign="center" name="key_yellow" position="560,536" size="250,38" transparent="1" valign="center" zPosition="2" />
 		<widget backgroundColor="#18188b" font="Regular;20" foregroundColor="#006565ff" halign="center" name="key_blue" position="830,536" size="250,38" transparent="1" valign="center" zPosition="2" />
 	</screen>"""
+
 	skin_hd = """
 		<screen name="TMBD" position="90,90" size="1100,570" title="TMBD Details Plugin">
 		<eLabel backgroundColor="#00bbbbbb" position="0,0" size="1100,2" />
@@ -547,6 +336,34 @@ class TMBD(Screen):
 		<widget backgroundColor="#a08500" font="Regular;20" foregroundColor="#00bab329" halign="center" name="key_yellow" position="560,536" size="250,38" transparent="1" valign="center" zPosition="2" />
 		<widget backgroundColor="#18188b" font="Regular;20" foregroundColor="#006565ff" halign="center" name="key_blue" position="830,536" size="250,38" transparent="1" valign="center" zPosition="2" />
 	</screen>"""
+
+	skin_fullhd = """
+		<screen name="TMBD" position="135,135" size="1650,855" title="TMBD Details Plugin">
+		<eLabel backgroundColor="#00bbbbbb" position="0,0" size="1650,3" />
+		<widget font="Regular;33" name="title" position="30,30" size="1140,42" transparent="1" valign="center" />
+		<widget alphatest="blend" name="starsbg" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/starsbar_empty.png" position="1185,15" size="315,31" zPosition="2" />
+		<widget name="stars" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/starsbar_filled.png" position="1185,15"  size="315,31" transparent="1" zPosition="3" />
+		<widget font="Regular;30" halign="left" name="ratinglabel" foregroundColor="#00f0b400" position="1185,51" size="315,34" transparent="1" />
+		<widget font="Regular;30" name="voteslabel" halign="left" position="1185,85" size="435,34" foregroundColor="#00f0b400" transparent="1" />
+		<widget alphatest="blend" name="poster" position="45,90" size="427,597" />
+		<widget name="menu" position="487,150" scrollbarMode="showOnDemand" size="1125,195" zPosition="3"  selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/button1080x25.png" />
+		<widget name="detailslabel" position="487,88" size="855,52" font="Regular;28" transparent="1" />  
+		<widget font="Regular;30" name="castlabel" position="480,367" size="1140,360" transparent="1" />
+		<widget font="Regular;30" name="extralabel" position="480,115" size="1140,270" transparent="1" />
+		<widget font="Regular;27" name="statusbar" position="15,735" size="1620,30" transparent="1" />
+		<eLabel backgroundColor="#00bbbbbb" position="0,777" size="1650,3" />
+		<ePixmap alphatest="on" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/red25.png" position="30,798" size="375,57" zPosition="1" />
+		<ePixmap alphatest="on" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/green25.png" position="435,798" size="375,57" zPosition="1" />
+		<ePixmap alphatest="on" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/yellow25.png" position="840,798" size="375,57" zPosition="1" />
+		<ePixmap alphatest="on" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/blue25.png" position="1245,798" size="375,57" zPosition="1" />
+		<ePixmap pixmap="skin_default/buttons/key_menu.png" position="1572,7" zPosition="1" size="52,37" alphatest="on" />
+		<ePixmap pixmap="skin_default/buttons/key_info.png" position="1572,52" zPosition="1" size="52,37" alphatest="on" />
+		<widget backgroundColor="#9f1313" font="Regular;30" foregroundColor="#00ff2525" halign="center" name="key_red" position="30,804" size="375,57" transparent="1" valign="center" zPosition="2" />
+		<widget backgroundColor="#1f771f" font="Regular;30" foregroundColor="#00389416" halign="center" name="key_green" position="435,804" size="375,57" transparent="1" valign="center" zPosition="2" />
+		<widget backgroundColor="#a08500" font="Regular;30" foregroundColor="#00bab329" halign="center" name="key_yellow" position="840,804" size="375,57" transparent="1" valign="center" zPosition="2" />
+		<widget backgroundColor="#18188b" font="Regular;30" foregroundColor="#006565ff" halign="center" name="key_blue" position="1245,804" size="375,57" transparent="1" valign="center" zPosition="2" />
+	</screen>"""
+
 	skin_sd = """
 		<screen name="TMBD" position="center,center" size="600,420" title="TMBD Details Plugin" >
 		<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" zPosition="0" size="140,40" transparent="1" alphatest="on" />
@@ -571,10 +388,9 @@ class TMBD(Screen):
 		<widget name="stars" position="340,40" size="210,21" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/starsbar_filled.png" transparent="1" />
 	</screen>"""
 
-	def __init__(self, session, eventName, callbackNeeded=False, movielist = False):
+	def __init__(self, session, eventName, callbackNeeded=False, movielist=False):
 		Screen.__init__(self, session)
 		self.skin = self.setSkin()
-		print self.skin
 		self.eventName = eventName
 		self.curResult = False
 		self.noExit = False
@@ -594,7 +410,7 @@ class TMBD(Screen):
 		self.working = False
 		self["title"] = Label("")
 		self["title"].setText(_("The Internet Movie Database"))
-		self["detailslabel"] = ScrollLabel("")
+		self["detailslabel"] = Label("")
 		self["castlabel"] = ScrollLabel("")
 		self["extralabel"] = ScrollLabel("")
 		self["statusbar"] = Label("")
@@ -612,7 +428,6 @@ class TMBD(Screen):
 		self.working = False
 		self.refreshTimer = eTimer()
 		self.refreshTimer.callback.append(self.TMBDPoster)
-		
 		self["actions"] = ActionMap(["OkCancelActions", "ColorActions", "MovieSelectionActions", "DirectionActions"],
 		{
 			"ok": self.showExtras,
@@ -628,7 +443,7 @@ class TMBD(Screen):
 			"contextMenu": self.contextMenuPressed,
 			"showEventInfo": self.aboutAutor
 		}, -1)
-		
+
 		self.setTitle(_("Profile: themoviedb.org"))
 		self.removCovers()
 		self.tmdb3 = tmdb.init_tmdb3()
@@ -645,11 +460,9 @@ class TMBD(Screen):
 			self.getTMBD()
 
 	def setSkin(self):
-		try:
-			screenWidth = getDesktop(0).size().width()
-		except:
-			screenWidth = 720
-		if screenWidth >= 1280:
+		if screenWidth >= 1920:
+			return TMBD.skin_fullhd
+		elif screenWidth >= 1280:
 			if config.plugins.tmbd.skins.value == "0":
 				return TMBD.skin_hd
 			if config.plugins.tmbd.skins.value == "1":
@@ -660,7 +473,7 @@ class TMBD(Screen):
 	def TestConnection(self):
 		self.testThread = Thread(target=self.test)
 		self.testThread.start()
-		
+
 	def get_iface_list(self):
 		names = array.array('B', '\0' * BYTES)
 		sck = socket(AF_INET, SOCK_DGRAM)
@@ -701,7 +514,6 @@ class TMBD(Screen):
 			self.resetLabels()
 			self["statusbar"].setText(_("Not found network connection..."))
 			self["title"].setText("")
-			return
 
 	def exit(self):
 		self.close()
@@ -998,7 +810,7 @@ class TMBD(Screen):
 			ChoiceBox,
 			list = list,
 			title= _("What exactly do you want to delete?"),
-		)	
+		)
 
 	def contextMenuPressed(self):
 		if self.movielist:
@@ -1015,44 +827,30 @@ class TMBD(Screen):
 				(_("Select from Favourites"), self.openChannelSelection),
 				(_("Settings"), self.Menu2),
 			]
-		self.session.openWithCallback(
-			self.menuCallback,
-			ChoiceBox,
-			list = list,
-			title= _("Select action:"),
-		)
+		self.session.openWithCallback(self.menuCallback, ChoiceBox, list = list, title= _("Select action:"))
 
 	def Menu2(self):
 		self.session.openWithCallback(self.workingFinished, TMBDSettings)
 
 	def saveresult(self):
-		global name
 		list = [
 			(_("Yes"), self.savePosterInfo),
 			(_("Yes,but write new meta-file"), self.writeMeta),
 			(_("No"), self.exitChoice),
 		]
-		self.session.openWithCallback(
-			self.menuCallback,
-			ChoiceBox,
-			title= _("Save poster and info for:\n %s ?") % (name),
-			list = list,
-		)
+		self.session.openWithCallback(self.menuCallback, ChoiceBox, title= _("Save poster and info for:\n %s ?") % (name), list = list)
 
 	def exitChoice(self):
 		self.close()
 
 	def savePosterInfo(self):
-		global name
-		import os
-		import shutil
 		if self.curResult:
 			self.savedescrip()
 		dir = config.plugins.tmbd.cover_dir.value + 'covers'
 		if not fileExists(dir):
 			try:
 				os.makedirs(dir)
-			except OSError:
+			except:
 				pass
 		if fileExists(dir):
 				if fileExists("/tmp/preview.jpg"):
@@ -1285,8 +1083,6 @@ class TMBD(Screen):
 					self.session.open(MessageBox, _("%s poster removed!") % (remove_jpg), MessageBox.TYPE_INFO, timeout=3)
 				except:
 					pass
-		else:
-			return
 
 	def removcurrentinfo(self):
 		global movie2, name
@@ -1305,8 +1101,6 @@ class TMBD(Screen):
 					self.session.open(MessageBox, _("%s meta-file removed!") % (remove_meta), MessageBox.TYPE_INFO, timeout=3)
 				except:
 					pass
-		else:
-			return
 
 	def removcurrentConfirmed(self, confirmed):
 		if not confirmed:
@@ -1349,15 +1143,11 @@ class TMBD(Screen):
 						self.session.open(MessageBox, _("%s meta-file removed!") % (remove_meta), MessageBox.TYPE_INFO, timeout=3)
 					except:
 						pass
-			else:
-				return
 
 	def removresult(self):
 		self.session.openWithCallback(self.removresultConfirmed, MessageBox, _("Remove all posters?"), MessageBox.TYPE_YESNO)
 
 	def removresultConfirmed(self, confirmed):
-		import os
-		import shutil
 		if not confirmed:
 			return
 		else:
@@ -1381,15 +1171,6 @@ class TMBD(Screen):
 		else:
 			self.searchYttrailer()
 
-	def yesNo(self, answer):
-		if answer is True:
-			self.yesInstall()
-
-	def yesInstall(self):
-		if fileExists(resolveFilename(SCOPE_PLUGINS, "Extensions/TMBD/enigma2-plugin-extensions-yttrailer_2.0_all.ipk")):
-			cmd = "opkg install -force-overwrite -force-downgrade /usr/lib/enigma2/python/Plugins/Extensions/TMBD/enigma2-plugin-extensions-yttrailer_2.0_all.ipk"
-			self.session.open(Console, _("Install YTTrailer..."), [cmd])
-
 	def searchYttrailer(self):
 		if self.curResult:
 			current = self["menu"].l.getCurrentSelection()
@@ -1402,35 +1183,18 @@ class TMBD(Screen):
 		self.working = False
 
 	def openKeyBoard(self):
-		global eventname
-		self.session.openWithCallback(
-			self.gotSearchString,
-			InputBox,
-			title = _("Edit text to search for"), text=eventname, visible_width = 40, maxSize=False, type=Input.TEXT)
+		self.session.openWithCallback(self.gotSearchString, InputBox, title = _("Edit text to search for"), text=eventname, visible_width = 40, maxSize=False, type=Input.TEXT)
 
 	def openVirtualKeyBoard(self):
 		if config.plugins.tmbd.virtual_text.value == "0":
-			self.session.openWithCallback(
-				self.gotSearchString,
-				VirtualKeyBoard,
-				title = _("Enter text to search for")
-			)
+			self.session.openWithCallback(self.gotSearchString, VirtualKeyBoard, title = _("Enter text to search for"))
 		else:
-			global eventname
-			self.session.openWithCallback(
-				self.gotSearchString,
-				VirtualKeyBoard,
-				title = _("Edit text to search for"),
-				text=eventname
-			)
+			self.session.openWithCallback(self.gotSearchString, VirtualKeyBoard, title = _("Edit text to search for"), text=eventname)
 
 	def openChannelSelection(self):
-		self.session.openWithCallback(
-			self.gotSearchString,
-			TMBDChannelSelection
-		)
+		self.session.openWithCallback(self.gotSearchString, TMBDChannelSelection)
 
-	def gotSearchString(self, ret = None):
+	def gotSearchString(self, ret=None):
 		if self.tmdb3 is None:
 			return
 		if ret:
@@ -1468,7 +1232,7 @@ class TMBD(Screen):
 		if not self.eventName:
 			s = self.session.nav.getCurrentService()
 			info = s and s.info()
-			event = info and info.getEvent(0) # 0 = now, 1 = next
+			event = info and info.getEvent(0)
 			if event:
 				self.eventName = event.getEventName()
 		if self.eventName:
@@ -1500,7 +1264,6 @@ class TMBD(Screen):
 		else:
 			self["title"].setText(_("Enter or choose event for search ..."))
 
-
 	def TMBDPoster(self):
 		if not self.curResult:
 			self.removCovers()
@@ -1530,45 +1293,35 @@ class TMBD(Screen):
 			self["poster"].hide()
 
 	def createSummary(self):
-		#return TMBDLCDScreen
 		pass
 
-#class TMBDLCDScreen(Screen):
-#	skin = """
-#	<screen position="0,0" size="132,64" title="TMBD Plugin">
-#		<widget name="headline" position="4,0" size="128,22" font="Regular;20"/>
-#		<widget source="parent.title" render="Label" position="6,26" size="120,34" font="Regular;14"/>
-#	</screen>"""
-
-#	def __init__(self, session, parent):
-#		Screen.__init__(self, session, parent)
-#		self["headline"] = Label(_("Search in themoviedb.org"))
-
 class KinopoiskConfiguration(Screen):
-	skin = """
-	<screen position="center,center" size="450,100" title="Kinopoisk Configuration" >
-		<widget name="menu" position="0,10" size="450,90" scrollbarMode="showOnDemand" />
-	</screen>"""
-	
+	if screenWidth >= 1920:
+		skin = """
+		<screen position="center,center" size="675,150" title="Kinopoisk Configuration" >
+			<widget name="menu" position="0,15" size="675,135" scrollbarMode="showOnDemand" />
+		</screen>"""
+	else:
+		skin = """
+		<screen position="center,center" size="450,100" title="Kinopoisk Configuration" >
+			<widget name="menu" position="0,10" size="450,90" scrollbarMode="showOnDemand" />
+		</screen>"""
+
 	def __init__(self, session, args=None):
 		Screen.__init__(self, session)
 		self.session = session
 		self.menu = args
 		self.setTitle(_("Choose action:"))
 		list = []
-		#list.append((_("Install packages library lmxl"), "lmxl"))
 		list.append((_("Option for all images"), "all"))
 		list.append((_("Option only python 2.7 images"), "new"))
 		self["menu"] = MenuList(list)
 		self["actions"] = ActionMap(["OkCancelActions"], {"ok": self.run, "cancel": self.close}, -1)
-	
+
 	def run(self):
-		returnValue = self["menu"].l.getCurrentSelection()[1]
+		returnValue = self["menu"].l.getCurrentSelection() and self["menu"].l.getCurrentSelection()[1]
 		if returnValue is not None:
-			if returnValue is "lmxl":
-				cmd = "opkg install /usr/lib/enigma2/python/Plugins/Extensions/TMBD/lmxl/*.ipk  && echo 'If ok, to apply the changes required restart GUI!' "
-				self.session.open(Console,_("Install packages library lmxl"),[cmd])
-			elif returnValue is "all":
+			if returnValue is "all":
 				cmd = "cp /usr/lib/enigma2/python/Plugins/Extensions/TMBD/profile/kinopoiskall.py /usr/lib/enigma2/python/Plugins/Extensions/TMBD/kinopoisk.py && echo 'Done...\nTo apply the changes required restart GUI!' "
 				self.session.open(Console,_("Option for all images"),[cmd])
 			elif returnValue is "new": 
@@ -1576,30 +1329,36 @@ class KinopoiskConfiguration(Screen):
 				self.session.open(Console,_("Option only python 2.7 images"),[cmd])
 
 class TMBDSettings(Screen, ConfigListScreen):
-	skin = """<screen position="center,center" size="740,485" title="TMBDSettings" backgroundColor="#31000000" >
-		<widget name="config" position="10,10" size="725,428" zPosition="1" transparent="0" backgroundColor="#31000000" scrollbarMode="showOnDemand" />
-		<widget name="key_red" position="10,460" zPosition="2" size="235,25" halign="center" font="Regular;22" transparent="1" foregroundColor="red"  />
-		<widget name="key_green" position="485,460" zPosition="2" size="235,25" halign="center" font="Regular;22" transparent="1" foregroundColor="green" />
-		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/red25.png" position="10,450" size="235,44" zPosition="1" alphatest="on" />
-		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/green25.png" position="485,450" size="235,44" zPosition="1" alphatest="on" />
-		</screen>"""
+	if screenWidth >= 1920:
+		skin = """
+			<screen position="center,center" size="1110,727" title="TMBDSettings" backgroundColor="#31000000" >
+				<widget name="config" position="15,15" size="1087,642" zPosition="1" transparent="0" backgroundColor="#31000000" scrollbarMode="showOnDemand" />
+				<widget name="key_red" position="15,690" zPosition="2" size="352,37" halign="center" font="Regular;33" transparent="1" foregroundColor="red"  />
+				<widget name="key_green" position="727,690" zPosition="2" size="352,37" halign="center" font="Regular;33" transparent="1" foregroundColor="green" />
+				<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/red25.png" position="15,675" size="352,66" zPosition="1" alphatest="on" />
+				<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/green25.png" position="727,675" size="352,66" zPosition="1" alphatest="on" />
+			</screen>"""
+	else:
+		skin = """
+			<screen position="center,center" size="740,485" title="TMBDSettings" backgroundColor="#31000000" >
+				<widget name="config" position="10,10" size="725,428" zPosition="1" transparent="0" backgroundColor="#31000000" scrollbarMode="showOnDemand" />
+				<widget name="key_red" position="10,460" zPosition="2" size="235,25" halign="center" font="Regular;22" transparent="1" foregroundColor="red"  />
+				<widget name="key_green" position="485,460" zPosition="2" size="235,25" halign="center" font="Regular;22" transparent="1" foregroundColor="green" />
+				<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/red25.png" position="10,450" size="235,44" zPosition="1" alphatest="on" />
+				<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/green25.png" position="485,450" size="235,44" zPosition="1" alphatest="on" />
+			</screen>"""
 
 	def __init__(self, session, args = None):
 		Screen.__init__(self, session)
 		self.setTitle(_("Settings TMBD Details Plugin...") + " " + plugin_version)
 		self['key_red'] = Button(_('Cancel'))
 		self['key_green'] = Button(_('Save'))
-		self['actions'] = ActionMap(['SetupActions',
-		    'ColorActions'], {'green': self.save,
-	            'ok': self.keyOK,
-	            'red': self.exit,
-	            'cancel': self.exit}, -2)
-
+		self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'green': self.save, 'ok': self.keyOK, 'red': self.exit, 'cancel': self.exit}, -2)
 		ConfigListScreen.__init__(self, [])
 		self.prev_ext_menu = config.plugins.tmbd.add_ext_menu.value
 		self.initConfig()
 		self.createSetup()
-		
+
 	def initConfig(self):
 		def getPrevValues(section):
 			res = { }
@@ -1631,10 +1390,8 @@ class TMBDSettings(Screen, ConfigListScreen):
 			list.append(self.cfg_locale)
 		else:
 			list.append(self.cfg_kinopoisk_data)
-		list.append(getConfigListEntry(_('Select your skins'), config.plugins.tmbd.skins))
-		#list.append(getConfigListEntry(_('Add \"Lookup in TMBD\" Info Button to single-EPG'), config.plugins.tmbd.add_tmbd_to_epg))
-		#list.append(getConfigListEntry(_('Add \"Lookup in TMBD\" Info Button to multi-EPG'), config.plugins.tmbd.add_tmbd_to_multi))
-		#list.append(getConfigListEntry(_('Add \"Lookup in TMBD\" Info Button to GraphMultiEpg'), config.plugins.tmbd.add_tmbd_to_graph))
+		if screenWidth >= 1280 and screenWidth < 1920:
+			list.append(getConfigListEntry(_('Select your skins'), config.plugins.tmbd.skins))
 		if epg_furtherOptions:
 			list.append(getConfigListEntry(_('Add \"Search event in TMBD\"  to event menu'), config.plugins.tmbd.show_in_furtheroptionsmenu))
 		list.append(getConfigListEntry(_('Open VirtualKeyBoard'), config.plugins.tmbd.virtual_text))
@@ -1655,12 +1412,6 @@ class TMBDSettings(Screen, ConfigListScreen):
 		if config.plugins.tmbd.yt_event_menu.value != "0":
 			list.append(getConfigListEntry(_('Behavior after searching trailers'), config.plugins.tmbd.yt_start))
 		list.append(getConfigListEntry(_('Select folder for covers'), config.plugins.tmbd.cover_dir))
-		#if fileExists("/usr/lib/enigma2/python/Plugins/Extensions/nStreamVOD/plugin.pyo") or fileExists("/usr/lib/enigma2/python/Plugins/Extensions/nStreamVOD/plugin.pyc"):
-		#	list.append(self.cfg_add_tmbd_to_nstreamvod)
-		#	if fileExists("/usr/lib/enigma2/python/Plugins/Extensions/VCS/plugin.pyo") and fileExists("/usr/lib/enigma2/python/Plugins/Extensions/VCS/VCS.pyo"):
-		#		list.append(self.cfg_add_vcs_to_nstreamvod)
-		#	else:
-		#		config.plugins.tmbd.add_vcs_to_nstreamvod.value = False
 		self["config"].list = list
 		self["config"].l.setList(list)
 
@@ -1762,62 +1513,33 @@ class KinoRu(Screen):
 		<widget backgroundColor="#18188b" font="Regular;20" foregroundColor="#006565ff" halign="center" name="key_blue" position="830,536" size="250,38" transparent="1" valign="center" zPosition="2" />
 	</screen>"""
 
-	skin_fullhd1 = """
-		<screen name="KinoRu" position="center,center" size="1100,570" title="TMBD Details Plugin">
-		<eLabel backgroundColor="#00bbbbbb" position="0,0" size="1100,2" />
-		<widget font="Regular;22" name="title" position="20,20" size="740,28" transparent="1" valign="center" />
-		<widget alphatest="blend" name="starsbg" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/starsbar_empty.png" position="770,10" size="210,21" zPosition="2" />
-		<widget name="stars" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/starsbar_filled.png" position="770,10"  size="210,21" transparent="1" zPosition="3" />
-		<widget font="Regular;20" halign="left" name="ratinglabel" foregroundColor="#00f0b400" position="770,34" size="210,23" transparent="1" />
-		<widget font="Regular;20" name="voteslabel" halign="left" position="770,57" size="330,23" foregroundColor="#00f0b400" transparent="1" />
-		<widget alphatest="blend" name="poster" position="30,60" size="285,398" />
-		<widget name="menu" position="20,270" foregroundColor="#00f0b400" scrollbarMode="showOnDemand" size="1100,200" zPosition="1"  selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/button1080x25.png" />
-		<widget name="detailslabel" position="325,230" size="570,23" font="Regular;20" transparent="1" />  
-		<widget font="Regular;20" name="castlabel" position="320,350" size="760,160" transparent="1" />
-		<widget font="Regular;20" name="extralabel" position="320,80" size="760,285" transparent="1" />
-		<widget font="Regular;22" name="titlelabel" position="380,85" foregroundColor="#00f0b400" size="700,340" transparent="1" />
-		<widget font="Regular;18" name="statusbar" position="10,490" size="1080,20" transparent="1" />
-		<widget name="kino" alphatest="blend" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/kino_ru.png" transparent="1" position="30,90" size="350,300" zPosition="1" />
-		<eLabel backgroundColor="#00bbbbbb" position="0,518" size="1100,2" />
-		<ePixmap alphatest="on" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/red25.png" position=" 20,532" size="250,38" zPosition="1" />
-		<ePixmap alphatest="on" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/green25.png" position="290,532" size="250,38" zPosition="1" />
-		<ePixmap alphatest="on" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/yellow25.png" position="560,532" size="250,38" zPosition="1" />
-		<ePixmap alphatest="on" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/blue25.png" position="830,532" size="250,38" zPosition="1" />
-		<ePixmap pixmap="skin_default/buttons/key_menu.png" position="1048,5" zPosition="1" size="35,25" alphatest="on" />
-		<ePixmap pixmap="skin_default/buttons/key_info.png" position="1048,35" zPosition="1" size="35,25" alphatest="on" />
-		<widget backgroundColor="#9f1313" font="Regular;20" foregroundColor="#00ff2525" halign="center" name="key_red" position=" 20,536" size="250,38" transparent="1" valign="center" zPosition="2" />
-		<widget backgroundColor="#1f771f" font="Regular;20" foregroundColor="#00389416" halign="center" name="key_green" position="290,536" size="250,38" transparent="1" valign="center" zPosition="2" />
-		<widget backgroundColor="#a08500" font="Regular;20" foregroundColor="#00bab329" halign="center" name="key_yellow" position="560,536" size="250,38" transparent="1" valign="center" zPosition="2" />
-		<widget backgroundColor="#18188b" font="Regular;20" foregroundColor="#006565ff" halign="center" name="key_blue" position="830,536" size="250,38" transparent="1" valign="center" zPosition="2" />
-	</screen>"""
-
 	skin_fullhd = """
-		<screen name="KinoRu" position="center,center" size="1100,570" title="TMBD Details Plugin">
-		<eLabel backgroundColor="#00bbbbbb" position="0,0" size="1100,2" />
-		<widget font="Regular;22" name="title" position="20,20" size="740,28" transparent="1" valign="center" />
-		<widget alphatest="blend" name="starsbg" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/starsbar_empty.png" position="770,10" size="210,21" zPosition="2" />
-		<widget name="stars" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/starsbar_filled.png" position="770,10"  size="210,21" transparent="1" zPosition="3" />
-		<widget font="Regular;20" halign="left" name="ratinglabel" foregroundColor="#00f0b400" position="770,34" size="210,23" transparent="1" />
-		<widget font="Regular;20" name="voteslabel" halign="left" position="770,57" size="330,23" foregroundColor="#00f0b400" transparent="1" />
-		<widget alphatest="blend" name="poster" position="30,80" size="110,170" />
-		<widget name="menu" position="20,270" foregroundColor="#00f0b400" scrollbarMode="showOnDemand" size="1100,200" zPosition="1"  selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/button1080x25.png" />
-		<widget name="detailslabel" position="325,230" size="570,23" font="Regular;20" transparent="1" />  
-		<widget font="Regular;20" name="castlabel" position="20,295" size="1064,195" transparent="1" />
-		<widget font="Regular;20" name="extralabel" position="164,77" size="920,220" transparent="1" />
-		<widget font="Regular;22" name="titlelabel" position="380,85" foregroundColor="#00f0b400" size="700,340" transparent="1" />
-		<widget font="Regular;18" name="statusbar" position="10,490" size="1080,20" transparent="1" />
-		<widget name="kino" alphatest="blend" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/kino_ru.png" transparent="1" position="30,90" size="350,300" zPosition="1" />
-		<eLabel backgroundColor="#00bbbbbb" position="0,518" size="1100,2" />
-		<ePixmap alphatest="on" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/red25.png" position=" 20,532" size="250,38" zPosition="1" />
-		<ePixmap alphatest="on" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/green25.png" position="290,532" size="250,38" zPosition="1" />
-		<ePixmap alphatest="on" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/yellow25.png" position="560,532" size="250,38" zPosition="1" />
-		<ePixmap alphatest="on" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/blue25.png" position="830,532" size="250,38" zPosition="1" />
-		<ePixmap pixmap="skin_default/buttons/key_menu.png" position="1048,5" zPosition="1" size="35,25" alphatest="on" />
-		<ePixmap pixmap="skin_default/buttons/key_info.png" position="1048,35" zPosition="1" size="35,25" alphatest="on" />
-		<widget backgroundColor="#9f1313" font="Regular;20" foregroundColor="#00ff2525" halign="center" name="key_red" position=" 20,536" size="250,38" transparent="1" valign="center" zPosition="2" />
-		<widget backgroundColor="#1f771f" font="Regular;20" foregroundColor="#00389416" halign="center" name="key_green" position="290,536" size="250,38" transparent="1" valign="center" zPosition="2" />
-		<widget backgroundColor="#a08500" font="Regular;20" foregroundColor="#00bab329" halign="center" name="key_yellow" position="560,536" size="250,38" transparent="1" valign="center" zPosition="2" />
-		<widget backgroundColor="#18188b" font="Regular;20" foregroundColor="#006565ff" halign="center" name="key_blue" position="830,536" size="250,38" transparent="1" valign="center" zPosition="2" />
+		<screen name="KinoRu" position="135,135" size="1650,855" title="TMBD Details Plugin">
+		<eLabel backgroundColor="#00bbbbbb" position="0,0" size="1650,3" />
+		<widget font="Regular;33" name="title" position="30,30" size="1110,42" transparent="1" valign="center" />
+		<widget alphatest="blend" name="starsbg" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/starsbar_empty.png" position="1155,15" size="315,31" zPosition="2" />
+		<widget name="stars" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/starsbar_filled.png" position="1155,15"  size="315,31" transparent="1" zPosition="3" />
+		<widget font="Regular;30" halign="left" name="ratinglabel" foregroundColor="#00f0b400" position="1155,51" size="315,34" transparent="1" />
+		<widget font="Regular;30" name="voteslabel" halign="left" position="1155,85" size="495,34" foregroundColor="#00f0b400" transparent="1" />
+		<widget alphatest="blend" name="poster" position="45,90" size="427,597" />
+		<widget name="menu" position="30,405" foregroundColor="#00f0b400" scrollbarMode="showOnDemand" size="1650,300" zPosition="1"  selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/button1080x25.png" />
+		<widget name="detailslabel" position="487,345" size="855,34" font="Regular;30" transparent="1" />  
+		<widget font="Regular;30" name="castlabel" position="480,525" size="1140,240" transparent="1" />
+		<widget font="Regular;30" name="extralabel" position="480,120" size="1140,427" transparent="1" />
+		<widget font="Regular;33" name="titlelabel" foregroundColor="#00f0b400" position="570,127" size="1050,510" transparent="1" />
+		<widget font="Regular;27" name="statusbar" position="15,735" size="1620,30" transparent="1" />
+		<widget name="kino" alphatest="blend" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/kino_ru.png" transparent="1" position="45,135" size="525,450" zPosition="1" />
+		<eLabel backgroundColor="#00bbbbbb" position="0,777" size="1650,3" />
+		<ePixmap alphatest="on" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/red25.png" position="30,798" size="375,57" zPosition="1" />
+		<ePixmap alphatest="on" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/green25.png" position="435,798" size="375,57" zPosition="1" />
+		<ePixmap alphatest="on" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/yellow25.png" position="840,798" size="375,57" zPosition="1" />
+		<ePixmap alphatest="on" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/blue25.png" position="1245,798" size="375,57" zPosition="1" />
+		<ePixmap pixmap="skin_default/buttons/key_menu.png" position="1572,7" zPosition="1" size="52,37" alphatest="on" />
+		<ePixmap pixmap="skin_default/buttons/key_info.png" position="1572,52" zPosition="1" size="52,37" alphatest="on" />
+		<widget backgroundColor="#9f1313" font="Regular;30" foregroundColor="#00ff2525" halign="center" name="key_red" position="30,804" size="375,57" transparent="1" valign="center" zPosition="2" />
+		<widget backgroundColor="#1f771f" font="Regular;30" foregroundColor="#00389416" halign="center" name="key_green" position="435,804" size="375,57" transparent="1" valign="center" zPosition="2" />
+		<widget backgroundColor="#a08500" font="Regular;30" foregroundColor="#00bab329" halign="center" name="key_yellow" position="840,804" size="375,57" transparent="1" valign="center" zPosition="2" />
+		<widget backgroundColor="#18188b" font="Regular;30" foregroundColor="#006565ff" halign="center" name="key_blue" position="1245,804" size="375,57" transparent="1" valign="center" zPosition="2" />
 	</screen>"""
 
 	skin_sd = """
@@ -1884,7 +1606,7 @@ class KinoRu(Screen):
 		self.working = False
 		self["title"] = Label("")
 		self["title"].setText(_("Search in kinopoisk.ru ,please wait ..."))
-		self["detailslabel"] = ScrollLabel("")
+		self["detailslabel"] = Label("")
 		self["castlabel"] = ScrollLabel("")
 		self["extralabel"] = ScrollLabel("")
 		self["statusbar"] = Label("")
@@ -1904,7 +1626,6 @@ class KinoRu(Screen):
 		self.working = False
 		self.refreshTimer = eTimer()
 		self.refreshTimer.callback.append(self.KinoRuPoster)
-		
 		self["actions"] = ActionMap(["OkCancelActions", "ColorActions", "MovieSelectionActions", "DirectionActions"],
 		{
 			"ok": self.showExtras,
@@ -1933,15 +1654,8 @@ class KinoRu(Screen):
 			self.getKinoRu()
 
 	def chooseSkin(self):
-		try:
-			screenWidth = getDesktop(0).size().width()
-		except:
-			screenWidth = 720
-		if screenWidth >= 1920: #TODO!!!
-			if config.plugins.tmbd.skins.value == "0":
-				return KinoRu.skin_fullhd
-			if config.plugins.tmbd.skins.value == "1":
-				return KinoRu.skin_fullhd1
+		if screenWidth >= 1920:
+			return KinoRu.skin_fullhd
 		elif screenWidth >= 1280:
 			if config.plugins.tmbd.skins.value == "0":
 				return KinoRu.skin_hd
@@ -1997,7 +1711,6 @@ class KinoRu(Screen):
 			self.resetLabels()
 			self["statusbar"].setText(_("Not found network connection..."))
 			self["title"].setText("")
-			return
 
 	def exit(self):
 		self.close()
@@ -2013,14 +1726,14 @@ class KinoRu(Screen):
 			self.close()
 
 	def aboutAutor(self):
-		self.session.open(MessageBox, _("Kinopoisk.ru\nDeveloper: Dima73(Dimitrij) 2012/2014"), MessageBox.TYPE_INFO)
+		self.session.open(MessageBox, _("Kinopoisk.ru\nDeveloper: Dima73(Dimitrij) 2012/2014") + "\nNikolasi", MessageBox.TYPE_INFO)
 
 	def removCovers(self):
 		if os.path.exists('/tmp/preview.jpg'):
-				try:
-					os.remove('/tmp/preview.jpg')
-				except:
-					pass
+			try:
+				os.remove('/tmp/preview.jpg')
+			except:
+				pass
 
 	def resetLabels(self):
 		try:
@@ -2265,12 +1978,9 @@ class KinoRu(Screen):
 		if id:
 			if id.endswith("end"):
 				id = id[:-3]
-			#url = 'http://st.kinopoisk.ru/images/film_big/%s.jpg' % (id)
 			url = 'http://st.kinopoisk.ru/images/film/%s.jpg' % (id)
 			user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.53.11 (KHTML, like Gecko) Version/5.1.3 Safari/534.53.10'
 			req = urllib2.Request(url, headers = {'User-agent': user_agent, 'Accept': 'text/html'})
-			#req = urllib2.Request(url, headers={"Accept" : "text/html"})
-			#req.add_header('User-agent',user_agent)
 			try:
 				res = urllib2.urlopen(req)
 			except:
@@ -2297,7 +2007,7 @@ class KinoRu(Screen):
 			ChoiceBox,
 			list = list,
 			title= _("What exactly do you want to delete?"),
-		)	
+		)
 
 	def contextMenuPressed(self):
 		if self.movielist:
@@ -2344,8 +2054,6 @@ class KinoRu(Screen):
 		
 	def savePoster(self):
 		global name
-		import os
-		import shutil
 		if self.curResult and self.curInfos and self.curPoster:
 			dir = config.plugins.tmbd.cover_dir.value + 'covers'
 			if not fileExists(dir):
@@ -2358,27 +2066,25 @@ class KinoRu(Screen):
 					if fileExists("/tmp/preview.jpg"):
 						shutil.copy2("/tmp/preview.jpg", dir + "/" + name + ".jpg")
 						self.session.open(MessageBox, _("Poster %s saved!") % (name), MessageBox.TYPE_INFO, timeout=2)
-				except OSError:
+				except:
 					pass
 
 	def savePosterInfo(self):
 		global name
-		import os
-		import shutil
 		if self.curResult and self.curInfos:
 			self.savedescrip()
 		dir = config.plugins.tmbd.cover_dir.value + 'covers'
 		if not fileExists(dir):
 			try:
 				os.makedirs(dir)
-			except OSError:
+			except:
 				pass
 		if fileExists(dir):
 			try:
 				if fileExists("/tmp/preview.jpg") and self.curPoster:
 					shutil.copy2("/tmp/preview.jpg", dir + "/" + name + ".jpg")
 					self.session.open(MessageBox, _("Poster %s saved!") % (name), MessageBox.TYPE_INFO, timeout=2)
-			except OSError:
+			except:
 				pass
 
 	def writeMeta(self):
@@ -2387,7 +2093,7 @@ class KinoRu(Screen):
 			Extratext2 = ""
 			namedetals2 = ""
 			if len(movie2):
-					TSFILE = movie2
+				TSFILE = movie2
 			else:
 				return
 			current = self["menu"].l.getCurrentSelection()
@@ -2522,8 +2228,6 @@ class KinoRu(Screen):
 					self.session.open(MessageBox, _("%s poster removed!") % (remove_jpg), MessageBox.TYPE_INFO, timeout=3)
 				except:
 					pass
-		else:
-			return
 
 	def removcurrentinfo(self):
 		global movie2, name
@@ -2542,8 +2246,6 @@ class KinoRu(Screen):
 					self.session.open(MessageBox, _("%s meta-file removed!") % (remove_meta), MessageBox.TYPE_INFO, timeout=3)
 				except:
 					pass
-		else:
-			return
 
 	def removcurrentConfirmed(self, confirmed):
 		if not confirmed:
@@ -2586,15 +2288,11 @@ class KinoRu(Screen):
 						self.session.open(MessageBox, _("%s meta-file removed!") % (remove_meta), MessageBox.TYPE_INFO, timeout=3)
 					except:
 						pass
-			else:
-				return
 
 	def removresult(self):
 		self.session.openWithCallback(self.removresultConfirmed, MessageBox, _("Remove all posters?"), MessageBox.TYPE_YESNO)
 
 	def removresultConfirmed(self, confirmed):
-		import os
-		import shutil
 		if not confirmed:
 			return
 		else:
@@ -2602,11 +2300,11 @@ class KinoRu(Screen):
 			if fileExists(dir):
 				try:
 					shutil.rmtree(dir)
-					self.session.open(MessageBox, _("All posters removed!"), MessageBox.TYPE_INFO, timeout=3)
-				except OSError:
+					self.session.open(MessageBox, _("All posters removed!"), MessageBox.TYPE_INFO, timeout=4)
+				except:
 					pass
 
-	def menuCallback(self, ret = None):
+	def menuCallback(self, ret=None):
 		ret and ret[1]()
 
 	def searchYttrailer3(self):
@@ -2617,15 +2315,6 @@ class KinoRu(Screen):
 			self.saveresult()
 		else:
 			self.searchYttrailer()
-
-	def yesNo(self, answer):
-		if answer is True:
-			self.yesInstall()
-
-	def yesInstall(self):
-		if fileExists(resolveFilename(SCOPE_PLUGINS, "Extensions/TMBD/enigma2-plugin-extensions-yttrailer_2.0_all.ipk")):
-			cmd = "opkg install -force-overwrite -force-downgrade /usr/lib/enigma2/python/Plugins/Extensions/TMBD/enigma2-plugin-extensions-yttrailer_2.0_all.ipk"
-			self.session.open(Console, _("Install YTTrailer..."), [cmd])
 
 	def searchYttrailer(self):
 		if self.curResult:
@@ -2643,33 +2332,16 @@ class KinoRu(Screen):
 		self.working = False
 
 	def openKeyBoard(self):
-		global eventname
-		self.session.openWithCallback(
-			self.gotSearchString,
-			InputBox,
-			title = _("Edit text to search for"), text=eventname, visible_width = 40, maxSize=False, type=Input.TEXT)
+		self.session.openWithCallback(self.gotSearchString, InputBox, title = _("Edit text to search for"), text=eventname, visible_width = 40, maxSize=False, type=Input.TEXT)
 
 	def openVirtualKeyBoard(self):
 		if config.plugins.tmbd.virtual_text.value == "0":
-			self.session.openWithCallback(
-				self.gotSearchString,
-				VirtualKeyBoard,
-				title = _("Enter text to search for")
-			)
+			self.session.openWithCallback(self.gotSearchString, VirtualKeyBoard, title = _("Enter text to search for"))
 		else:
-			global eventname
-			self.session.openWithCallback(
-				self.gotSearchString,
-				VirtualKeyBoard,
-				title = _("Edit text to search for"),
-				text=eventname
-			)
+			self.session.openWithCallback(self.gotSearchString, VirtualKeyBoard, title = _("Edit text to search for"), text=eventname)
 
 	def openChannelSelection(self):
-		self.session.openWithCallback(
-			self.gotSearchString,
-			TMBDChannelSelection
-		)
+		self.session.openWithCallback(self.gotSearchString, TMBDChannelSelection)
 
 	def gotSearchString(self, ret = None):
 		if ret:
@@ -2812,24 +2484,23 @@ class KinoRu(Screen):
 			self["poster"].hide()
 
 	def createSummary(self):
-		#return KinoRuLCDScreen
 		pass
 
-#class KinoRuLCDScreen(Screen):
-#	skin = """
-#	<screen position="0,0" size="132,64" title="TMBD Details">
-#		<widget name="headline" position="4,0" size="128,22" font="Regular;20"/>
-#		<widget source="parent.title" render="Label" position="6,26" size="120,34" font="Regular;14"/>
-#
-#	def __init__(self, session, parent):
-#		Screen.__init__(self, session, parent)
-#		self["headline"] = Label(_("Search in kinopoisk.ru"))
-
-
 class MovielistPreviewScreen(Screen):
+	if screenWidth >= 1920:
+		skin = """
+			<screen position="0,0" size="130,200" zPosition="10" flags="wfNoBorder" backgroundColor="#ff000000" >
+				<widget name="background" position="0,0" size="130,200" zPosition="1" backgroundColor="#00000000" />
+				<widget name="preview" position="0,0" size="130,200" zPosition="2" alphatest="blend"/>
+			</screen>"""
+	else:
+		skin = """
+			<screen position="0,0" size="130,200" zPosition="10" flags="wfNoBorder" backgroundColor="#ff000000" >
+				<widget name="background" position="0,0" size="130,200" zPosition="1" backgroundColor="#00000000" />
+				<widget name="preview" position="0,0" size="130,200" zPosition="2" alphatest="blend"/>
+			</screen>"""
 	def __init__(self, session):
 		Screen.__init__(self, session)
-		self.skin = SKIN
 		self["background"] = Label("")
 		self["preview"] = Pixmap()
 		self.onShow.append(self.movePosition)
@@ -2919,27 +2590,35 @@ class MovielistPreview():
 movielistpreview = MovielistPreview()
 
 class MovielistPreviewPositionerCoordinateEdit(ConfigListScreen, Screen):
-	skin = """
-		<screen position="center,center" size="560,110" title="%s">
-			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" transparent="1" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/green.png" position="140,0" size="140,40" transparent="1" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/yellow.png" position="280,0" size="140,40" transparent="1" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/blue.png" position="420,0" size="140,40" transparent="1" alphatest="on" />
-			<widget name="key_green" position="140,0" zPosition="1" size="140,40" font="Regular;20" valign="center" halign="center" backgroundColor="#1f771f" transparent="1" />
-			<widget name="config" position="0,45" size="560,60" scrollbarMode="showOnDemand" />
-		</screen>""" % _("Poster Preview")
+	if screenWidth >= 1920:
+		skin = """
+			<screen position="center,center" size="840,165" title="%s">
+				<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="210,60" transparent="1" alphatest="on" />
+				<ePixmap pixmap="skin_default/buttons/green.png" position="210,0" size="210,60" transparent="1" alphatest="on" />
+				<ePixmap pixmap="skin_default/buttons/yellow.png" position="420,0" size="210,60" transparent="1" alphatest="on" />
+				<ePixmap pixmap="skin_default/buttons/blue.png" position="630,0" size="210,60" transparent="1" alphatest="on" />
+				<widget name="key_green" position="210,0" zPosition="1" size="210,60" font="Regular;30" valign="center" halign="center" backgroundColor="#1f771f" transparent="1" />
+				<widget name="config" position="0,67" size="840,90" scrollbarMode="showOnDemand" />
+			</screen>""" % _("Poster Preview")
+	else:
+		skin = """
+			<screen position="center,center" size="560,110" title="%s">
+				<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" transparent="1" alphatest="on" />
+				<ePixmap pixmap="skin_default/buttons/green.png" position="140,0" size="140,40" transparent="1" alphatest="on" />
+				<ePixmap pixmap="skin_default/buttons/yellow.png" position="280,0" size="140,40" transparent="1" alphatest="on" />
+				<ePixmap pixmap="skin_default/buttons/blue.png" position="420,0" size="140,40" transparent="1" alphatest="on" />
+				<widget name="key_green" position="140,0" zPosition="1" size="140,40" font="Regular;20" valign="center" halign="center" backgroundColor="#1f771f" transparent="1" />
+				<widget name="config" position="0,45" size="560,60" scrollbarMode="showOnDemand" />
+			</screen>""" % _("Poster Preview")
 
 	def __init__(self, session, x, y, w, h):
 		Screen.__init__(self, session)
-		
 		self["key_green"] = Label(_("OK"))
-		
 		self.xEntry = ConfigInteger(default=x, limits=(0, w))
 		self.yEntry = ConfigInteger(default=y, limits=(0, h))
 		ConfigListScreen.__init__(self, [
 			getConfigListEntry("x position:", self.xEntry),
 			getConfigListEntry("y position:", self.yEntry)])
-		
 		self["actions"] = ActionMap(["OkCancelActions", "ColorActions"],
 			{
 				"green": self.ok,
@@ -2950,12 +2629,23 @@ class MovielistPreviewPositionerCoordinateEdit(ConfigListScreen, Screen):
 		self.close([self.xEntry.value, self.yEntry.value])
 
 class MovielistPreviewPositioner(Screen):
+	if screenWidth >= 1920:
+		skin = """
+			<screen position="0,0" size="130,200" zPosition="10" flags="wfNoBorder" backgroundColor="#ff000000" >
+				<widget name="background" position="0,0" size="130,200" zPosition="1" backgroundColor="#00000000" />
+				<widget name="preview" position="0,0" size="130,200" zPosition="2" alphatest="blend"/>
+			</screen>"""
+	else:
+		skin = """
+			<screen position="0,0" size="130,200" zPosition="10" flags="wfNoBorder" backgroundColor="#ff000000" >
+				<widget name="background" position="0,0" size="130,200" zPosition="1" backgroundColor="#00000000" />
+				<widget name="preview" position="0,0" size="130,200" zPosition="2" alphatest="blend"/>
+			</screen>"""
+
 	def __init__(self, session):
 		Screen.__init__(self, session)
-		self.skin = SKIN
 		self["background"] = Label("")
 		self["preview"] = Pixmap()
-		
 		self["actions"] = ActionMap(["EPGSelectActions", "MenuActions", "WizardActions"],
 		{
 			"left": self.left,
@@ -2968,15 +2658,12 @@ class MovielistPreviewPositioner(Screen):
 			"nextBouquet": self.bigger,
 			"prevBouquet": self.smaller
 		}, -1)
-		
 		desktop = getDesktop(0)
 		self.desktopWidth = desktop.size().width()
 		self.desktopHeight = desktop.size().height()
-		
 		self.moveTimer = eTimer()
 		self.moveTimer.callback.append(self.movePosition)
 		self.moveTimer.start(50, 1)
-		
 		self.onShow.append(self.__onShow)
 
 	def __onShow(self):
@@ -3057,11 +2744,16 @@ class MovielistPreviewPositioner(Screen):
 		self.__onShow()
 
 class MovielistPreviewMenu(Screen):
-	skin = """
-		<screen position="center,center" size="420,105" title="%s">
-			<widget name="list" position="5,5" size="410,100" />
-		</screen>""" % _("Poster Preview")
-
+	if screenWidth >= 1920:
+		skin = """
+			<screen position="center,center" size="630,157" title="%s">
+				<widget name="list" position="7,7" size="615,150" />
+			</screen>""" % _("Poster Preview")
+	else:
+		skin = """
+			<screen position="center,center" size="420,105" title="%s">
+				<widget name="list" position="5,5" size="410,100" />
+			</screen>""" % _("Poster Preview")
 	def __init__(self, session, service):
 		Screen.__init__(self, session)
 		self.session = session
@@ -3170,7 +2862,6 @@ class EventChoiseList:
 			config.plugins.tmbd.profile.value = "0"
 		config.plugins.tmbd.profile.save()
 
-		
 	def Nowevent(self):
 		global eventname, eventname_now, eventname_next
 		eventname = eventname_now
@@ -3186,15 +2877,21 @@ class EventChoiseList:
 			self.session.open(TMBD, eventname, False)
 		else:
 			self.session.open(KinoRu, eventname, False)
-			
+
 	def menuCallback(self, ret = None):
 		ret and ret[1]()
-		
+
 class MovielistProfileList(Screen):
-	skin = """
-		<screen position="center,center" size="380,80" title="%s">
-			<widget name="list" position="5,5" size="370,75" />
-		</screen>""" % _("Select Profile")
+	if screenWidth >= 1920:
+		skin = """
+			<screen position="center,center" size="570,120" title="%s">
+				<widget name="list" position="7,7" size="555,112" />
+			</screen>""" % _("Select Profile")
+	else:
+		skin = """
+			<screen position="center,center" size="380,80" title="%s">
+				<widget name="list" position="5,5" size="370,75" />
+			</screen>""" % _("Select Profile")
 
 	def __init__(self, session, eventname):
 		Screen.__init__(self, session)
@@ -3232,44 +2929,6 @@ def eventinfo(session, eventName="", **kwargs):
 		ref = session.nav.getCurrentlyPlayingServiceReference()
 		session.open(TMBDEPGSelection, ref)
 
-#def showExtendedServiceInfo(session, service, **kwargs):
-#	from enigma import eServiceReference
-#	if service and (service.flags & eServiceReference.isDirectory):
-#		servtype = "directory"
-#	else:
-#		servtype = "service"
-#	print "Тип сервиса:",  servtype
-	
-#	infotype = kwargs.get("info", "")
-#	if infotype == "poster":
-#		print "Надо показать постер(ы)!"
-#	elif infotype == "details":
-#		print "Надо показать детали!"
-#	else:
-#		print "Эта функция вызвана не из меню списка записей!!!"
-
-
-#myMovieSelection.defMovieContextMenu = myMovieSelection.MovieContextMenu
-#class newMovieContextMenu(myMovieSelection.defMovieContextMenu):
-#	try:
-#		def __init__(self, session, csel, service):
-#			myMovieSelection.defMovieContextMenu.__init__(self, session, csel, service)
-#			self.skinName = "MovieContextMenu"
-#			idx = 2
-#			if service:
-#				if (service.flags & eServiceReference.mustDescent):
-#					#self["menu"].list.insert(idx, (_("Search movie in TMBD"),boundFunction(movielist, session, service)))
-#					for p in plugins.getPlugins(PluginDescriptor.WHERE_MOVIELIST):
-#						if _("Search movie in TMBD") in str(p.name):
-#							append_to_menu( menu, (p.description, boundFunction(p, session, service)), key="bullet")
-#							break
-#					#self["menu"].list.insert(idx, (_("Show Poster"),boundFunction(showExtendedServiceInfo, session, service,info="poster")))
-#					#self["menu"].list.insert(idx, (_("Show Details"),boundFunction(showExtendedServiceInfo, session, service,info="details")))
-#	except:
-#		pass
-#myMovieSelection.MovieContextMenu = newMovieContextMenu
-
-
 def main(session, **kwargs):
 	session.open(TMBDSettings)
 
@@ -3278,7 +2937,7 @@ def main3(session, eventName="", **kwargs):
 	eventname = ""
 	s = session.nav.getCurrentService()
 	info = s and s.info()
-	event = info and info.getEvent(0)	# 0 = now
+	event = info and info.getEvent(0)
 	if config.plugins.tmbd.ext_menu_event.value == "0":
 		if event:
 			eventName = event.getEventName().split("(")[0].strip()
@@ -3325,7 +2984,7 @@ class TMBDInfoBar:
 					self.showChoiceEvent()
 				return 1
 		return 0
-		
+
 	def execute(self):
 		self.session.open(TMBDSettings)
 
@@ -3334,7 +2993,7 @@ class TMBDInfoBar:
 		eventname = ""
 		s = self.session.nav.getCurrentService()
 		info = s and s.info()
-		event = info and info.getEvent(0)	# 0 = now
+		event = info and info.getEvent(0)
 		if config.plugins.tmbd.ext_menu_event.value == "0":
 			if event:
 				eventName = event.getEventName().split("(")[0].strip()
@@ -3365,12 +3024,12 @@ class TMBDInfoBar:
 			cur_name = ServiceReference(eServiceReference(refstr)).getServiceName()
 		s = self.session.nav.getCurrentService()
 		info = s and s.info()
-		event_now = info and info.getEvent(0)	# 0 = now
+		event_now = info and info.getEvent(0)
 		if event_now:
 			eventName = event_now.getEventName().split("(")[0].strip()
 			eventname_now = cutName(eventName)
 
-		event_next = info and info.getEvent(1)	# 1 = next
+		event_next = info and info.getEvent(1)
 		if event_next:
 			eventName = event_next.getEventName().split("(")[0].strip()
 			eventname_next = cutName(eventName)
@@ -3412,7 +3071,7 @@ class TMBDInfoBar:
 			self.session.open(TMBD, eventname, False)
 		else:
 			self.session.open(KinoRu, eventname, False)
-	
+
 	def Nextevent(self):
 		global eventname, eventname_now, eventname_next
 		eventname = eventname_next
@@ -3420,7 +3079,7 @@ class TMBDInfoBar:
 			self.session.open(TMBD, eventname, False)
 		else:
 			self.session.open(KinoRu, eventname, False)
-			
+
 	def menuCallback(self, ret = None):
 		ret and ret[1]()
 
@@ -3451,14 +3110,13 @@ def tmbdInfoBar__init__(self, session):
 
 def sessionstart(reason, **kwargs):
 	if reason == 0:
-		global _session, def_SelectionEventInfo_updateEventInfo
+		global _session, def_SelectionEventInfo_updateEventInfo, def_MovieSelection_showEventInformation
 		if _session is None:
 			_session = kwargs["session"]
-		movielistpreview.gotSession(kwargs["session"])
+		movielistpreview.gotSession(_session)
 		if def_SelectionEventInfo_updateEventInfo is None:
 			def_SelectionEventInfo_updateEventInfo = SelectionEventInfo.updateEventInfo
 			SelectionEventInfo.updateEventInfo = new_SelectionEventInfo_updateEventInfo
-		global def_MovieSelection_showEventInformation
 		if def_MovieSelection_showEventInformation is None:
 			def_MovieSelection_showEventInformation = MovieSelection.showEventInformation
 			MovieSelection.showEventInformation = new_MovieSelection_showEventInformation
@@ -3470,20 +3128,6 @@ def autostart(reason, **kwargs):
 		if baseInfoBar__init__ is None:
 			baseInfoBar__init__ = InfoBar.__init__
 		InfoBar.__init__ = tmbdInfoBar__init__
-		#try:
-		#	EPGSelectionInit()
-		#except Exception:
-		#	pass
-		#if fileExists("/usr/lib/enigma2/python/Plugins/Extensions/GraphMultiEPG/plugin.pyo") or fileExists("/usr/lib/enigma2/python/Plugins/Extensions/GraphMultiEPG/plugin.pyc"):
-		#	try:
-		#		GraphMultiEPGInit()
-		#	except Exception:
-		#		pass
-		#if fileExists("/usr/lib/enigma2/python/Plugins/Extensions/nStreamVOD/plugin.pyo") or fileExists("/usr/lib/enigma2/python/Plugins/Extensions/nStreamVOD/plugin.pyc"):
-		#	try:
-		#		nStreamVODInit()
-		#	except Exception:
-		#		pass
 
 def main2(session, service):
 	session.open(MovielistPreviewMenu, service)
