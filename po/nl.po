@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-08-29 15:54+0200\n"
-"PO-Revision-Date: 2016-08-29 16:45+0200\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2016-08-30 12:42+0200\n"
+"Language-Team: Rob van der Does\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -21,7 +21,7 @@ msgstr ""
 #: plugin.py:1252
 #, python-format
 msgid " (%s times)\n"
-msgstr " (%s tijden)\n"
+msgstr " (%s keer)\n"
 
 #: plugin.py:2442
 #, python-format
@@ -38,7 +38,7 @@ msgstr " min."
 
 #: plugin.py:918 plugin.py:2170
 msgid " times"
-msgstr "tijden"
+msgstr "keer"
 
 #: plugin.py:1664
 msgid "\"TMBD Details: current event\" quick button"
@@ -63,7 +63,7 @@ msgstr ""
 #: plugin.py:1326 plugin.py:1350 plugin.py:2508 plugin.py:2532
 #, python-format
 msgid "%s eit-file removed!"
-msgstr "%s eit-bestand verwijderd!"
+msgstr "%s EIT-bestand verwijderd!"
 
 #: plugin.py:1333 plugin.py:1377 plugin.py:2515 plugin.py:2559
 #, python-format
@@ -109,15 +109,15 @@ msgstr "Voeg \"Zoek programma in TMBD\"  toe aan eventmenu"
 
 #: plugin.py:1671
 msgid "Add \"open plugin VCS\" Info/EPG Button to nStreamVOD"
-msgstr "Voeg \"open plugin VCS\" toe aan Info/EPG-toets nStreamVOD"
+msgstr "Voeg \"Open plugin VCS\" toe aan Info/EPG-toets nStreamVOD"
 
 #: plugin.py:1670
 msgid "Add \"search in TMBD\" Info/EPG Button to nStreamVOD"
-msgstr "Voeg \"zoek in TMBD\" toe aan Info/EPG-toets nStreamVOD"
+msgstr "Voeg \"Zoek in TMBD\" toe aan Info/EPG-toets nStreamVOD"
 
 #: plugin.py:1669
 msgid "Add yt-trailer to context menu EPG"
-msgstr "Voeg yt-trailer toe aan EPG-contextmenu"
+msgstr "Voeg YT-trailer toe aan EPG-contextmenu"
 
 #: plugin.py:2223
 msgid "Age"
@@ -145,7 +145,7 @@ msgstr "Verschenen:"
 
 #: plugin.py:1702
 msgid "Behavior after searching trailers"
-msgstr "gedrag na zoeken trailers"
+msgstr "Gedrag na zoeken trailers"
 
 #: tmbdYTTrailer.py:293
 msgid "Best resolution for first found"
@@ -209,7 +209,7 @@ msgstr "Land"
 
 #: plugin.py:1210 plugin.py:2432
 msgid "Country:"
-msgstr "land:"
+msgstr "Land:"
 
 #: plugin.py:1019 plugin.py:2271
 msgid "Current poster and info"
@@ -230,7 +230,7 @@ msgstr "Details voor: %s"
 
 #: plugin.py:954 plugin.py:2209
 msgid "Director"
-msgstr "regisseur"
+msgstr "Regisseur"
 
 #: plugin.py:2195
 msgid "Duration"
@@ -254,7 +254,7 @@ msgstr "Geef of kies prgramma om te zoeken..."
 
 #: tmbdYTTrailer.py:313
 msgid "Enter text for search YT-Trailer:"
-msgstr "Geef zoektekst voor YT-Trailer:"
+msgstr "Geef zoektekst voor YT-trailer:"
 
 #: plugin.py:1462 plugin.py:2645
 msgid "Enter text to search for"
@@ -306,7 +306,7 @@ msgstr "Hoeveel zoekresultaten wilt u krijgen in de lijstmode?"
 
 #: plugin.py:1431 plugin.py:2613
 msgid "Install YTTrailer..."
-msgstr "Installeer YTTrailer..."
+msgstr "Installeer YT-trailer..."
 
 #: plugin.py:1605 plugin.py:1616
 msgid "Install packages library lmxl"
@@ -318,11 +318,11 @@ msgid ""
 "Developer: Dima73(Dimitrij) 2012/2014"
 msgstr ""
 "Kinopoisk.ru\n"
-" ontwikkelaar: Dima73(Dimitrij) 2012/2014"
+" Ontwikkelaar: Dima73(Dimitrij) 2012/2014"
 
 #: plugin.py:135
 msgid "Large poster"
-msgstr "Groete poster"
+msgstr "Grote poster"
 
 #: plugin.py:2732 plugin.py:2734
 msgid ""
@@ -344,11 +344,11 @@ msgstr "Lijst: themoviedb.org / kinopoisk.ru"
 
 #: plugin.py:226 plugin.py:498
 msgid "Lookup in TMBD"
-msgstr "Opzoeken in TMDB"
+msgstr "Opzoeken in TMBD"
 
 #: plugin.py:638 plugin.py:803 plugin.py:1890 plugin.py:2090
 msgid "Manual input"
-msgstr "handmatige invoer"
+msgstr "Handmatige invoer"
 
 #: tmbdYTTrailer.py:302
 msgid "Manual search"
@@ -382,12 +382,12 @@ msgstr "Geen netwerkverbinding gevonden..."
 #: plugin.py:1527
 #, python-format
 msgid "Nothing found for: %s"
-msgstr "niets gevonden voor: %s"
+msgstr "Niets gevonden voor: %s"
 
 #: plugin.py:2737
 #, python-format
 msgid "Nothing found for: %s or no answer in kinopoisk.ru"
-msgstr "niets gevonden voor %s of geen antwoord van kinopoisk.ru"
+msgstr "Niets gevonden voor %s of geen antwoord van kinopoisk.ru"
 
 #: plugin.py:3113 plugin.py:3350
 #, python-format
@@ -420,7 +420,7 @@ msgstr "Open plugin ls er geen programma is"
 
 #: plugin.py:1668
 msgid "Open yt-trailer setup"
-msgstr "Open yt-trailer instellingen"
+msgstr "Open YT-trailer instellingen"
 
 #: plugin.py:1606 plugin.py:1619
 msgid "Option for all images"
@@ -457,7 +457,7 @@ msgstr "Druk op OK om handmatig te zoeken in YT-trailer"
 
 #: tmbdYTTrailer.py:99 tmbdYTTrailer.py:226
 msgid "Problems with YT-Feeds!"
-msgstr "Problemen met YT-Feeds!"
+msgstr "Problemen met YT-feeds!"
 
 #: plugin.py:964
 msgid "Producers"
@@ -564,11 +564,11 @@ msgstr "Zoekresultaten voor: %s"
 
 #: plugin.py:3592 plugin.py:3594 plugin.py:3597 plugin.py:3598
 msgid "Search yt-trailer for event"
-msgstr "Zoek yt-trailer voor programma"
+msgstr "Zoek YT-trailer voor programma"
 
 #: plugin.py:3165
 msgid "Select Profile"
-msgstr "kies profiel:"
+msgstr "Kies profiel:"
 
 #: plugin.py:265 plugin.py:1050 plugin.py:2302
 msgid "Select action:"
@@ -620,7 +620,7 @@ msgstr "Toon filmdetails"
 
 #: plugin.py:1687
 msgid "Show plugin in channel selection context menu"
-msgstr "Toon plugin in kanaalselectie conekstmenu"
+msgstr "Toon plugin in kanaalselectie contextmenu"
 
 #: plugin.py:930 plugin.py:2147
 msgid "Show search results"
@@ -650,7 +650,7 @@ msgid ""
 "(c)2012"
 msgstr ""
 "TMBD details Plugin\n"
-"ontwikkelaar: Nikolasi,vlamo,Dima73\n"
+"Ontwikkelaar: Nikolasi,vlamo,Dima73\n"
 "(c)2012"
 
 #: plugin.py:3546
@@ -699,8 +699,8 @@ msgid ""
 "What maximum resolution used, if available.\n"
 "If you have a slow Internet connection, you can use a lower resolution."
 msgstr ""
-"Welke maximum resolutie te gebruiken, indien beschikbaar.\n"
-"Als u een langzame internetverbinding hebt kunt u aan lagere resolutie "
+"Welke maximum resolutie te gebruiken, indien beschikbaar?.\n"
+"Als u een langzame internetverbinding hebt, kunt u aan lagere resolutie "
 "kiezen."
 
 #: tmbdYTTrailer.py:301
@@ -709,7 +709,7 @@ msgstr "Indien niet ingeschakeld, sluit de speler alleen met de stoptoets."
 
 #: plugin.py:1280 plugin.py:2462
 msgid "Write event to new eit-file:\n"
-msgstr "Schrijf programma naar nieuw eit-bestand:\n"
+msgstr "Schrijf programma naar nieuw EIT-bestand:\n"
 
 #: plugin.py:1169 plugin.py:2414
 msgid "Write to new meta-file for:\n"
@@ -721,15 +721,15 @@ msgstr "GEEL"
 
 #: tmbdYTTrailer.py:140
 msgid "YT Trailer-List"
-msgstr "YT Trailer-lijst"
+msgstr "YT-trailer lijst"
 
 #: tmbdYTTrailer.py:247
 msgid "YT-Trailer Player"
-msgstr "YT-Trailer speler"
+msgstr "YT-trailer speler"
 
 #: tmbdYTTrailer.py:277 tmbdYTTrailer.py:310
 msgid "YT-Trailer Setup"
-msgstr "YT-Trailer instellingen"
+msgstr "YT-trailer instellingen"
 
 #: plugin.py:1059 plugin.py:2311
 msgid "Yes"
@@ -737,7 +737,7 @@ msgstr "Ja"
 
 #: plugin.py:1060 plugin.py:2312
 msgid "Yes,but write new meta-file"
-msgstr "ja, maar schrijf nieuw meta-bestand"
+msgstr "Ja, maar schrijf nieuw meta-bestand"
 
 #: plugin.py:151
 msgid "ask user"
@@ -765,7 +765,7 @@ msgstr "kinopoisk.ru (alleen Russische taal)"
 
 #: tmbdYTTrailer.py:236 tmbdYTTrailer.py:245
 msgid "leave YT-Trailer player..."
-msgstr "veraat YT-Trailer player..."
+msgstr "verlaat YT-trailer speler..."
 
 #: plugin.py:894
 msgid "no user rating yet"
@@ -777,7 +777,7 @@ msgstr "alleen huidig programma"
 
 #: plugin.py:141 plugin.py:160
 msgid "only current profile"
-msgstr "alleen huidig profile"
+msgstr "alleen huidig profiel"
 
 #: plugin.py:258
 msgid "open plugin VCS"
