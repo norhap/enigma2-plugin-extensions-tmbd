@@ -1398,7 +1398,7 @@ class TMBDSettings(Screen, ConfigListScreen):
 		list.append(getConfigListEntry(_('Show plugin in channel selection context menu'), config.plugins.tmbd.menu))
 		if config.plugins.tmbd.menu.value:
 			list.append(self.cfg_menu_profile)
-		list.append(self.cfg_hotkey)
+		#list.append(self.cfg_hotkey)
 		list.append(self.cfg_addmenu)
 		if config.plugins.tmbd.add_ext_menu.value or config.plugins.tmbd.hotkey.value != "none":
 			list.append(self.cfg_Event)
@@ -3123,11 +3123,12 @@ def sessionstart(reason, **kwargs):
 
 def autostart(reason, **kwargs):
 	if reason == 0:
-		global baseInfoBar__init__
-		from Screens.InfoBar import InfoBar
-		if baseInfoBar__init__ is None:
-			baseInfoBar__init__ = InfoBar.__init__
-		InfoBar.__init__ = tmbdInfoBar__init__
+		pass
+		#global baseInfoBar__init__
+		#from Screens.InfoBar import InfoBar
+		#if baseInfoBar__init__ is None:
+		#	baseInfoBar__init__ = InfoBar.__init__
+		#InfoBar.__init__ = tmbdInfoBar__init__
 
 def main2(session, service):
 	session.open(MovielistPreviewMenu, service)
