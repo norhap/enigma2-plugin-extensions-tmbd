@@ -8,7 +8,7 @@ configs = None
 def setLocale(lng):
     global configs
     configs = {}
-    configs['locale'] = config.plugins.tmbd.locale.value
+    configs['locale'] = lng
 
 
 def getLocale():
@@ -41,11 +41,11 @@ def prevImageIndex(movie):
         item = movie['images'].pop(-1)
         movie['images'].insert(0, item)
 
-def init_tmdb3():
+def init_tmdb3(alternative_lang=None):
     import tmdb3
     tmdb3.set_key('1f834eb425728133b9a2c1c0c82980eb')
     tmdb3.set_cache('null')
-    lng = config.plugins.tmbd.locale.value
+    lng = alternative_lang or config.plugins.tmbd.locale.value
     if lng == 'en':
         tmdb3.set_locale(lng, 'US')
     elif lng == 'el':

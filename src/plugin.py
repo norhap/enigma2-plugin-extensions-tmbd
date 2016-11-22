@@ -40,7 +40,7 @@ from time import strftime, localtime, mktime
 from meta import MetaParser, getctime, fileSize
 import kinopoisk, urllib2, tmbdYTTrailer
 
-plugin_version = "7.5"
+plugin_version = "7.6"
 
 epg_furtherOptions = False
 if hasattr(EPGSelection, "furtherOptions"):
@@ -101,6 +101,7 @@ def GetLanguageCode():
 
 config.plugins.tmbd = ConfigSubsection()
 config.plugins.tmbd.locale = ConfigText(default="ru", fixed_size = False)
+config.plugins.tmbd.alrernative_locale = ConfigText(default="en", fixed_size = False)
 config.plugins.tmbd.skins = ConfigSelection(default = "0", choices = [("0", _("Small poster")), ("1", _("Large poster"))])
 config.plugins.tmbd.enabled = ConfigYesNo(default=True)
 config.plugins.tmbd.virtual_text = ConfigSelection(default = "0", choices = [("0", _("< empty >")), ("1", _("< text >"))])
@@ -819,14 +820,15 @@ class TMBD(Screen):
 				(_("Select from Favourites"), self.openChannelSelection),
 				(_("Search Trailer"), self.searchYttrailer3),
 				(_("Remove poster / info"), self.removmenu),
-				(_("Settings"), self.Menu2),
 			]
 		else:
 			list = [
 				(_("Text editing"), self.openKeyBoard),
 				(_("Select from Favourites"), self.openChannelSelection),
-				(_("Settings"), self.Menu2),
 			]
+		if config.plugins.tmbd.alrernative_locale.value and config.plugins.tmbd.alrernative_locale.value != config.plugins.tmbd.locale.value:
+			list.append((_("Search on alternative language"), self.alternativeSearch))
+		list.append((_("Settings"), self.Menu2))
 		self.session.openWithCallback(self.menuCallback, ChoiceBox, list = list, title= _("Select action:"))
 
 	def Menu2(self):
@@ -1182,6 +1184,13 @@ class TMBD(Screen):
 	def workingFinished(self, callback=None):
 		self.working = False
 
+	def alternativeSearch(self):
+		self.tmdb3 = tmdb.init_tmdb3(alternative_lang=config.plugins.tmbd.alrernative_locale.value)
+		if self.tmdb3 is None:
+			self["statusbar"].setText(_("Unknown error!"))
+			return
+		self.gotSearchString(ret=self.eventName)
+
 	def openKeyBoard(self):
 		self.session.openWithCallback(self.gotSearchString, InputBox, title = _("Edit text to search for"), text=eventname, visible_width = 40, maxSize=False, type=Input.TEXT)
 
@@ -1237,10 +1246,12 @@ class TMBD(Screen):
 				self.eventName = event.getEventName()
 		if self.eventName:
 			title = self.eventName.split("(")[0].strip()
+			title = cutName(title)
 			try:
 				results = self.tmdb3.searchMovie(title)
 			except:
 				results = []
+			self.tmdb3 = tmdb.init_tmdb3()
 			if len(results) == 0:
 				self["statusbar"].setText(_("Nothing found for: %s") % (self.eventName))
 				self["title"].setText("")
@@ -1262,6 +1273,7 @@ class TMBD(Screen):
 			self.showMenu()
 			self["menu"].setList(self.resultlist)
 		else:
+			self.tmdb3 = tmdb.init_tmdb3()
 			self["title"].setText(_("Enter or choose event for search ..."))
 
 	def TMBDPoster(self):
@@ -1374,6 +1386,7 @@ class TMBDSettings(Screen, ConfigListScreen):
 		self.cfg_Event = getConfigListEntry(_("Event mode for search"), config.plugins.tmbd.ext_menu_event)
 		self.cfg_noevent = getConfigListEntry(_("Open plugin if there is no event"), config.plugins.tmbd.no_event)
 		self.cfg_locale = getConfigListEntry(_('Select the search language'), config.plugins.tmbd.locale)
+		self.cfg_alrernative_locale = getConfigListEntry(_('Alternative language for search'), config.plugins.tmbd.alrernative_locale)
 		self.cfg_hotkey = getConfigListEntry(_('\"TMBD Details: current event\" quick button'), config.plugins.tmbd.hotkey)
 		self.cfg_menu_profile = getConfigListEntry(_('Choice profile in search'), config.plugins.tmbd.menu_profile)
 		self.cfg_movielist_profile = getConfigListEntry(_('Profile movielist context menu'), config.plugins.tmbd.movielist_profile)
@@ -1388,6 +1401,7 @@ class TMBDSettings(Screen, ConfigListScreen):
 		list.append(getConfigListEntry(_('Choice database to search'), config.plugins.tmbd.profile))
 		if config.plugins.tmbd.profile.value == "0":
 			list.append(self.cfg_locale)
+			list.append(self.cfg_alrernative_locale)
 		else:
 			list.append(self.cfg_kinopoisk_data)
 		if screenWidth >= 1280 and screenWidth < 1920:

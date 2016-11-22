@@ -788,3 +788,10 @@ msgstr ""
 #: plugin.py:3189
 msgid "themoviedb.org"
 msgstr ""
+
+msgid "Alternative language for search"
+msgstr ""
+
+msgid "Search on alternative language"
+msgstr ""
+

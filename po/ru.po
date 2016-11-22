@@ -629,3 +629,10 @@ msgstr "показать список"
 
 msgid "standard info"
 msgstr "стандартная информация"
+
+msgid "Alternative language for search"
+msgstr "Альтернативный язык для поиска"
+
+msgid "Search on alternative language"
+msgstr "Поиск на альтернативном языке"
+
