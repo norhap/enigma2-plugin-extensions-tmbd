@@ -67,9 +67,11 @@ class Request(urllib2.Request):
         locale = get_locale()
         kwargs = {}
         for k, v in self._kwargs.items():
-            kwargs[k] = locale.encode(v)
-        url = '{0}{1}?{2}'\
-                .format(self._base_url, self._url, urlencode(kwargs))
+            if isinstance(v, unicode):
+                kwargs[k] = v.encode('utf-8')
+            else:
+                kwargs[k] = str(v)
+        url = '{0}{1}?{2}'.format(self._base_url, self._url, urlencode(kwargs))
 
         urllib2.Request.__init__(self, url)
         self.add_header('Accept', 'application/json')
@@ -135,33 +137,49 @@ class Request(urllib2.Request):
         return data
 
 status_handlers = {
-    1: None,
-    2: TMDBRequestInvalid('Invalid service - This service does not exist.'),
-    3: TMDBRequestError('Authentication Failed - You do not have ' +
-                        'permissions to access this service.'),
-    4: TMDBRequestInvalid("Invalid format - This service doesn't exist " +
-                        'in that format.'),
-    5: TMDBRequestInvalid('Invalid parameters - Your request parameters ' +
-                        'are incorrect.'),
-    6: TMDBRequestInvalid('Invalid id - The pre-requisite id is invalid ' +
-                        'or not found.'),
-    7: TMDBKeyInvalid('Invalid API key - You must be granted a valid key.'),
-    8: TMDBRequestError('Duplicate entry - The data you tried to submit ' +
-                        'already exists.'),
-    9: TMDBOffline('This service is tempirarily offline. Try again later.'),
-    10: TMDBKeyRevoked('Suspended API key - Access to your account has been ' +
-                       'suspended, contact TMDB.'),
-    11: TMDBError('Internal error - Something went wrong. Contact TMDb.'),
-    12: None,
-    13: None,
-    14: TMDBRequestError('Authentication Failed.'),
-    15: TMDBError('Failed'),
-    16: TMDBError('Device Denied'),
-    17: TMDBError('Session Denied')}
+    1: None,                    # Success
+    2: TMDBRequestInvalid,      # Invalid service
+    3: TMDBRequestError,        # Authentication failed
+    4: TMDBRequestInvalid,      # Invalid format
+    5: TMDBRequestInvalid,      # Invalid parameters
+    6: TMDBRequestInvalid,      # Invalid id
+    7: TMDBKeyInvalid,          # Invalid API key
+    8: TMDBRequestError,        # Duplicate entry
+    9: TMDBOffline,             # Service offline
+    10: TMDBKeyRevoked,         # Suspended API key
+    11: TMDBError,              # Internal error
+    12: None,                   # Item update success
+    13: None,                   # Item delete success
+    14: TMDBRequestError,       # Authentication failed
+    15: TMDBError,              # Failed
+    16: TMDBError,              # Device denied
+    17: TMDBError,              # Session denied
+    18: TMDBRequestError,       # Validation denied
+    19: TMDBRequestInvalid,     # Invalid accept header
+    20: TMDBRequestInvalid,     # Invalid date range
+    21: TMDBRequestError,       # Entry not found
+    22: TMDBPagingIssue,        # Invalid page
+    23: TMDBRequestInvalid,     # Invalud date
+    24: TMDBError,              # Request time out
+    25: TMDBRequestError,       # Request limit reached
+    26: TMDBRequestInvalid,     # Missing usernam and password
+    27: TMDBRequestError,       # Too many append
+    28: TMDBRequestInvalid,     # Invalud timezone
+    29: TMDBRequestInvalid,     # Action confirmation required
+    30: TMDBRequestError,       # Invalid username or password
+    31: TMDBRequestError,       # Accound disabled
+    32: TMDBRequestError,       # Email not verified,
+    33: TMDBKeyInvalid,         # Invalud request token
+    34: TMDBRequestError        # Resource could not be found
+}
+
 
 def handle_status(data, query):
-    status = status_handlers[data.get('status_code', 1)]
-    if status is not None:
-        status.tmdberrno = data['status_code']
+    status_code = data.get('status_code', 1)
+    exception_class = status_handlers[status_code]
+    if exception_class is not None:
+        status_message = data.get('status_message', None)
+        status = exception_class(status_message)
+        status.tmdberrno = status_code
         status.query = query
         raise status

@@ -55,6 +55,7 @@ def _donothing(*args, **kwargs):
 
 try:
     import fcntl
+
     class Flock(object):
         """
         Context manager to flock file for the duration the object
@@ -96,7 +97,8 @@ try:
 
 except ImportError:
     import msvcrt
-    class Flock( object ):
+
+    class Flock(object):
         LOCK_EX = msvcrt.LK_LOCK
         LOCK_SH = msvcrt.LK_LOCK
 
@@ -207,7 +209,7 @@ class FileCacheObject(CacheObject):
         fd.write(self._buff.getvalue())
 
 
-class FileEngine( CacheEngine ):
+class FileEngine(CacheEngine):
     """Simple file-backed engine."""
     name = 'file'
     _struct = struct.Struct('HH')  # two shorts for version and count
@@ -256,7 +258,7 @@ class FileEngine( CacheEngine ):
                     else:
                         # let the unhandled error continue through
                         raise
-            elif e.errno == errno.EACCESS:
+            elif e.errno == errno.EACCES:
                 # file exists, but we do not have permission to access it
                 raise TMDBCacheReadError(self.cachefile)
             else:

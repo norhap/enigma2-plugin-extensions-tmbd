@@ -40,7 +40,7 @@ from time import strftime, localtime, mktime
 from meta import MetaParser, getctime, fileSize
 import kinopoisk, urllib2, tmbdYTTrailer
 
-plugin_version = "7.6"
+plugin_version = "7.7"
 
 epg_furtherOptions = False
 if hasattr(EPGSelection, "furtherOptions"):
@@ -102,6 +102,7 @@ def GetLanguageCode():
 config.plugins.tmbd = ConfigSubsection()
 config.plugins.tmbd.locale = ConfigText(default="ru", fixed_size = False)
 config.plugins.tmbd.alrernative_locale = ConfigText(default="en", fixed_size = False)
+config.plugins.tmbd.available_languages = ConfigSelection(choices = [("1", _("Press OK"))], default = "1")
 config.plugins.tmbd.skins = ConfigSelection(default = "0", choices = [("0", _("Small poster")), ("1", _("Large poster"))])
 config.plugins.tmbd.enabled = ConfigYesNo(default=True)
 config.plugins.tmbd.virtual_text = ConfigSelection(default = "0", choices = [("0", _("< empty >")), ("1", _("< text >"))])
@@ -395,6 +396,7 @@ class TMBD(Screen):
 		self.eventName = eventName
 		self.curResult = False
 		self.noExit = False
+		self.TVseries = False
 		self.onShow.append(self.selectionChanged)
 		self.movielist = movielist
 		self.callbackNeeded = callbackNeeded
@@ -797,6 +799,24 @@ class TMBD(Screen):
 							Extratext2 += "%s: %s\n" % (_("Country"), country)
 					except:
 						pass
+				try:
+					seasons = movie.seasons
+				except:
+					seasons = ""
+				if seasons:
+					Extratext2 += "%s: %s\n" % (_("Seasons"), seasons)
+				try:
+					number_of_episodes = movie.number_of_episodes
+				except:
+					number_of_episodes = ""
+				if number_of_episodes:
+					Extratext2 += "%s: %s\n" % (_("Episodes number"), number_of_episodes)
+				try:
+					number_of_seasons = movie.number_of_seasons
+				except:
+					number_of_seasons = ""
+				if number_of_seasons:
+					Extratext2 += "%s: %s\n" % (_("Seasons number"), number_of_seasons)
 				self["extralabel"].setText("%s%s" % (Extratext2, Extratext))
 
 	def removmenu(self):
@@ -828,11 +848,32 @@ class TMBD(Screen):
 			]
 		if config.plugins.tmbd.alrernative_locale.value and config.plugins.tmbd.alrernative_locale.value != config.plugins.tmbd.locale.value:
 			list.append((_("Search on alternative language"), self.alternativeSearch))
+		list.append((_("Search TV-series"), self.TVseriesSearch))
 		list.append((_("Settings"), self.Menu2))
 		self.session.openWithCallback(self.menuCallback, ChoiceBox, list = list, title= _("Select action:"))
 
 	def Menu2(self):
 		self.session.openWithCallback(self.workingFinished, TMBDSettings)
+
+	def TVseriesSearch(self):
+		if config.plugins.tmbd.alrernative_locale.value and config.plugins.tmbd.alrernative_locale.value != config.plugins.tmbd.locale.value:
+			menu = [(_("Main language"), "main"),(_("Alternative language"), "alter")]
+			def SearchAction(choice):
+				if choice is not None:
+					if choice[1] == "main":
+						self.TVseries = True
+						self.gotSearchString(ret=self.eventName)
+					elif choice[1] == "alter":
+						self.tmdb3 = tmdb.init_tmdb3(alternative_lang=config.plugins.tmbd.alrernative_locale.value)
+						if self.tmdb3 is None:
+							self["statusbar"].setText(_("Unknown error!"))
+							return
+						self.TVseries = True
+						self.gotSearchString(ret=self.eventName)
+			self.session.openWithCallback(SearchAction, ChoiceBox, title=_("Select action:"), list=menu)
+		else:
+			self.TVseries = True
+			self.gotSearchString(ret=self.eventName)
 
 	def saveresult(self):
 		list = [
@@ -1237,6 +1278,7 @@ class TMBD(Screen):
 		results = ""
 		self.resetLabels()
 		if self.tmdb3 is None:
+			self.TVseries = False
 			return
 		if not self.eventName:
 			s = self.session.nav.getCurrentService()
@@ -1248,10 +1290,14 @@ class TMBD(Screen):
 			title = self.eventName.split("(")[0].strip()
 			title = cutName(title)
 			try:
-				results = self.tmdb3.searchMovie(title)
+				if self.TVseries:
+					results = self.tmdb3.searchSeries(title)
+				else:
+					results = self.tmdb3.searchMovie(title)
 			except:
 				results = []
 			self.tmdb3 = tmdb.init_tmdb3()
+			self.TVseries = False
 			if len(results) == 0:
 				self["statusbar"].setText(_("Nothing found for: %s") % (self.eventName))
 				self["title"].setText("")
@@ -1274,6 +1320,7 @@ class TMBD(Screen):
 			self["menu"].setList(self.resultlist)
 		else:
 			self.tmdb3 = tmdb.init_tmdb3()
+			self.TVseries = False
 			self["title"].setText(_("Enter or choose event for search ..."))
 
 	def TMBDPoster(self):
@@ -1386,6 +1433,7 @@ class TMBDSettings(Screen, ConfigListScreen):
 		self.cfg_Event = getConfigListEntry(_("Event mode for search"), config.plugins.tmbd.ext_menu_event)
 		self.cfg_noevent = getConfigListEntry(_("Open plugin if there is no event"), config.plugins.tmbd.no_event)
 		self.cfg_locale = getConfigListEntry(_('Select the search language'), config.plugins.tmbd.locale)
+		self.cfg_available_languages = getConfigListEntry(_('Examples languages'), config.plugins.tmbd.available_languages)
 		self.cfg_alrernative_locale = getConfigListEntry(_('Alternative language for search'), config.plugins.tmbd.alrernative_locale)
 		self.cfg_hotkey = getConfigListEntry(_('\"TMBD Details: current event\" quick button'), config.plugins.tmbd.hotkey)
 		self.cfg_menu_profile = getConfigListEntry(_('Choice profile in search'), config.plugins.tmbd.menu_profile)
@@ -1402,6 +1450,7 @@ class TMBDSettings(Screen, ConfigListScreen):
 		if config.plugins.tmbd.profile.value == "0":
 			list.append(self.cfg_locale)
 			list.append(self.cfg_alrernative_locale)
+			list.append(self.cfg_available_languages)
 		else:
 			list.append(self.cfg_kinopoisk_data)
 		if screenWidth >= 1280 and screenWidth < 1920:
@@ -1436,6 +1485,8 @@ class TMBDSettings(Screen, ConfigListScreen):
 			self.session.open(KinopoiskConfiguration)
 		if sel == config.plugins.tmbd.yt_setup:
 			self.session.open(tmbdYTTrailer.TmbdYTTrailerSetup)
+		if config.plugins.tmbd.available_languages:
+			self.session.open(MessageBox, "en/eng', ru/rus, fr/fra, bg/bul, it/ita, po/pol, lv/lav, de/ger, da/dan, nl/dut, fi/fin, el/gre, he/heb, hu/hun, no/nor, pt/por, ro/ron, sk/slo, sl/slv, es/est, sv/swe, tr/tur, uk/ukr, cz/cze", MessageBox.TYPE_INFO)
 
 	def keyLeft(self):
 		ConfigListScreen.keyLeft(self)

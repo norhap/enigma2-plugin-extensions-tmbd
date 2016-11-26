@@ -83,8 +83,7 @@ class Poller(object):
         # apply data directly, bypassing callable function
         unfilled = False
         for k, v in self.lookup.items():
-            if (k in data) and \
-                    ((data[k] is not None) if callable(self.func) else True):
+            if (k in data) and (not callable(self.func) or data[k] is not None):
                 # argument received data, populate it
                 setattr(self.inst, v, data[k])
             elif v in self.inst._data:
@@ -110,7 +109,7 @@ class Data(object):
     This maps to a single key in a JSON dictionary received from the API
     """
     def __init__(self, field, initarg=None, handler=None, poller=None,
-                 raw=True, default=u'', lang=False):
+                 raw=True, default=u'', lang=None, passthrough={}):
         """
         This defines how the dictionary value is to be processed by the
         poller
@@ -142,6 +141,7 @@ class Data(object):
         self.raw = raw
         self.default = default
         self.sethandler(handler)
+        self.passthrough = passthrough
 
     def __get__(self, inst, owner):
         if inst is None:
@@ -160,6 +160,9 @@ class Data(object):
         if isinstance(value, Element):
             value._locale = inst._locale
             value._session = inst._session
+
+            for source, dest in self.passthrough:
+                setattr(value, dest, getattr(inst, source))
         inst._data[self.field] = value
 
     def sethandler(self, handler):
@@ -181,7 +184,7 @@ class Datalist(Data):
     Response definition class for list data
     This maps to a key in a JSON dictionary storing a list of data
     """
-    def __init__(self, field, handler=None, poller=None, sort=None, raw=True):
+    def __init__(self, field, handler=None, poller=None, sort=None, raw=True, passthrough={}):
         """
         This defines how the dictionary value is to be processed by the
         poller
@@ -206,7 +209,7 @@ class Datalist(Data):
                        force the data to instead be passed in as the first
                        argument
         """
-        super(Datalist, self).__init__(field, None, handler, poller, raw)
+        super(Datalist, self).__init__(field, None, handler, poller, raw, passthrough=passthrough)
         self.sort = sort
 
     def __set__(self, inst, value):
@@ -217,6 +220,10 @@ class Datalist(Data):
                 if isinstance(val, Element):
                     val._locale = inst._locale
                     val._session = inst._session
+
+                    for source, dest in self.passthrough.items():
+                        setattr(val, dest, getattr(inst, source))
+
                 data.append(val)
             if self.sort:
                 if self.sort is True:
@@ -232,7 +239,7 @@ class Datadict(Data):
     This maps to a key in a JSON dictionary storing a dictionary of data
     """
     def __init__(self, field, handler=None, poller=None, raw=True,
-                       key=None, attr=None):
+                       key=None, attr=None, passthrough={}):
         """
         This defines how the dictionary value is to be processed by the
         poller
@@ -252,7 +259,7 @@ class Datadict(Data):
                        the field name from the source data is used instead
             attr    -- (optional) name of attribute in resultant data to be
                        used as the key in the stored dictionary. if this is
-                       not the field name from the source data is used
+                       None, the field name from the source data is used
                        instead
             raw     -- (optional) if the specified handler is an Element
                        class, the data will be passed into it using the
@@ -262,7 +269,7 @@ class Datadict(Data):
         """
         if key and attr:
             raise TypeError("`key` and `attr` cannot both be defined")
-        super(Datadict, self).__init__(field, None, handler, poller, raw)
+        super(Datadict, self).__init__(field, None, handler, poller, raw, passthrough=passthrough)
         if key:
             self.getkey = lambda x: x[key]
         elif attr:
@@ -279,10 +286,15 @@ class Datadict(Data):
                 if isinstance(val, Element):
                     val._locale = inst._locale
                     val._session = inst._session
+
+                    for source, dest in self.passthrough.items():
+                        setattr(val, dest, getattr(inst, source))
+
                 data[self.getkey(val)] = val
         inst._data[self.field] = data
 
-class ElementType( type ):
+
+class ElementType(type):
     """
     MetaClass used to pre-process Element-derived classes and set up the
     Data definitions
@@ -294,7 +306,7 @@ class ElementType( type ):
         # a copy into this class's attributes
         # run in reverse order so higher priority values overwrite lower ones
         data = {}
-        pollers = {'_populate':None}
+        pollers = {'_populate': None}
 
         for base in reversed(bases):
             if isinstance(base, mcs):
@@ -315,7 +327,7 @@ class ElementType( type ):
         if '_populate' in attrs:
             pollers['_populate'] = attrs['_populate']
 
-        # process all defined Data attribues, testing for use as an initial
+        # process all defined Data attributes, testing for use as an initial
         # argument, and building a list of what Pollers are used to populate
         # which Data points
         pollermap = dict([(k, []) for k in pollers])
@@ -348,7 +360,7 @@ class ElementType( type ):
                 attr.poller = poller
                 attrs[attr.name] = attr
 
-        # build sorted list of arguments used for intialization
+        # build sorted list of arguments used for initialization
         attrs['_InitArgs'] = tuple(
                 [a.name for a in sorted(initargs, key=lambda x: x.initarg)])
         return type.__new__(mcs, name, bases, attrs)
@@ -386,6 +398,6 @@ class ElementType( type ):
         return obj
 
 
-class Element( object ):
+class Element(object):
     __metaclass__ = ElementType
     _lang = 'en'

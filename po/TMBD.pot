@@ -795,3 +795,23 @@ msgstr ""
 msgid "Search on alternative language"
 msgstr ""
 
+msgid "Alternative language"
+msgstr ""
+
+msgid "Main language"
+msgstr ""
+
+msgid "Search TV-series"
+msgstr ""
+
+msgid "Examples languages"
+msgstr ""
+
+msgid "Seasons"
+msgstr ""
+
+msgid "Episodes number"
+msgstr ""
+
+msgid "Seasons number"
+msgstr ""
