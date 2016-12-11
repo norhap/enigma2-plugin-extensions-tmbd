@@ -1,0 +1,832 @@
+# Portuguese Translation for TMBD enigma2 plugin
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-11-29 23:51+0000\n"
+"PO-Revision-Date: 2016-11-30 00:39+0000\n"
+"Language-Team: BH-Team\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.11\n"
+"Last-Translator: nunigaia\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: pt_PT\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: plugin.py:1252
+#, python-format
+msgid " (%s times)\n"
+msgstr " (%s vezes)\n"
+
+#: plugin.py:2442
+#, python-format
+msgid " (%s votes)\n"
+msgstr "(%s votos)\n"
+
+#: plugin.py:1252 plugin.py:2442
+msgid " User Rating: "
+msgstr "Classificação de usuários:"
+
+#: plugin.py:1179 plugin.py:1566 plugin.py:2194 plugin.py:2784
+msgid " min."
+msgstr " min."
+
+#: plugin.py:918 plugin.py:2170
+msgid " times"
+msgstr "tempos"
+
+#: plugin.py:1664
+msgid "\"TMBD Details: current event\" quick button"
+msgstr "\"TMBD detalhes: evento atual\" botão rápido"
+
+#: plugin.py:1280 plugin.py:2462
+#, python-format
+msgid "%d bytes"
+msgstr "%d bytes"
+
+#: plugin.py:3123 plugin.py:3360
+#, python-format
+msgid ""
+"%s\n"
+"Profile: %s\n"
+"Select event for search:"
+msgstr ""
+"%s\n"
+"Perfil: %s\n"
+"Selecionar evento para pesquisa:"
+
+#: plugin.py:1326 plugin.py:1350 plugin.py:2508 plugin.py:2532
+#, python-format
+msgid "%s eit-file removed!"
+msgstr "%s arquivo-eit removido!"
+
+#: plugin.py:1333 plugin.py:1377 plugin.py:2515 plugin.py:2559
+#, python-format
+msgid "%s meta-file removed!"
+msgstr "%s meta-arquivo removido!"
+
+#: plugin.py:1313 plugin.py:1370 plugin.py:2495 plugin.py:2552
+#, python-format
+msgid "%s poster removed!"
+msgstr "%s poster removido!"
+
+#: plugin.py:1566 plugin.py:2784
+msgid "/ Duration: "
+msgstr "/ Duração: "
+
+#: plugin.py:1177
+msgid "0 min."
+msgstr "0 min."
+
+#: plugin.py:138
+msgid "< empty >"
+msgstr "(vazio)"
+
+#: plugin.py:138
+msgid "< text >"
+msgstr "< texto >"
+
+#: plugin.py:3047
+msgid "Activate Poster Preview"
+msgstr "Ativar visualização de Poster"
+
+#: plugin.py:974 plugin.py:2216
+msgid "Actors"
+msgstr "Atores"
+
+#: plugin.py:1262 plugin.py:2444
+msgid "Actors:"
+msgstr "Atores:"
+
+#: plugin.py:1685
+msgid "Add \"Search event in TMBD\"  to event menu"
+msgstr "Adicionar \"Evento de pesquisa em TMBD\" ao menu do evento"
+
+#: plugin.py:1671
+msgid "Add \"open plugin VCS\" Info/EPG Button to nStreamVOD"
+msgstr "Adicionar \"abrir plugin VCS\" botão Info/EPG para nStreamVOD"
+
+#: plugin.py:1670
+msgid "Add \"search in TMBD\" Info/EPG Button to nStreamVOD"
+msgstr "Adicionar \"procurar em TMBD\" botão Info/EPG para nStreamVOD"
+
+#: plugin.py:1669
+msgid "Add yt-trailer to context menu EPG"
+msgstr "Adicionar yt-trailer ao menu de contexto EPG"
+
+#: plugin.py:2223
+msgid "Age"
+msgstr "Idade"
+
+#: plugin.py:2440
+msgid "Age:"
+msgstr "Idade:"
+
+#: plugin.py:1022 plugin.py:2274
+msgid "All posters for movie"
+msgstr "Todos os posters do filme"
+
+#: plugin.py:1396 plugin.py:2578
+msgid "All posters removed!"
+msgstr "Todos os posters removidos!"
+
+#: plugin.py:2187
+msgid "Appeared"
+msgstr "Apareceu em"
+
+#: plugin.py:867
+msgid "Appeared: "
+msgstr "Apareceu em:"
+
+#: plugin.py:1702
+msgid "Behavior after searching trailers"
+msgstr "Comportamento depois de pesquisar trailers"
+
+#: tmbdYTTrailer.py:293
+msgid "Best resolution for first found"
+msgstr "Melhor resolução para o primeiro encontrado"
+
+#: plugin.py:1636 tmbdYTTrailer.py:278
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: plugin.py:998
+msgid "Certification"
+msgstr "Certificação"
+
+#: plugin.py:3048
+msgid "Change Poster Preview position"
+msgstr "Mudar a posição da Previsualização do Poster"
+
+#: plugin.py:3121 plugin.py:3358
+msgid "Change profile"
+msgstr "Alterar perfil"
+
+#: plugin.py:469
+msgid "Channel Selection"
+msgstr "Seleção de Canais"
+
+#: plugin.py:1696
+msgid "Check status Internet"
+msgstr "Verificar o estado da Internet"
+
+#: plugin.py:1675
+msgid "Choice database to search"
+msgstr "Escolha base de dados para pesquisar"
+
+#: plugin.py:1665
+msgid "Choice profile in search"
+msgstr "Escolha o perfil na procura"
+
+#: plugin.py:462
+msgid "Choice profile in search:"
+msgstr "Escolha o perfil na procura:"
+
+#: plugin.py:1603
+msgid "Choose action:"
+msgstr "Escolher ação:"
+
+#: tmbdYTTrailer.py:299
+msgid "Close Player with exit-key"
+msgstr "Fechar Leitor com a tecla <EXIT>"
+
+#: plugin.py:1698
+msgid "Close plugin EXIT Button"
+msgstr "Fechar o plugin tecla <EXIT>"
+
+#: plugin.py:739 plugin.py:1990
+msgid "Close plugin?"
+msgstr "Fechar o Plugin?"
+
+#: plugin.py:1012 plugin.py:2180
+msgid "Country"
+msgstr "País"
+
+#: plugin.py:1210 plugin.py:2432
+msgid "Country:"
+msgstr "País:"
+
+#: plugin.py:1019 plugin.py:2271
+msgid "Current poster and info"
+msgstr "Informação e cartaz atual"
+
+#: plugin.py:1667
+msgid "Data processing method for Kinopoisk.ru"
+msgstr "Método de processamento de dados para Kinopoisk.ru"
+
+#: plugin.py:3045
+msgid "Deactivate Poster Preview"
+msgstr "Desactivar a Previsualização do Poster"
+
+#: plugin.py:933 plugin.py:2148
+#, python-format
+msgid "Details for: %s"
+msgstr "Detalhes para: %s"
+
+#: plugin.py:954 plugin.py:2209
+msgid "Director"
+msgstr "Diretor"
+
+#: plugin.py:2195
+msgid "Duration"
+msgstr "Duração"
+
+#: plugin.py:167
+msgid "EPGSelection (context menu)"
+msgstr "EPGSelection (menu de contexto)"
+
+#: plugin.py:167
+msgid "EPGSelection/EventView/EventInfo plugins"
+msgstr "EPGSelection/EventView/EventInfo plugins"
+
+#: plugin.py:1455 plugin.py:1469 plugin.py:2638 plugin.py:2652
+msgid "Edit text to search for"
+msgstr "Editar texto a pesquisar"
+
+#: plugin.py:1547 plugin.py:2756
+msgid "Enter or choose event for search ..."
+msgstr "Digite ou escolha o evento para a pesquisa..."
+
+#: tmbdYTTrailer.py:313
+msgid "Enter text for search YT-Trailer:"
+msgstr "Digite o texto para pesquisar YT-Trailer:"
+
+#: plugin.py:1462 plugin.py:2645
+msgid "Enter text to search for"
+msgstr "Introduza o texto a pesquisar"
+
+#: plugin.py:1661
+msgid "Event mode for search"
+msgstr "Modo de evento para a pesquisa"
+
+#: plugin.py:167 plugin.py:169
+msgid "EventView (context menu)/EventInfo plugins"
+msgstr "EventView (menu de contexto) / plugins EventInfo"
+
+#: plugin.py:635 plugin.py:1887
+msgid "Exit"
+msgstr "Sair"
+
+#: tmbdYTTrailer.py:290
+msgid "Extended search filter"
+msgstr "Filtro de pesquisa extendido"
+
+#: plugin.py:119
+msgid "GREEN"
+msgstr "VERDE"
+
+#: plugin.py:944 plugin.py:2202
+msgid "Genre"
+msgstr "Género"
+
+#: plugin.py:1220 plugin.py:2434
+msgid "Genre:"
+msgstr "Género:"
+
+#: plugin.py:231
+msgid "Go to next service"
+msgstr "Ir para o próximo serviço"
+
+#: plugin.py:230
+msgid "Go to previous service"
+msgstr "Ir para o serviço anterior"
+
+#: plugin.py:124
+msgid "HELP"
+msgstr "AJUDA"
+
+#: tmbdYTTrailer.py:298
+msgid "How many search results will be returned in list mode."
+msgstr "Quantos resultados de pesquisa serão retornados no modo lista."
+
+#: plugin.py:1431 plugin.py:2613
+msgid "Install YTTrailer..."
+msgstr "Instale o YTTrailer..."
+
+#: plugin.py:1605 plugin.py:1616
+msgid "Install packages library lmxl"
+msgstr "Instalar pacotes biblioteca lmxl"
+
+#: plugin.py:1999
+msgid ""
+"Kinopoisk.ru\n"
+"Developer: Dima73(Dimitrij) 2012/2014"
+msgstr ""
+"Kinopoisk.ru\n"
+"Developer: Dima73(Dimitrij) 2012/2014"
+
+#: plugin.py:135
+msgid "Large poster"
+msgstr "Poster grande"
+
+#: plugin.py:2732 plugin.py:2734
+msgid ""
+"Library lmxl is not installed!\n"
+"Try to install the library again or change the method of processing data in "
+"the settings menu."
+msgstr ""
+"Biblioteca lmxl não está instalado!\n"
+"Tente instalar a biblioteca de novo ou alterar o método de processamento de "
+"dados no menu de configurações."
+
+#: plugin.py:141 plugin.py:160
+msgid "List: kinopoisk.ru / themoviedb.org"
+msgstr "Lista: kinopoisk.ru / themoviedb.org"
+
+#: plugin.py:141 plugin.py:160
+msgid "List: themoviedb.org / kinopoisk.ru"
+msgstr "Lista: themoviedb.org / kinopoisk.ru"
+
+#: plugin.py:226 plugin.py:498
+msgid "Lookup in TMBD"
+msgstr "Pesquisa em TMBD"
+
+#: plugin.py:638 plugin.py:803 plugin.py:1890 plugin.py:2090
+msgid "Manual input"
+msgstr "Entrada manual"
+
+#: tmbdYTTrailer.py:302
+msgid "Manual search"
+msgstr "Procura manual"
+
+#: plugin.py:117
+msgid "NONE"
+msgstr "Nenhum"
+
+#: plugin.py:3114 plugin.py:3351
+#, python-format
+msgid "Next: %s"
+msgstr "Próximo: %s"
+
+#: plugin.py:1061 plugin.py:2314
+msgid "No"
+msgstr "Não"
+
+#: plugin.py:1968
+msgid "No connect to kinopoisk.ru..."
+msgstr "Não ligar a kinopoisk.ru..."
+
+#: plugin.py:720
+msgid "No connect to www.themoviedb.org"
+msgstr "Não ligar a www.themoviedb.org"
+
+#: plugin.py:730 plugin.py:1981
+msgid "Not found network connection..."
+msgstr "Não foi encontrada uma ligação de rede..."
+
+#: plugin.py:1527
+#, python-format
+msgid "Nothing found for: %s"
+msgstr "Sem resultados para: %s"
+
+#: plugin.py:2737
+#, python-format
+msgid "Nothing found for: %s or no answer in kinopoisk.ru"
+msgstr "Nada foi encontrado para: %s ou sem resposta em kinopoisk.ru"
+
+#: plugin.py:3113 plugin.py:3350
+#, python-format
+msgid "Now: %s"
+msgstr "AGORA: %s"
+
+#: plugin.py:2904
+msgid "OK"
+msgstr "OK"
+
+#: plugin.py:1021 plugin.py:2273
+msgid "Only current info"
+msgstr "Apenas a informação atual"
+
+#: plugin.py:1020 plugin.py:2272
+msgid "Only current poster"
+msgstr "Só o poster atual"
+
+#: plugin.py:2313
+msgid "Only poster"
+msgstr "Só Poster"
+
+#: plugin.py:1686
+msgid "Open VirtualKeyBoard"
+msgstr "Abrir Teclado Virtual "
+
+#: plugin.py:1662
+msgid "Open plugin if there is no event"
+msgstr "Abrir plugin se não há nenhum evento"
+
+#: plugin.py:1668
+msgid "Open yt-trailer setup"
+msgstr "Abrir definição de yt-trailer"
+
+#: plugin.py:1606 plugin.py:1619
+msgid "Option for all images"
+msgstr "Opção para todas as imagens"
+
+#: plugin.py:1607 plugin.py:1622
+msgid "Option only python 2.7 images"
+msgstr "Opção só para as imagens python 2.7"
+
+#: plugin.py:801 plugin.py:2088
+msgid "Please select the matching entry:"
+msgstr "Por favor, selecionar entrada correspondente:"
+
+#: plugin.py:1089 plugin.py:2341 plugin.py:2361
+#, python-format
+msgid "Poster %s saved!"
+msgstr "Cartaz %s guardado!"
+
+#: plugin.py:2899 plugin.py:3032
+msgid "Poster Preview"
+msgstr "Pré-Visualização do cartaz"
+
+#: plugin.py:3541 plugin.py:3542 plugin.py:3581 plugin.py:3582
+msgid "Poster Preview (TMBD)"
+msgstr "Pré-Visualização do cartaz (TMBD)"
+
+#: plugin.py:161 plugin.py:162 tmbdYTTrailer.py:34
+msgid "Press OK"
+msgstr "Prima OK "
+
+#: tmbdYTTrailer.py:304
+msgid "Press OK for manual search YT-Trailer."
+msgstr "Prima OK para procura manual YT-Trailer."
+
+#: tmbdYTTrailer.py:99 tmbdYTTrailer.py:226
+msgid "Problems with YT-Feeds!"
+msgstr "Problemas com YT-Feeds!"
+
+#: plugin.py:964
+msgid "Producers"
+msgstr "Produtores"
+
+#: plugin.py:1666
+msgid "Profile movielist context menu"
+msgstr "Menu de contexto do perfil lista de filmes"
+
+#: plugin.py:1912
+msgid "Profile: kinopoisk.ru"
+msgstr "Perfil: kinopoisk.ru"
+
+#: plugin.py:660
+msgid "Profile: themoviedb.org"
+msgstr "Perfil: themoviedb.org"
+
+#: plugin.py:3520 plugin.py:3547 plugin.py:3560
+msgid "Query details from the Internet Movie Database"
+msgstr "Consulta detalhes da Base de dados de filmes da Internet"
+
+#: plugin.py:121
+msgid "RADIO"
+msgstr "RÁDIO"
+
+#: plugin.py:118
+msgid "RED"
+msgstr "VERMELHO"
+
+#: plugin.py:1384 plugin.py:2566
+msgid "Remove all posters?"
+msgstr "Remover todos os posters?"
+
+#: plugin.py:1290 plugin.py:2472
+#, python-format
+msgid ""
+"Remove current poster and info for:\n"
+"%s ?"
+msgstr "Remover o poster atual e informação para: %s?"
+
+#: plugin.py:1037 plugin.py:2289
+msgid "Remove poster / info"
+msgstr "Remover o poster / informação"
+
+#: tmbdYTTrailer.py:296
+msgid "Results in list mode"
+msgstr "Resultados em modo lista"
+
+#: plugin.py:2231
+msgid "Roles duplicated"
+msgstr "Funções duplicadas"
+
+#: plugin.py:2446
+msgid "Roles duplicated:"
+msgstr "Funções duplicadas:"
+
+#: plugin.py:1637 tmbdYTTrailer.py:279
+msgid "Save"
+msgstr "Salvar"
+
+#: plugin.py:805 plugin.py:2244
+msgid "Save info / poster"
+msgstr "Salvar informações / poster"
+
+#: plugin.py:1066 plugin.py:2319
+#, python-format
+msgid ""
+"Save poster and info for:\n"
+" %s ?"
+msgstr "Salvar o poster informação para: %s?"
+
+#: plugin.py:807 plugin.py:1036 plugin.py:2093 plugin.py:2095 plugin.py:2288
+msgid "Search Trailer"
+msgstr "Procurar Trailer"
+
+#: plugin.py:3588
+msgid "Search event in TMBD"
+msgstr "Pesquisar evento em TMBD"
+
+#: plugin.py:3565
+msgid "Search for movie in TMBD"
+msgstr "Procurar filme em TMBD"
+
+#: plugin.py:1874 plugin.py:2012 plugin.py:2702
+msgid "Search in kinopoisk.ru ,please wait ..."
+msgstr "Procurar em kinopoisk.ru, por favor aguarde..."
+
+#: plugin.py:761
+msgid "Search in themoviedb.org ,please wait ..."
+msgstr "Procurar em themoviedb.org, por favor aguarde..."
+
+#: plugin.py:3524 plugin.py:3525 plugin.py:3564
+msgid "Search movie in TMBD"
+msgstr "Procurar filme em TMBD"
+
+#: plugin.py:799 plugin.py:2086
+#, python-format
+msgid "Search results for: %s"
+msgstr "Pesquisando resultados para: %s"
+
+#: plugin.py:3592 plugin.py:3594 plugin.py:3597 plugin.py:3598
+msgid "Search yt-trailer for event"
+msgstr "Pesquisar yt-trailer para evento"
+
+#: plugin.py:3165
+msgid "Select Profile"
+msgstr "Seleccionar perfil"
+
+#: plugin.py:265 plugin.py:1050 plugin.py:2302
+msgid "Select action:"
+msgstr "Selecionar ação:"
+
+#: plugin.py:1703
+msgid "Select folder for covers"
+msgstr "Seleccione a pasta para capas"
+
+#: plugin.py:1035 plugin.py:1043 plugin.py:2287 plugin.py:2295
+msgid "Select from Favourites"
+msgstr "Selecione dos Favoritos"
+
+#: plugin.py:1663
+msgid "Select the search language"
+msgstr "Selecione o idioma de pesquisa"
+
+#: plugin.py:1680
+msgid "Select your skins"
+msgstr "Selecione as suas skins"
+
+#: tmbdYTTrailer.py:292
+msgid "Set extended search filter, e.g. ru."
+msgstr "Defina o filtro de pesquisa estendida, por ex: pt."
+
+#: plugin.py:1038 plugin.py:1044 plugin.py:2290 plugin.py:2296
+msgid "Settings"
+msgstr "Definições"
+
+#: plugin.py:1635
+msgid "Settings TMBD Details Plugin..."
+msgstr "Definições TMBD Detalhes do Plugin..."
+
+#: plugin.py:3514 plugin.py:3554
+msgid "Setup menu"
+msgstr "Menu de Definições"
+
+#: plugin.py:1660
+msgid "Show \"TMBD Details: current event\" in extensions menu"
+msgstr "Mostrar \"TMBD detalhes: evento atual\" no menu de extensões"
+
+#: plugin.py:1697
+msgid "Show info for all types of movies"
+msgstr "Mostrar informação para todos os tipos de filmes"
+
+#: plugin.py:808 plugin.py:2096
+msgid "Show movie details"
+msgstr "Mostrar detalhes do filme"
+
+#: plugin.py:1687
+msgid "Show plugin in channel selection context menu"
+msgstr "Mostrar o plugin no menu de contexto de seleção de canal"
+
+#: plugin.py:930 plugin.py:2147
+msgid "Show search results"
+msgstr "Mostrar os resultados da pesquisa"
+
+#: plugin.py:135
+msgid "Small poster"
+msgstr "Pequeno poster"
+
+#: plugin.py:985
+msgid "Studios"
+msgstr "Estúdio"
+
+#: plugin.py:122
+msgid "TEXT"
+msgstr "TEXTO"
+
+#: plugin.py:420 plugin.py:423 plugin.py:3124 plugin.py:3361 plugin.py:3513
+#: plugin.py:3553
+msgid "TMBD Details"
+msgstr "Detalhes TMBD"
+
+#: plugin.py:748
+msgid ""
+"TMBD Details Plugin\n"
+"Developer: Nikolasi,vlamo,Dima73\n"
+"(c)2012"
+msgstr ""
+"TMBD Details Plugin\n"
+"Developer: Nikolasi,vlamo,Dima73\n"
+"(c)2012"
+
+#: plugin.py:3546
+msgid "TMBD Details:current event"
+msgstr "Detalhes TMBD: evento atual"
+
+#: plugin.py:3519 plugin.py:3559
+msgid "TMBD details for event"
+msgstr "Detalhes TMBD para evento"
+
+#: plugin.py:123
+msgid "TV"
+msgstr "TV"
+
+#: plugin.py:1034 plugin.py:1042 plugin.py:2286 plugin.py:2294
+msgid "Text editing"
+msgstr "Edição de texto"
+
+#: plugin.py:624
+msgid "The Internet Movie Database"
+msgstr "Base de dados de filmes na Internet"
+
+#: plugin.py:1539 plugin.py:2748
+#, python-format
+msgid "Total results: %s"
+msgstr "Total de resultados: %s"
+
+#: plugin.py:664
+msgid "Unknown error!"
+msgstr "Ocorreu um erro desconhecido!"
+
+#: plugin.py:901 plugin.py:2157
+msgid "User Rating"
+msgstr "Classificação do utilizador"
+
+#: plugin.py:918 plugin.py:2170
+msgid "Votes"
+msgstr "Votos"
+
+#: plugin.py:1028 plugin.py:2280
+msgid "What exactly do you want to delete?"
+msgstr "O que exatamente você quer apagar?"
+
+#: tmbdYTTrailer.py:295
+msgid ""
+"What maximum resolution used, if available.\n"
+"If you have a slow Internet connection, you can use a lower resolution."
+msgstr ""
+"Qual é a resolução máxima usada, se disponível.\n"
+"Se tiver uma conexão de Internet lenta, pode usar uma resolução menor."
+
+#: tmbdYTTrailer.py:301
+msgid "When not enabled, Player close with only stop key."
+msgstr "Quando não estiver ativado, Leitor fecha apenas com a tecla stop."
+
+#: plugin.py:1280 plugin.py:2462
+msgid "Write event to new eit-file:\n"
+msgstr "Gravar eventos em novos arquivos-eit:\n"
+
+#: plugin.py:1169 plugin.py:2414
+msgid "Write to new meta-file for:\n"
+msgstr "Escreva para novo meta-arquivo para:\n"
+
+#: plugin.py:120
+msgid "YELLOW"
+msgstr "AMARELO"
+
+#: tmbdYTTrailer.py:140
+msgid "YT Trailer-List"
+msgstr "Lista-YT Trailer"
+
+#: tmbdYTTrailer.py:247
+msgid "YT-Trailer Player"
+msgstr "Leitor YT-Trailer"
+
+#: tmbdYTTrailer.py:277 tmbdYTTrailer.py:310
+msgid "YT-Trailer Setup"
+msgstr "Definições de YT-Trailer"
+
+#: plugin.py:1059 plugin.py:2311
+msgid "Yes"
+msgstr "Sim"
+
+#: plugin.py:1060 plugin.py:2312
+msgid "Yes,but write new meta-file"
+msgstr "Sim, mas escrever novo meta-arquivo"
+
+#: plugin.py:151
+msgid "ask user"
+msgstr "perguntar ao utilizador"
+
+#: plugin.py:147
+msgid "choice now/next event"
+msgstr "escolha agora/próximo evento"
+
+#: plugin.py:151
+msgid "close"
+msgstr "fechar"
+
+#: plugin.py:167 plugin.py:169
+msgid "disabled"
+msgstr "desativado"
+
+#: plugin.py:455 plugin.py:459 plugin.py:3178 plugin.py:3182 plugin.py:3187
+msgid "kinopoisk.ru"
+msgstr "Kinopoisk.ru"
+
+#: plugin.py:153
+msgid "kinopoisk.ru (only russian language)"
+msgstr "Kinopoisk.ru (somente idioma russo)"
+
+#: tmbdYTTrailer.py:236 tmbdYTTrailer.py:245
+msgid "leave YT-Trailer player..."
+msgstr "abandona o leitor de YT-Trailer..."
+
+#: plugin.py:894
+msgid "no user rating yet"
+msgstr "Não classificado ainda pelo utilizador"
+
+#: plugin.py:147
+msgid "only current event"
+msgstr "apenas o evento atual"
+
+#: plugin.py:141 plugin.py:160
+msgid "only current profile"
+msgstr "só o perfil atual"
+
+#: plugin.py:258
+msgid "open plugin VCS"
+msgstr "abrir o plugin VCS"
+
+#: plugin.py:171
+msgid "run first"
+msgstr "executar primeiro"
+
+#: plugin.py:256 plugin.py:262
+msgid "search in TMBD"
+msgstr "procurar em TMBD"
+
+#: tmbdYTTrailer.py:240
+msgid "show VCS..."
+msgstr "Mostrar VCS..."
+
+#: plugin.py:171
+msgid "show list"
+msgstr "mostrar a lista"
+
+#: plugin.py:257 plugin.py:263
+msgid "standard info"
+msgstr "informação padrão"
+
+#: plugin.py:153 plugin.py:454 plugin.py:460 plugin.py:3179 plugin.py:3181
+#: plugin.py:3189
+msgid "themoviedb.org"
+msgstr "themoviedb.org"
+
+msgid "Alternative language for search"
+msgstr "Idioma alternativo para a pesquisa"
+
+msgid "Search on alternative language"
+msgstr "Pesquisa no idioma alternativo"
+
+msgid "Alternative language"
+msgstr "Idioma alternativo"
+
+msgid "Main language"
+msgstr "Idioma principal"
+
+msgid "Search TV-series"
+msgstr "Pesquisa-Séries de TV"
+
+msgid "Examples languages"
+msgstr "Idiomas de exemplos"
+
+msgid "Seasons"
+msgstr "Temporadas"
+
+msgid "Episodes number"
+msgstr "Número de episódios"
+
+msgid "Seasons number"
+msgstr "Número de temporadas"
