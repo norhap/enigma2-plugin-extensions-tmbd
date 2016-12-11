@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Enigma 2 TMBD Plugin\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-09-24 16:16+0200\n"
-"PO-Revision-Date: 2016-07-24 10:50+0300\n"
+"PO-Revision-Date: 2016-12-11 18:17+0200\n"
 "Last-Translator: vovan43 <vovan43@ex.ua>\n"
 "Language-Team: Dima-73@inbox.lv\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2;\n"
 "Language: uk_UA\n"
-"X-Generator: Poedit 1.8.8\n"
+"X-Generator: Poedit 1.8.11\n"
 
 msgid " (%s times)\n"
 msgstr " (%s раз)\n"
@@ -426,6 +426,9 @@ msgstr "Пошук трейлерів"
 msgid "Search event in TMBD"
 msgstr "Пошук деталей подій в TMBD"
 
+msgid "Search movie in TMBD"
+msgstr "Пошук відео в TMBD"
+
 msgid "Search for movie in TMBD"
 msgstr "Пошук для відео в TMBD"
 
@@ -600,7 +603,7 @@ msgid "leave YT-Trailer player..."
 msgstr "вийти з YT-Trailer плеєру..."
 
 msgid "no user rating yet"
-msgstr "Немає рейтинга"
+msgstr "немає рейтинга"
 
 msgid "no votes"
 msgstr "немає голосування"
@@ -628,3 +631,30 @@ msgstr "показати список"
 
 msgid "standard info"
 msgstr "стандартна інфо"
+
+msgid "Alternative language for search"
+msgstr "Альтернативна мова для пошуку"
+
+msgid "Search on alternative language"
+msgstr "Пошук на альтернативній мові"
+
+msgid "Alternative language"
+msgstr "Альтернативна мова"
+
+msgid "Main language"
+msgstr "Основна мова"
+
+msgid "Search TV-series"
+msgstr "Пошук ТВ серій"
+
+msgid "Examples languages"
+msgstr "Приклади мов"
+
+msgid "Seasons"
+msgstr "Сезони"
+
+msgid "Episodes number"
+msgstr "Номер епізодів"
+
+msgid "Seasons number"
+msgstr "Номер сезонів"
