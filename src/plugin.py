@@ -40,7 +40,7 @@ from time import strftime, localtime, mktime
 from meta import MetaParser, getctime, fileSize
 import kinopoisk, urllib2, tmbdYTTrailer
 
-plugin_version = "7.7"
+plugin_version = "7.8"
 
 epg_furtherOptions = False
 if hasattr(EPGSelection, "furtherOptions"):
@@ -391,13 +391,13 @@ class TMBD(Screen):
 	</screen>"""
 
 	def __init__(self, session, eventName, callbackNeeded=False, movielist=False):
-		Screen.__init__(self, session)
 		self.skin = self.setSkin()
+		Screen.__init__(self, session)
 		self.eventName = eventName
 		self.curResult = False
 		self.noExit = False
 		self.TVseries = False
-		self.onShow.append(self.selectionChanged)
+		self.onShow.append(self.selectChanged)
 		self.movielist = movielist
 		self.callbackNeeded = callbackNeeded
 		self.callbackData = ""
@@ -422,7 +422,7 @@ class TMBD(Screen):
 		self.resultlist = []
 		self["menu"] = MenuList(self.resultlist)
 		self["menu"].hide()
-		self["menu"].onSelectionChanged.append(self.selectionChanged)
+		self["menu"].onSelectionChanged.append(self.selectChanged)
 		self["key_red"] = Button(_("Exit"))
 		self["key_green"] = Button("")
 		self["key_yellow"] = Button("")
@@ -519,6 +519,7 @@ class TMBD(Screen):
 			self["title"].setText("")
 
 	def exit(self):
+		self.removCovers()
 		self.close()
 
 	def exit2(self):
@@ -529,17 +530,14 @@ class TMBD(Screen):
 
 	def exitConfirmed(self, answer):
 		if answer:
+			self.removCovers()
 			self.close()
 
 	def aboutAutor(self):
 		self.session.open(MessageBox, _("TMBD Details Plugin\nDeveloper: Nikolasi,vlamo,Dima73\n(c)2012"), MessageBox.TYPE_INFO)
 
 	def removCovers(self):
-		if os.path.exists('/tmp/preview.jpg'):
-			try:
-				os.remove('/tmp/preview.jpg')
-			except:
-				pass
+		os.system('rm -rf /tmp/preview.jpg')
 
 	def resetLabels(self):
 		try:
@@ -614,13 +612,16 @@ class TMBD(Screen):
 				self.noExit = False
 				self.showMenu()
 
-	def selectionChanged(self):
-		self["poster"].hide()
-		self["stars"].hide()
-		self["starsbg"].hide()
-		self["ratinglabel"].hide()
-		self["castlabel"].hide()
-		current = self["menu"].l.getCurrentSelection()
+	def selectChanged(self):
+		try:
+			self["poster"].hide()
+			self["stars"].hide()
+			self["starsbg"].hide()
+			self["ratinglabel"].hide()
+			self["castlabel"].hide()
+			current = self["menu"].l.getCurrentSelection()
+		except:
+			return
 		if current and self.curResult:
 			try:
 				movie = current[1]
@@ -1634,8 +1635,8 @@ class KinoRu(Screen):
 	</screen>"""  
 
 	def __init__(self, session, eventName, callbackNeeded=False, movielist=False):
-		Screen.__init__(self, session)
 		self.skin = self.chooseSkin()
+		Screen.__init__(self, session)
 		self.eventName = eventName
 		self.curResult = False
 		self.noExit = False
@@ -1653,7 +1654,7 @@ class KinoRu(Screen):
 		self.age = None
 		self.duplicated = None
 		self.plot = None
-		self.onShow.append(self.selectionChanged)
+		self.onShow.append(self.selectChanged)
 		self.movielist = movielist
 		self.callbackNeeded = callbackNeeded
 		self.callbackData = ""
@@ -1682,7 +1683,7 @@ class KinoRu(Screen):
 		self.resultlist = []
 		self["menu"] = MenuList(self.resultlist)
 		self["menu"].hide()
-		self["menu"].onSelectionChanged.append(self.selectionChanged)
+		self["menu"].onSelectionChanged.append(self.selectChanged)
 		self["key_red"] = Button(_("Exit"))
 		self["key_green"] = Button("")
 		self["key_yellow"] = Button("")
@@ -1778,6 +1779,7 @@ class KinoRu(Screen):
 			self["title"].setText("")
 
 	def exit(self):
+		self.removCovers()
 		self.close()
 
 	def exit2(self):
@@ -1788,17 +1790,14 @@ class KinoRu(Screen):
 
 	def exitConfirmed(self, answer):
 		if answer:
+			self.removCovers()
 			self.close()
 
 	def aboutAutor(self):
 		self.session.open(MessageBox, _("Kinopoisk.ru\nDeveloper: Dima73(Dimitrij) 2012/2014") + "\nNikolasi", MessageBox.TYPE_INFO)
 
 	def removCovers(self):
-		if os.path.exists('/tmp/preview.jpg'):
-			try:
-				os.remove('/tmp/preview.jpg')
-			except:
-				pass
+		os.system('rm -rf /tmp/preview.jpg')
 
 	def resetLabels(self):
 		try:
@@ -2059,7 +2058,7 @@ class KinoRu(Screen):
 				self["kino"].hide()
 				self.curPoster = True
 				self["poster"].show()
-			
+
 	def removmenu(self):
 		list = [
 			(_("Current poster and info"), self.removcurrent),
@@ -2116,7 +2115,7 @@ class KinoRu(Screen):
 
 	def exitChoice(self):
 		self.close()
-		
+
 	def savePoster(self):
 		global name
 		if self.curResult and self.curInfos and self.curPoster:
@@ -2503,25 +2502,28 @@ class KinoRu(Screen):
 		else:
 			self["title"].setText(_("Enter or choose event for search ..."))
 
-	def selectionChanged(self):
-		self["titlelabel"].setText("")
-		current = self["menu"].getCurrent()
-		if current and self.curResult:
-			genre = ''
-			try:
-				genre = current.split('genres:')[1]
-			except:
+	def selectChanged(self):
+		try:
+			self["titlelabel"].setText("")
+			current = self["menu"].getCurrent()
+			if current and self.curResult:
 				genre = ''
-			if genre:
-				genre = genre.replace('end', '')
-			else:
 				try:
-					genre = current[2]
+					genre = current.split('genres:')[1]
 				except:
-					pass
-			if len(genre) == 1:
-				genre = ''
-			self["titlelabel"].setText("%s" % (genre))
+					genre = ''
+				if genre:
+					genre = genre.replace('end', '')
+				else:
+					try:
+						genre = current[2]
+					except:
+						pass
+				if len(genre) == 1:
+					genre = ''
+				self["titlelabel"].setText("%s" % (genre))
+		except:
+			pass
 
 	def KinoRuPoster(self):
 		if not self.curResult:
@@ -2934,7 +2936,7 @@ class EventChoiseList:
 			self.session.open(TMBD, eventname, False)
 		else:
 			self.session.open(KinoRu, eventname, False)
-	
+
 	def Nextevent(self):
 		global eventname, eventname_now, eventname_next
 		eventname = eventname_next
