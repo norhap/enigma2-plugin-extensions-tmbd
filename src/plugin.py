@@ -397,7 +397,7 @@ class TMBD(Screen):
 		self.curResult = False
 		self.noExit = False
 		self.TVseries = False
-		self.onShow.append(self.selectChanged)
+		self.onLayoutFinish.append(self.selectChanged)
 		self.movielist = movielist
 		self.callbackNeeded = callbackNeeded
 		self.callbackData = ""
@@ -1654,7 +1654,7 @@ class KinoRu(Screen):
 		self.age = None
 		self.duplicated = None
 		self.plot = None
-		self.onShow.append(self.selectChanged)
+		self.onLayoutFinish.append(self.selectChanged)
 		self.movielist = movielist
 		self.callbackNeeded = callbackNeeded
 		self.callbackData = ""
