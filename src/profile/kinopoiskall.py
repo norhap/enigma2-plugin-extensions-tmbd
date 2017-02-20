@@ -299,8 +299,8 @@ def search_title(title):
     genres = ''
     search = ''
     title = title.replace(' ', '%20').decode('utf8')
-    print title
-    url = 'http://www.kinopoisk.ru/index.php?first=no&what=&kp_query=' + title.encode('cp1251')
+    encoded_args = urllib.quote(title.encode('cp1251'))
+    url = 'http://www.kinopoisk.ru/index.php?first=no&what=&kp_query=%s' % encoded_args
     watchrequest = Request(url, None, std_headers)
     try:
         watchvideopage = urlopen2(watchrequest)
@@ -387,8 +387,8 @@ def search_title2(title):
     runtime = ''
     time = ''
     title = title.replace(' ', '%20').decode('utf8')
-    print title
-    url = 'http://www.kinopoisk.ru/index.php?first=no&what=&kp_query=' + title.encode('cp1251')
+    encoded_args = urllib.quote(title.encode('cp1251'))
+    url = 'http://www.kinopoisk.ru/index.php?first=no&what=&kp_query=%s' % encoded_args
     watchrequest = Request(url, None, std_headers)
     try:
         watchvideopage = urlopen2(watchrequest)
