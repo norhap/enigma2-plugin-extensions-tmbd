@@ -429,6 +429,9 @@ msgstr "Поиск деталей события в TMBD"
 msgid "Search for movie in TMBD"
 msgstr "Поиск для видео в TMBD"
 
+msgid "Search movie in TMBD"
+msgstr "Поиск видео в TMBD"
+
 msgid "Search in kinopoisk.ru"
 msgstr "Поиск в kinopoisk.ru"
 
@@ -656,6 +659,3 @@ msgstr "Номер эпизода"
 
 msgid "Seasons number"
 msgstr "Номер сезона"
-
-
-
