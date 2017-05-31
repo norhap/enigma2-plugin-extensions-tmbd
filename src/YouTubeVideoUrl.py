@@ -337,7 +337,7 @@ class YouTubeVideoUrl():
 			encoded_url_map = encoded_url_map.split(',')
 			url_map_str = None
 			# If format changed in config, recreate priority list
-			if PRIORITY_VIDEO_FORMAT[0] != config.plugins.YouTube.maxResolution.value:
+			if PRIORITY_VIDEO_FORMAT[0] != config.plugins.tmbd_yttrailer.best_resolution.value:
 				createPriorityFormats()
 			for our_format in PRIORITY_VIDEO_FORMAT:
 				our_format = 'itag=' + our_format
