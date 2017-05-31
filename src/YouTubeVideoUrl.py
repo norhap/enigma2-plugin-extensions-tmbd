@@ -11,17 +11,19 @@ from urlparse import urljoin
 
 from Components.config import config
 
+from . import sslContext
 from jsinterp import JSInterpreter
 from swfinterp import SWFInterpreter
 
 
-PRIORITY_VIDEO_FORMAT= []
+PRIORITY_VIDEO_FORMAT = []
+
 
 def createPriorityFormats():
 	global PRIORITY_VIDEO_FORMAT
-	PRIORITY_VIDEO_FORMAT= []
+	PRIORITY_VIDEO_FORMAT = []
 	use_format = False
-	for itag_value in ['38', '37', '96', '22', '95', '120', 
+	for itag_value in ['38', '37', '96', '22', '95', '120',
 		'35', '94', '18', '93', '5', '92', '132', '17']:
 		if itag_value == config.plugins.tmbd_yttrailer.best_resolution.value:
 			use_format = True
@@ -31,13 +33,13 @@ def createPriorityFormats():
 createPriorityFormats()
 
 IGNORE_VIDEO_FORMAT = [
-		'43', #webm
-		'44', #webm
-		'45', #webm
-		'46', #webm
-		'100', #webm
-		'101', #webm
-		'102'  #webm
+		'43',  # webm
+		'44',  # webm
+		'45',  # webm
+		'46',  # webm
+		'100',  # webm
+		'101',  # webm
+		'102'  # webm
 	]
 
 
@@ -47,6 +49,7 @@ def uppercase_escape(s):
 		r'\\U[0-9a-fA-F]{8}',
 		lambda m: unicode_escape(m.group(0))[0],
 		s)
+
 
 def compat_urllib_parse_unquote(string, encoding='utf-8', errors='replace'):
 	if string == '':
@@ -83,6 +86,7 @@ def compat_urllib_parse_unquote(string, encoding='utf-8', errors='replace'):
 		string += pct_sequence.decode(encoding, errors)
 	return string
 
+
 def _parse_qsl(qs, keep_blank_values=False, strict_parsing=False,
 			encoding='utf-8', errors='replace'):
 	qs, _coerce_result = qs, unicode
@@ -112,6 +116,7 @@ def _parse_qsl(qs, keep_blank_values=False, strict_parsing=False,
 			r.append((name, value))
 	return r
 
+
 def compat_parse_qs(qs, keep_blank_values=False, strict_parsing=False,
 					encoding='utf-8', errors='replace'):
 	parsed_result = {}
@@ -127,12 +132,17 @@ def compat_parse_qs(qs, keep_blank_values=False, strict_parsing=False,
 
 class YouTubeVideoUrl():
 
-	def _download_webpage(self, url):
+	def _download_webpage(self, url, fatal=True):
 		""" Returns a tuple (page content as string, URL handle) """
 		try:
-			urlh = urlopen(url)
+			if sslContext:
+				urlh = urlopen(url, context = sslContext)
+			else:
+				urlh = urlopen(url)
 		except URLError, e:
-			raise Exception(e.reason)
+			if fatal:
+				raise Exception(e.reason)
+			return False
 		return urlh.read()
 
 	def _search_regex(self, pattern, string, group=None):
@@ -205,16 +215,35 @@ class YouTubeVideoUrl():
 
 	def _extract_from_m3u8(self, manifest_url):
 		url_map = {}
+
 		def _get_urls(_manifest):
 			lines = _manifest.split('\n')
 			urls = filter(lambda l: l and not l.startswith('#'), lines)
 			return urls
+
 		manifest = self._download_webpage(manifest_url)
 		formats_urls = _get_urls(manifest)
 		for format_url in formats_urls:
 			itag = self._search_regex(r'itag/(\d+?)/', format_url)
 			url_map[itag] = format_url
 		return url_map
+
+	def _get_ytplayer_config(self, webpage):
+		# User data may contain arbitrary character sequences that may affect
+		# JSON extraction with regex, e.g. when '};' is contained the second
+		# regex won't capture the whole JSON. Yet working around by trying more
+		# concrete regex first keeping in mind proper quoted string handling
+		# to be implemented in future that will replace this workaround (see
+		# https://github.com/rg3/youtube-dl/issues/7468,
+		# https://github.com/rg3/youtube-dl/pull/7599)
+		patterns = [
+			r';ytplayer\.config\s*=\s*({.+?});ytplayer',
+			r';ytplayer\.config\s*=\s*({.+?});',
+		]
+		for pattern in patterns:
+			config = self._search_regex(pattern, webpage)
+			if config:
+				return json.loads(uppercase_escape(config))
 
 	def extract(self, video_id):
 		url = 'https://www.youtube.com/watch?v=%s&gl=US&hl=en&has_verified=1&bpctr=9999999999' % video_id
@@ -240,25 +269,25 @@ class YouTubeVideoUrl():
 			url = 'https://www.youtube.com/embed/%s' % video_id
 			embed_webpage = self._download_webpage(url)
 			data = urlencode({
-				'video_id': video_id,
-				'eurl': 'https://youtube.googleapis.com/v/' + video_id,
-				'sts': self._search_regex(r'"sts"\s*:\s*(\d+)', embed_webpage),
-			})
+					'video_id': video_id,
+					'eurl': 'https://youtube.googleapis.com/v/' + video_id,
+					'sts': self._search_regex(r'"sts"\s*:\s*(\d+)', embed_webpage),
+				})
 			video_info_url = 'https://www.youtube.com/get_video_info?' + data
 			video_info_webpage = self._download_webpage(video_info_url)
 			video_info = compat_parse_qs(video_info_webpage)
 		else:
 			age_gate = False
 			video_info = None
+			sts = None
 			# Try looking directly into the video webpage
-			mobj = re.search(r';ytplayer\.config\s*=\s*({.*?});', video_webpage)
-			if mobj:
-				json_code = uppercase_escape(mobj.group(1))
-				ytplayer_config = json.loads(json_code)
+			ytplayer_config = self._get_ytplayer_config(video_webpage)
+			if ytplayer_config:
 				args = ytplayer_config['args']
 				if args.get('url_encoded_fmt_stream_map'):
 					# Convert to the same format returned by compat_parse_qs
 					video_info = dict((k, [v]) for k, v in args.items())
+				sts = ytplayer_config.get('sts')
 
 			if not video_info:
 				# We also try looking in get_video_info since it may contain different dashmpd
@@ -267,11 +296,24 @@ class YouTubeVideoUrl():
 				# manifest pointed by get_video_info's dashmpd).
 				# The general idea is to take a union of itags of both DASH manifests (for example
 				# video with such 'manifest behavior' see https://github.com/rg3/youtube-dl/issues/6093)
-				for el_type in ['&el=info', '&el=embedded', '&el=detailpage', '&el=vevo', '']:
-					video_info_url = (
-						'https://www.youtube.com/get_video_info?&video_id=%s%s&ps=default&eurl=&gl=US&hl=en'
-						% (video_id, el_type))
-					video_info_webpage = self._download_webpage(video_info_url)
+				for el in ('info', 'embedded', 'detailpage', 'vevo', ''):
+					query = {
+							'video_id': video_id,
+							'ps': 'default',
+							'eurl': '',
+							'gl': 'US',
+							'hl': 'en',
+						}
+					if el:
+						query['el'] = el
+					if sts:
+						query['sts'] = sts
+					data = urlencode(query)
+
+					video_info_url = 'https://www.youtube.com/get_video_info?' + data
+					video_info_webpage = self._download_webpage(video_info_url, fatal=False)
+					if not video_info_webpage:
+						continue
 					video_info = compat_parse_qs(video_info_webpage)
 					if 'token' in video_info:
 						break
@@ -295,7 +337,7 @@ class YouTubeVideoUrl():
 			encoded_url_map = encoded_url_map.split(',')
 			url_map_str = None
 			# If format changed in config, recreate priority list
-			if PRIORITY_VIDEO_FORMAT[0] != config.plugins.tmbd_yttrailer.best_resolution.value:
+			if PRIORITY_VIDEO_FORMAT[0] != config.plugins.YouTube.maxResolution.value:
 				createPriorityFormats()
 			for our_format in PRIORITY_VIDEO_FORMAT:
 				our_format = 'itag=' + our_format
@@ -370,4 +412,3 @@ class YouTubeVideoUrl():
 			raise Exception('No supported formats found in video info!')
 
 		return str(url)
-
