@@ -815,3 +815,6 @@ msgstr ""
 
 msgid "Seasons number"
 msgstr ""
+
+msgid "Restart the GUI now?"
+msgstr ""

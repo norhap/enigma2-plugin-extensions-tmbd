@@ -659,3 +659,6 @@ msgstr "Номер эпизода"
 
 msgid "Seasons number"
 msgstr "Номер сезона"
+
+msgid "Restart the GUI now?"
+msgstr "Выполнить рестарт GUI сейчас?"

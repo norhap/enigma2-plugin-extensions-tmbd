@@ -37,10 +37,11 @@ import os, sys, re, gettext, random, tmdb, urllib, array, struct, fcntl, shutil
 from socket import socket, AF_INET, SOCK_STREAM, SOCK_DGRAM, SHUT_RDWR
 from event import Event, ShortEventDescriptor, ExtendedEventDescriptor
 from time import strftime, localtime, mktime
+from Screens.Standby import TryQuitMainloop
 from meta import MetaParser, getctime, fileSize
 import kinopoisk, urllib2, tmbdYTTrailer
 
-plugin_version = "7.8"
+plugin_version = "7.9"
 
 epg_furtherOptions = False
 if hasattr(EPGSelection, "furtherOptions"):
@@ -1383,10 +1384,17 @@ class KinopoiskConfiguration(Screen):
 		if returnValue is not None:
 			if returnValue is "all":
 				cmd = "cp /usr/lib/enigma2/python/Plugins/Extensions/TMBD/profile/kinopoiskall.py /usr/lib/enigma2/python/Plugins/Extensions/TMBD/kinopoisk.py && echo 'Done...\nTo apply the changes required restart GUI!' "
-				self.session.open(Console,_("Option for all images"),[cmd])
+				self.session.openWithCallback(self.restartGui, Console,_("Option for all images"),[cmd])
 			elif returnValue is "new": 
 				cmd = "cp /usr/lib/enigma2/python/Plugins/Extensions/TMBD/profile/kinopoisklmxl.py /usr/lib/enigma2/python/Plugins/Extensions/TMBD/kinopoisk.py && echo 'Done...\nTo apply the changes required restart GUI!' "
-				self.session.open(Console,_("Option only python 2.7 images"),[cmd])
+				self.session.openWithCallback(self.restartGui, Console,_("Option only python 2.7 images"),[cmd])
+
+	def restartGui(self):
+		self.session.openWithCallback(self.restartGuiAnswer, MessageBox, _("Restart the GUI now?"), MessageBox.TYPE_YESNO)
+
+	def restartGuiAnswer(self, answer):
+		if answer:
+			self.session.open(TryQuitMainloop, 3)
 
 class TMBDSettings(Screen, ConfigListScreen):
 	if screenWidth >= 1920:
@@ -1481,12 +1489,13 @@ class TMBDSettings(Screen, ConfigListScreen):
 
 	def keyOK(self):
 		ConfigListScreen.keyOK(self)
-		sel = self["config"].getCurrent()[1]
+		sel = self["config"].getCurrent() and self["config"].getCurrent()[1]
+		if not sel: return
 		if sel == config.plugins.tmbd.kinopoisk_data:
 			self.session.open(KinopoiskConfiguration)
 		if sel == config.plugins.tmbd.yt_setup:
 			self.session.open(tmbdYTTrailer.TmbdYTTrailerSetup)
-		if config.plugins.tmbd.available_languages:
+		if sel == config.plugins.tmbd.available_languages:
 			self.session.open(MessageBox, "en/eng', ru/rus, fr/fra, bg/bul, it/ita, po/pol, lv/lav, de/ger, da/dan, nl/dut, fi/fin, el/gre, he/heb, hu/hun, no/nor, pt/por, ro/ron, sk/slo, sl/slv, es/est, sv/swe, tr/tur, uk/ukr, cz/cze", MessageBox.TYPE_INFO)
 
 	def keyLeft(self):
