@@ -41,7 +41,7 @@ from Screens.Standby import TryQuitMainloop
 from meta import MetaParser, getctime, fileSize
 import kinopoisk, urllib2, tmbdYTTrailer
 
-plugin_version = "7.9"
+plugin_version = "8.0"
 
 epg_furtherOptions = False
 if hasattr(EPGSelection, "furtherOptions"):
@@ -201,28 +201,33 @@ def TMBDChannelContextMenu__init__(self, session, csel):
 					callFunction = self.profileContextMenuCallback 
 					self["menu"].list.insert(1, ChoiceEntryComponent(text = (_("TMBD Details"), boundFunction(callFunction,1))))
 
-def showServiceInformations2(self, eventName="", profile=False):
+def showServiceInformations2(self, profile=False):
 		global eventname
-		s = self.csel.servicelist.getCurrent()  
-		info = s and eServiceCenter.getInstance().info(s)
-		event = info and info.getEvent(s)
-		if event != None:
-			try:
-				epg_name = event.getEventName() or ''
+		service = self.csel.servicelist.getCurrent()  
+		info = service and eServiceCenter.getInstance().info(service)
+		event = info and info.getEvent(service)
+		epg_name = ""
+		try:
+			if event != None:
+				epg_name = event.getEventName() or ""
+			elif service:
+				if '%3a//' in service.toString():
+					name = info and info.getName(service) or ServiceReference(service).getServiceName() or ""
+					epg_name = name.replace('\xc2\x86', '').replace('\xc2\x87', '')
+			if epg_name:
 				eventname = cutName(epg_name)
-				eventName = eventname
 				if config.plugins.tmbd.menu_profile.value == "0":
 					if config.plugins.tmbd.profile.value == "0":
-						self.session.open(TMBD, eventName)
+						self.session.open(TMBD, eventname)
 					else:
-						self.session.open(KinoRu, eventName)
+						self.session.open(KinoRu, eventname)
 				else:
 					if profile:
-						self.session.open(KinoRu, eventName)
+						self.session.open(KinoRu, eventname)
 					else:
-						self.session.open(TMBD, eventName)
-			except:
-				pass
+						self.session.open(TMBD, eventname)
+		except:
+			pass
 		self.close()
 
 def profileContextMenuCallback(self, add):
