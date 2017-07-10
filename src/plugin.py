@@ -41,7 +41,7 @@ from Screens.Standby import TryQuitMainloop
 from meta import MetaParser, getctime, fileSize
 import kinopoisk, urllib2, tmbdYTTrailer
 
-plugin_version = "8.0"
+plugin_version = "8.1"
 
 epg_furtherOptions = False
 if hasattr(EPGSelection, "furtherOptions"):
@@ -1498,10 +1498,17 @@ class TMBDSettings(Screen, ConfigListScreen):
 		if not sel: return
 		if sel == config.plugins.tmbd.kinopoisk_data:
 			self.session.open(KinopoiskConfiguration)
-		if sel == config.plugins.tmbd.yt_setup:
+		elif sel == config.plugins.tmbd.yt_setup:
 			self.session.open(tmbdYTTrailer.TmbdYTTrailerSetup)
-		if sel == config.plugins.tmbd.available_languages:
+		elif sel == config.plugins.tmbd.available_languages:
 			self.session.open(MessageBox, "en/eng', ru/rus, fr/fra, bg/bul, it/ita, po/pol, lv/lav, de/ger, da/dan, nl/dut, fi/fin, el/gre, he/heb, hu/hun, no/nor, pt/por, ro/ron, sk/slo, sl/slv, es/est, sv/swe, tr/tur, uk/ukr, cz/cze", MessageBox.TYPE_INFO)
+		elif sel == config.plugins.tmbd.cover_dir or sel == config.plugins.tmbd.locale or sel == config.plugins.tmbd.alrernative_locale:
+			text = str(self["config"].getCurrent()[1].getText())
+			self.session.openWithCallback(self.textCallback, VirtualKeyBoard, text = text)
+
+	def textCallback(self, callback = None):
+		if callback:
+			self["config"].getCurrent()[1].value = callback
 
 	def keyLeft(self):
 		ConfigListScreen.keyLeft(self)
