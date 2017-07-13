@@ -41,7 +41,7 @@ from Screens.Standby import TryQuitMainloop
 from meta import MetaParser, getctime, fileSize
 import kinopoisk, urllib2, tmbdYTTrailer
 
-plugin_version = "8.1"
+plugin_version = "8.2"
 
 epg_furtherOptions = False
 if hasattr(EPGSelection, "furtherOptions"):
@@ -1501,12 +1501,73 @@ class TMBDSettings(Screen, ConfigListScreen):
 		elif sel == config.plugins.tmbd.yt_setup:
 			self.session.open(tmbdYTTrailer.TmbdYTTrailerSetup)
 		elif sel == config.plugins.tmbd.available_languages:
-			self.session.open(MessageBox, "en/eng', ru/rus, fr/fra, bg/bul, it/ita, po/pol, lv/lav, de/ger, da/dan, nl/dut, fi/fin, el/gre, he/heb, hu/hun, no/nor, pt/por, ro/ron, sk/slo, sl/slv, es/est, sv/swe, tr/tur, uk/ukr, cz/cze", MessageBox.TYPE_INFO)
+			self.availableLanguagesPressed()
+			#self.session.open(MessageBox, "en/eng', ru/rus, fr/fra, bg/bul, it/ita, po/pol, lv/lav, de/ger, da/dan, nl/dut, fi/fin, el/gre, he/heb, hu/hun, no/nor, pt/por, ro/ron, sk/slo, sl/slv, es/est, sv/swe, tr/tur, uk/ukr, cz/cze", MessageBox.TYPE_INFO)
 		elif sel == config.plugins.tmbd.cover_dir or sel == config.plugins.tmbd.locale or sel == config.plugins.tmbd.alrernative_locale:
 			text = str(self["config"].getCurrent()[1].getText())
 			self.session.openWithCallback(self.textCallback, VirtualKeyBoard, text = text)
 
-	def textCallback(self, callback = None):
+	def availableLanguagesPressed(self):
+		list = [
+			("en", "en"),
+			("ru", "ru"),
+			("fr", "fr"),
+			("bg", "bg"),
+			("it", "it"),
+			("po", "po"),
+			("lv", "lv"),
+			("de", "de"),
+			("da", "da"),
+			("nl", "nl"),
+			("fi", "fi"),
+			("el", "el"),
+			("he", "he"),
+			("hu", "hu"),
+			("no", "no"),
+			("pt", "pt"),
+			("ro", "ro"),
+			("sk", "sk"),
+			("sl", "sl"),
+			("es", "es"),
+			("sv", "sv"),
+			("tr", "tr"),
+			("uk", "uk"),
+			("cz", "cz"),
+			("en" + _(" as alternative language"), "en"),
+			("ru" + _(" as alternative language"), "ru"),
+			("fr" + _(" as alternative language"), "fr"),
+			("bg" + _(" as alternative language"), "bg"),
+			("it" + _(" as alternative language"), "it"),
+			("po" + _(" as alternative language"), "po"),
+			("lv" + _(" as alternative language"), "lv"),
+			("de" + _(" as alternative language"), "de"),
+			("da" + _(" as alternative language"), "da"),
+			("nl" + _(" as alternative language"), "nl"),
+			("fi" + _(" as alternative language"), "fi"),
+			("el" + _(" as alternative language"), "el"),
+			("he" + _(" as alternative language"), "he"),
+			("hu" + _(" as alternative language"), "hu"),
+			("no" + _(" as alternative language"), "no"),
+			("pt" + _(" as alternative language"), "pt"),
+			("ro" + _(" as alternative language"), "ro"),
+			("sk" + _(" as alternative language"), "sk"),
+			("sl" + _(" as alternative language"), "sl"),
+			("es" + _(" as alternative language"), "es"),
+			("sv" + _(" as alternative language"), "sv"),
+			("tr" + _(" as alternative language"), "tr"),
+			("uk" + _(" as alternative language"), "uk"),
+			("cz" + _(" as alternative language"), "cz")
+		]
+		self.session.openWithCallback(self.menuCallback, ChoiceBox, list = list, title= _("Select action:"))
+
+	def menuCallback(self, ret=None):
+		if ret:
+			if _(" as alternative language") in ret[0]:
+				config.plugins.tmbd.alrernative_locale.value = ret[1]
+			else:
+				config.plugins.tmbd.locale.value = ret[1]
+
+	def textCallback(self, callback=None):
 		if callback:
 			self["config"].getCurrent()[1].value = callback
 

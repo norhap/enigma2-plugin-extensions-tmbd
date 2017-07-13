@@ -662,3 +662,6 @@ msgstr "Номер сезона"
 
 msgid "Restart the GUI now?"
 msgstr "Выполнить рестарт GUI сейчас?"
+
+msgid " as alternative language"
+msgstr " как альтернативный язык"

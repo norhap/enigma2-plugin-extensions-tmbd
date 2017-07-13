@@ -818,3 +818,6 @@ msgstr ""
 
 msgid "Restart the GUI now?"
 msgstr ""
+
+msgid " as alternative language"
+msgstr ""
