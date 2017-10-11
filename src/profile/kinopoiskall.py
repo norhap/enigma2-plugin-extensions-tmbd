@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+#BY Nikolasi for indb
 import re
 from urllib2 import Request, URLError, HTTPError, urlopen as urlopen2, quote as urllib2_quote, unquote as urllib2_unquote
 import urllib
@@ -313,10 +315,10 @@ def search_title(title):
     content_results = content[content.find('\xd0\xa1\xd0\xba\xd0\xbe\xd1\x80\xd0\xb5\xd0\xb5 \xd0\xb2\xd1\x81\xd0\xb5\xd0\xb3\xd0\xbe, \xd0\xb2\xd1\x8b \xd0\xb8\xd1\x89\xd0\xb5\xd1\x82\xd0\xb5:'):content.find('search_results search_results_last')]
     if content_results:
         results = CrewRoleList(content_results)
-        yearitems = re.compile('<p class="name"><a href="/level/1/film/.*?/sr/1/" .*? data-type=".*?">.*?</a> <span class="year">(.*?)</span></p>').findall(content_results)
-        titleitems = re.compile('<p class="name"><a href="/level/1/film/.*?/sr/1/" .*? data-type=".*?">(.*?)</a> <span class="year">.*?</span></p>').findall(content_results)
-        iditems = re.compile('<p class="name"><a href="/level/1/film/(.*?)/sr/1/" .*? data-type=".*?">.*?</a> <span class="year">.*?</span></p>').findall(content_results)
-        genres = re.compile('<span class="genres">(.*?)</span>').findall(results)
+        yearitems = re.compile('<span class="year">(.*?)</span>').findall(content_results)
+        titleitems = re.compile('<p class="name"><a href="/film/.*?/sr/1/" .*? data-type=".*?">(.*?)</a> <span class="year">.*?</span></p>').findall(content_results)
+        iditems = re.compile('<p class="name"><a href="/film/.*?/sr/1/" .*? data-id="(.*?)" data-type=".*?">.*?</a> <span class="year">.*?</span></p>').findall(content_results)
+        genres = re.compile('<span class="genres">(.*?)</span>').findall(results)     
         for titleitem in titleitems:
             search_results.append(normilize_string(titleitem))
 
@@ -329,7 +331,7 @@ def search_title(title):
         l = 0
         for iditem in iditems:
             if l < len(iditems):
-                search_results[l] = search_results[l] + '\n genres:' + genres[l] + 'end' + '\n\n' + 'id:' + iditem + 'end'
+                search_results[l] = search_results[l] + '\n genres:' + genres[l] + 'end' + '\n\n' + 'id:' + iditem.strip() + 'end'
             l += 1
 
     else:
@@ -504,7 +506,7 @@ def search_data(id):
         print '[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err)
 
     data = watchvideopage.read().decode('cp1251').encode('utf-8')
-    content_results = '%s' % data
+    content_results = '%s' % data.replace('     ', '').replace('\n', '').replace('\t', '')
     watchvideopage.close()
     try:
         filmdata = {'title': '',
@@ -544,12 +546,12 @@ def search_data(id):
             filmdata['genre'] = ''
 
         try:
-            filmdata['user_rating'] = singleValue(data, '<div class="div1"><meta itemprop="ratingValue" content="(.*?)" />')
+            filmdata['user_rating'] = singleValue(content_results, '<div class="div1"><meta itemprop="ratingValue" content="(.*?)" />')
         except:
             filmdata['user_rating'] = ''
 
         try:
-            filmdata['rating_count'] = normilize_string(singleValue(data, '<span class="ratingCount" itemprop="ratingCount">(.*?)</span>'))
+            filmdata['rating_count'] = normilize_string(singleValue(data, '<span class="ratingCount">(.*?)</span>'))
         except:
             filmdata['rating_count'] = ''
 
@@ -570,7 +572,7 @@ def search_data(id):
             filmdata['cast'] = ''
 
         try:
-            movierating = string.split(singleValue(data, '<td class="type">\xd1\x80\xd0\xb5\xd0\xb9\xd1\x82\xd0\xb8\xd0\xbd\xd0\xb3 MPAA</td>.*?<img src.*?alt=(.*?) border=0>'))
+            movierating = string.split(singleValue(data, '<td class="type">рейтинг MPAA</td>.*?<img src.*?alt=(.*?) border=0>'))
             if len(movierating) > 0:
                 filmdata['movie_rating'] = movierating[1]
             else:
