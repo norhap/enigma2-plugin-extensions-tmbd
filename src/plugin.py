@@ -41,7 +41,7 @@ from Screens.Standby import TryQuitMainloop
 from meta import MetaParser, getctime, fileSize
 import kinopoisk, urllib2, tmbdYTTrailer
 
-plugin_version = "8.2"
+plugin_version = "8.3"
 
 epg_furtherOptions = False
 if hasattr(EPGSelection, "furtherOptions"):
@@ -3087,6 +3087,18 @@ def main3(session, eventName="", **kwargs):
 	s = session.nav.getCurrentService()
 	info = s and s.info()
 	event = info and info.getEvent(0)
+	service = session.nav.getCurrentlyPlayingServiceReference()
+	if event is None and service:
+		if '%3a//' in service.toString():
+			name = ServiceReference(service).getServiceName()
+			epg_name = name.replace('\xc2\x86', '').replace('\xc2\x87', '')
+			if epg_name:
+				eventname = cutName(epg_name)
+				if config.plugins.tmbd.profile.value == "0":
+					session.open(TMBD, eventname)
+				else:
+					session.open(KinoRu, eventname)
+				return
 	if config.plugins.tmbd.ext_menu_event.value == "0":
 		if event:
 			eventName = event.getEventName().split("(")[0].strip()
