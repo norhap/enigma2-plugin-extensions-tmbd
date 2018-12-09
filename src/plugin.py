@@ -366,10 +366,10 @@ class TMBD(Screen):
 		<ePixmap alphatest="on" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/blue25.png" position="1245,798" size="375,57" zPosition="1" />
 		<ePixmap pixmap="skin_default/buttons/key_menu.png" position="1572,7" zPosition="1" size="52,37" alphatest="on" />
 		<ePixmap pixmap="skin_default/buttons/key_info.png" position="1572,52" zPosition="1" size="52,37" alphatest="on" />
-		<widget backgroundColor="#9f1313" font="Regular;30" foregroundColor="#00ff2525" halign="center" name="key_red" position="30,804" size="375,57" transparent="1" valign="center" zPosition="2" />
-		<widget backgroundColor="#1f771f" font="Regular;30" foregroundColor="#00389416" halign="center" name="key_green" position="435,804" size="375,57" transparent="1" valign="center" zPosition="2" />
-		<widget backgroundColor="#a08500" font="Regular;30" foregroundColor="#00bab329" halign="center" name="key_yellow" position="840,804" size="375,57" transparent="1" valign="center" zPosition="2" />
-		<widget backgroundColor="#18188b" font="Regular;30" foregroundColor="#006565ff" halign="center" name="key_blue" position="1245,804" size="375,57" transparent="1" valign="center" zPosition="2" />
+		<widget backgroundColor="#9f1313" font="Regular;30" foregroundColor="#00ff2525" halign="center" name="key_red" position="0,794" size="300,57" transparent="1" valign="center" zPosition="2" />
+		<widget backgroundColor="#1f771f" font="Regular;30" foregroundColor="#00389416" halign="center" name="key_green" position="380,794" size="375,57" transparent="1" valign="center" zPosition="2" />
+		<widget backgroundColor="#a08500" font="Regular;30" foregroundColor="#00bab329" halign="center" name="key_yellow" position="785,794" size="375,57" transparent="1" valign="center" zPosition="2" />
+		<widget backgroundColor="#18188b" font="Regular;30" foregroundColor="#006565ff" halign="center" name="key_blue" position="1190,794" size="375,57" transparent="1" valign="center" zPosition="2" />
 	</screen>"""
 
 	skin_sd = """
@@ -1684,10 +1684,10 @@ class KinoRu(Screen):
 		<ePixmap alphatest="on" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/blue25.png" position="1245,798" size="375,57" zPosition="1" />
 		<ePixmap pixmap="skin_default/buttons/key_menu.png" position="1572,7" zPosition="1" size="52,37" alphatest="on" />
 		<ePixmap pixmap="skin_default/buttons/key_info.png" position="1572,52" zPosition="1" size="52,37" alphatest="on" />
-		<widget backgroundColor="#9f1313" font="Regular;30" foregroundColor="#00ff2525" halign="center" name="key_red" position="30,804" size="375,57" transparent="1" valign="center" zPosition="2" />
-		<widget backgroundColor="#1f771f" font="Regular;30" foregroundColor="#00389416" halign="center" name="key_green" position="435,804" size="375,57" transparent="1" valign="center" zPosition="2" />
-		<widget backgroundColor="#a08500" font="Regular;30" foregroundColor="#00bab329" halign="center" name="key_yellow" position="840,804" size="375,57" transparent="1" valign="center" zPosition="2" />
-		<widget backgroundColor="#18188b" font="Regular;30" foregroundColor="#006565ff" halign="center" name="key_blue" position="1245,804" size="375,57" transparent="1" valign="center" zPosition="2" />
+		<widget backgroundColor="#9f1313" font="Regular;30" foregroundColor="#00ff2525" halign="center" name="key_red" position="0,794" size="300,57" transparent="1" valign="center" zPosition="2" />
+		<widget backgroundColor="#1f771f" font="Regular;30" foregroundColor="#00389416" halign="center" name="key_green" position="380,794" size="375,57" transparent="1" valign="center" zPosition="2" />
+		<widget backgroundColor="#a08500" font="Regular;30" foregroundColor="#00bab329" halign="center" name="key_yellow" position="785,794" size="375,57" transparent="1" valign="center" zPosition="2" />
+		<widget backgroundColor="#18188b" font="Regular;30" foregroundColor="#006565ff" halign="center" name="key_blue" position="1190,794" size="375,57" transparent="1" valign="center" zPosition="2" />
 	</screen>"""
 
 	skin_sd = """
