@@ -16,7 +16,7 @@ import traceback
 import codecs
 #from optparse import OptionParser
 
-kinopoisk_date = "14.08.2016"
+kinopoisk_date = "25.04.2019"
 title = "The kinopoisk.ru Query"
 author = "Alex Vasilyev / mod Dima73"
 usage_examples = ""
@@ -167,7 +167,7 @@ def get_page(address,  data=0,  title=''):
                                 ("Connection",  "keep-alive")]
         time.sleep(1.5)
         f = opener.open(address)
-        return f.read().decode('cp1251')
+        return f.read().decode('utf8')
     
     except:
         print_exception(traceback.format_exc())
@@ -218,7 +218,7 @@ def search_title(title):
     doc = html.document_fromstring(data)
     search_results = []
     #Проверяем ту ли страницу (т.е. страницу с результатами поиска) мы получили
-    regexp= re.compile(unicode("Скорее всего, вы ищете:", "utf8"), re.DOTALL)
+    regexp = re.compile(unicode("Скорее всего, вы ищете:", "utf8"), re.DOTALL)
     result = regexp.search(data)
     #if result == None:
         #Если не ту, то парсим страницу фильма на которую нас перенаправил кинопоиск

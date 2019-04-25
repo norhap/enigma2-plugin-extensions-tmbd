@@ -41,7 +41,7 @@ from Screens.Standby import TryQuitMainloop
 from meta import MetaParser, getctime, fileSize
 import kinopoisk, urllib2, tmbdYTTrailer
 
-plugin_version = "8.3"
+plugin_version = "8.4"
 
 epg_furtherOptions = False
 if hasattr(EPGSelection, "furtherOptions"):
