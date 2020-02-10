@@ -196,10 +196,10 @@ def TMBDChannelContextMenu__init__(self, session, csel):
 			if config.plugins.tmbd.menu.value:
 				if config.plugins.tmbd.menu_profile.value == "0":
 					callFunction = self.showServiceInformations2 
-					self["menu"].list.insert(1, ChoiceEntryComponent(text = (_("TMBD Details"), boundFunction(callFunction,1))))
+					self["menu"].list.insert(1, ChoiceEntryComponent(text = (_("TMBD Details"), boundFunction(callFunction,1)), key = "bullet"))
 				else:
 					callFunction = self.profileContextMenuCallback 
-					self["menu"].list.insert(1, ChoiceEntryComponent(text = (_("TMBD Details"), boundFunction(callFunction,1))))
+					self["menu"].list.insert(1, ChoiceEntryComponent(text = (_("TMBD Details"), boundFunction(callFunction,1)), key = "bullet"))
 
 def showServiceInformations2(self, profile=False):
 		global eventname
