@@ -25,9 +25,9 @@ from . import _
 
 
 config.plugins.tmbd_yttrailer = ConfigSubsection()
-config.plugins.tmbd_yttrailer.best_resolution = ConfigSelection(default = '22', choices = [
-	('38', '3072p'), ('37', '1080p'), ('22', '720p'),
-	('35', '480p'), ('18', '360p'), ('5', '240p'), ('17', '144p')])
+config.plugins.tmbd_yttrailer.best_resolution = ConfigSelection(default='22', choices=[
+	('38', '4096x3072'), ('37', '1920x1080'), ('22', '1280x720'), ('35', '854x480'),
+	('18', '640x360'), ('5', '400x240'), ('17', '176x144')])
 config.plugins.tmbd_yttrailer.ext_descr = ConfigText(default = '', fixed_size = False)
 config.plugins.tmbd_yttrailer.max_results = ConfigInteger(5, limits = (1, 10))
 config.plugins.tmbd_yttrailer.close_player_with_exit = ConfigYesNo(False)

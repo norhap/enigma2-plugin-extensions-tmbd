@@ -6,14 +6,13 @@ import json
 import re
 
 from urllib import urlencode
-from urllib2 import urlopen, URLError
+from urllib2 import urlopen, URLError, HTTPError
 from urlparse import urljoin, urlparse
 
 from Components.config import config
 
 from . import sslContext
 from jsinterp import JSInterpreter
-from swfinterp import SWFInterpreter
 
 
 PRIORITY_VIDEO_FORMAT = []
@@ -85,16 +84,12 @@ def url_or_none(url):
 	return url if re.match(r'^(?:[a-zA-Z][\da-zA-Z.+-]*:)?//', url) else None
 
 
-def compat_urllib_parse_unquote(string, encoding='utf-8', errors='replace'):
+def compat_urllib_parse_unquote(string):
 	if string == '':
 		return string
 	res = string.split('%')
 	if len(res) == 1:
 		return string
-	if encoding is None:
-		encoding = 'utf-8'
-	if errors is None:
-		errors = 'replace'
 	# pct_sequence: contiguous sequence of percent-encoded bytes, decoded
 	pct_sequence = b''
 	string = res[0]
@@ -113,49 +108,39 @@ def compat_urllib_parse_unquote(string, encoding='utf-8', errors='replace'):
 			rest = '%' + item
 		# Encountered non-percent-encoded characters. Flush the current
 		# pct_sequence.
-		string += pct_sequence.decode(encoding, errors) + rest
+		string += pct_sequence.decode('utf-8', 'replace') + rest
 		pct_sequence = b''
 	if pct_sequence:
 		# Flush the final pct_sequence
-		string += pct_sequence.decode(encoding, errors)
+		string += pct_sequence.decode('utf-8', 'replace')
 	return string
 
 
-def _parse_qsl(qs, keep_blank_values=False, strict_parsing=False,
-			encoding='utf-8', errors='replace'):
+def _parse_qsl(qs):
 	qs, _coerce_result = qs, unicode
 	pairs = [s2 for s1 in qs.split('&') for s2 in s1.split(';')]
 	r = []
 	for name_value in pairs:
-		if not name_value and not strict_parsing:
+		if not name_value:
 			continue
 		nv = name_value.split('=', 1)
 		if len(nv) != 2:
-			if strict_parsing:
-				raise ValueError("bad query field: %r" % (name_value,))
 			# Handle case of a control-name with no equal sign
-			if keep_blank_values:
-				nv.append('')
-			else:
-				continue
-		if len(nv[1]) or keep_blank_values:
+			continue
+		if len(nv[1]):
 			name = nv[0].replace('+', ' ')
-			name = compat_urllib_parse_unquote(
-				name, encoding=encoding, errors=errors)
+			name = compat_urllib_parse_unquote(name)
 			name = _coerce_result(name)
 			value = nv[1].replace('+', ' ')
-			value = compat_urllib_parse_unquote(
-				value, encoding=encoding, errors=errors)
+			value = compat_urllib_parse_unquote(value)
 			value = _coerce_result(value)
 			r.append((name, value))
 	return r
 
 
-def compat_parse_qs(qs, keep_blank_values=False, strict_parsing=False,
-					encoding='utf-8', errors='replace'):
+def compat_parse_qs(qs):
 	parsed_result = {}
-	pairs = _parse_qsl(qs, keep_blank_values, strict_parsing,
-					encoding=encoding, errors=errors)
+	pairs = _parse_qsl(qs)
 	for name, value in pairs:
 		if name in parsed_result:
 			parsed_result[name].append(value)
@@ -181,7 +166,7 @@ def clean_html(html):
 
 class YouTubeVideoUrl():
 
-	def _download_webpage(self, url, fatal=True):
+	def _download_webpage(self, url):
 		""" Returns a tuple (page content as string, URL handle) """
 		try:
 			if sslContext:
@@ -189,10 +174,26 @@ class YouTubeVideoUrl():
 			else:
 				urlh = urlopen(url)
 		except URLError, e:
-			if fatal:
-				raise Exception(e.reason)
-			return False
+			raise Exception(e.reason)
 		return urlh.read()
+
+	def _download_webpage_handle(self, url_or_request):
+		""" Returns a tuple (page content as string, URL handle) """
+
+		# Strip hashes from the URL (#1038)
+		if isinstance(url_or_request, (unicode, str)):
+			url_or_request = url_or_request.partition('#')[0]
+
+		try:
+			if sslContext:
+				urlh = urlopen(url_or_request, context=sslContext)
+			else:
+				urlh = urlopen(url_or_request)
+		except URLError, e:
+			raise Exception(e.reason)
+
+		content = urlh.read()
+		return (content, urlh)
 
 	def _search_regex(self, pattern, string, group=None):
 		"""
@@ -229,21 +230,30 @@ class YouTubeVideoUrl():
 		try:
 			func = self._extract_signature_function(player_url)
 			return func(s)
-		except:
-			raise Exception('Signature extraction failed!')
+		except Exception as e:
+			raise Exception('Signature extraction failed!\n%s' % str(e))
+
+	def _extract_player_info(self, player_url):
+		_PLAYER_INFO_RE = (
+			r'/(?P<id>[a-zA-Z0-9_-]{8,})/player_ias\.vflset(?:/[a-zA-Z]{2,3}_[a-zA-Z]{2,3})?/base\.(?P<ext>[a-z]+)$',
+			r'\b(?P<id>vfl[a-zA-Z0-9_-]+)\b.*?\.(?P<ext>[a-z]+)$',
+		)
+
+		for player_re in _PLAYER_INFO_RE:
+			id_m = re.search(player_re, player_url)
+			if id_m:
+				break
+		else:
+			raise Exception('Cannot identify player %r' % player_url)
+		return id_m.group('ext')
 
 	def _extract_signature_function(self, player_url):
-		id_m = re.match(
-			r'.*?-(?P<id>[a-zA-Z0-9_-]+)(?:/watch_as3|/html5player(?:-new)?|(?:/[a-z]{2}_[A-Z]{2})?/base)?\.(?P<ext>[a-z]+)$',
-			player_url)
-		if not id_m:
-			raise Exception('Cannot identify player %r!' % player_url)
-		player_type = id_m.group('ext')
+		player_type = self._extract_player_info(player_url)
 		code = self._download_webpage(player_url)
 		if player_type == 'js':
 			return self._parse_sig_js(code)
 		elif player_type == 'swf':
-			return self._parse_sig_swf(code)
+			raise Exception('Shockwave Flash player is no longer supported!')
 		else:
 			raise Exception('Invalid player type %r!' % player_type)
 
@@ -265,13 +275,6 @@ class YouTubeVideoUrl():
 				jscode, group='sig')
 		jsi = JSInterpreter(jscode)
 		initial_function = jsi.extract_function(funcname)
-		return lambda s: initial_function([s])
-
-	def _parse_sig_swf(self, file_contents):
-		swfi = SWFInterpreter(file_contents)
-		TARGET_CLASSNAME = 'SignatureDecipher'
-		searched_class = swfi.extract_class(TARGET_CLASSNAME)
-		initial_function = swfi.extract_function(searched_class, 'decipher')
 		return lambda s: initial_function([s])
 
 	def _extract_from_m3u8(self, manifest_url):
@@ -307,28 +310,16 @@ class YouTubeVideoUrl():
 				return json.loads(uppercase_escape(config))
 
 	def extract(self, video_id):
-		#gl = config.plugins.YouTube.searchRegion.value
-		#hl = config.plugins.YouTube.searchLanguage.value
-		#url = 'https://www.youtube.com/watch?v=%s&gl=%s&hl=%s&has_verified=1&bpctr=9999999999' % (video_id, gl, hl)
 		url = 'https://www.youtube.com/watch?v=%s&gl=US&hl=en&has_verified=1&bpctr=9999999999' % video_id
 
 		# Get video webpage
-		video_webpage = self._download_webpage(url)
+		video_webpage, urlh = self._download_webpage_handle(url)
+
+		qs = compat_parse_qs(urlparse(urlh.geturl()).query)
+		video_id = qs.get('v', [None])[0] or video_id
+
 		if not video_webpage:
 			raise Exception('Video webpage not found!')
-
-		# Attempt to extract SWF player URL
-		mobj = re.search(r'swfConfig.*?"(https?:\\/\\/.*?watch.*?-.*?\.swf)"', video_webpage)
-		if mobj is not None:
-			player_url = re.sub(r'\\(.)', r'\1', mobj.group(1))
-		else:
-			player_url = None
-
-		is_live = None
-
-		def extract_token(v_info):
-			token = v_info.get('account_playback_token') or v_info.get('accountPlaybackToken') or v_info.get('token')
-			return token
 
 		def extract_player_response(player_response):
 			if not player_response:
@@ -337,9 +328,11 @@ class YouTubeVideoUrl():
 			if isinstance(pl_response, dict):
 				return pl_response
 
+		is_live = None
 		player_response = {}
 
 		# Get video info
+		video_info = {}
 		embed_webpage = None
 		if re.search(r'player-age-gate-content">', video_webpage) is not None:
 			age_gate = True
@@ -353,14 +346,16 @@ class YouTubeVideoUrl():
 					'sts': self._search_regex(r'"sts"\s*:\s*(\d+)', embed_webpage),
 				})
 			video_info_url = 'https://www.youtube.com/get_video_info?' + data
-			video_info_webpage = self._download_webpage(video_info_url)
-			video_info = compat_parse_qs(video_info_webpage)
-			pl_response = video_info.get('player_response', [None])[0]
-			player_response = extract_player_response(pl_response)
+			try:
+				video_info_webpage = self._download_webpage(video_info_url)
+			except ExtractorError:
+				video_info_webpage = None
+			if video_info_webpage:
+				video_info = compat_parse_qs(video_info_webpage)
+				pl_response = video_info.get('player_response', [None])[0]
+				player_response = extract_player_response(pl_response)
 		else:
 			age_gate = False
-			video_info = None
-			sts = None
 			args = {}
 			# Try looking directly into the video webpage
 			ytplayer_config = self._get_ytplayer_config(video_webpage)
@@ -371,47 +366,8 @@ class YouTubeVideoUrl():
 					video_info = dict((k, [v]) for k, v in args.items())
 				if args.get('livestream') == '1' or args.get('live_playback') == 1:
 					is_live = True
-				sts = ytplayer_config.get('sts')
 				if not player_response:
 					player_response = extract_player_response(args.get('player_response'))
-			if not video_info:
-				# We also try looking in get_video_info since it may contain different dashmpd
-				# URL that points to a DASH manifest with possibly different itag set (some itags
-				# are missing from DASH manifest pointed by webpage's dashmpd, some - from DASH
-				# manifest pointed by get_video_info's dashmpd).
-				# The general idea is to take a union of itags of both DASH manifests (for example
-				# video with such 'manifest behavior' see https://github.com/rg3/youtube-dl/issues/6093)
-				for el in ('embedded', 'detailpage', 'vevo', ''):
-					query = {
-							'video_id': video_id,
-							'ps': 'default',
-							'eurl': '',
-							'gl': 'US',#gl
-							'hl': 'en',#hl
-						}
-					if el:
-						query['el'] = el
-					if sts:
-						query['sts'] = sts
-					data = urlencode(query)
-
-					video_info_url = 'https://www.youtube.com/get_video_info?' + data
-					video_info_webpage = self._download_webpage(video_info_url, fatal=False)
-					if not video_info_webpage:
-						continue
-					video_info = compat_parse_qs(video_info_webpage)
-					if not player_response:
-						pl_response = video_info.get('player_response', [None])[0]
-						player_response = extract_player_response(pl_response)
-					token = extract_token(video_info)
-					if not token:
-						break
-		token = extract_token(video_info)
-		if not token:
-			if 'reason' in video_info:
-				print '[YouTubeVideoUrl] %s' % video_info['reason'][0]
-			else:
-				print '[YouTubeVideoUrl] "token" parameter not in video info for unknown reason'
 
 		video_details = try_get(
 			player_response, lambda x: x['videoDetails'], dict) or {}
@@ -443,12 +399,12 @@ class YouTubeVideoUrl():
 						'cipher': None,
 						'url_data': None
 					}
-				if fmt.get('drm_families'):
+				if fmt.get('drmFamilies') or fmt.get('drm_families'):
 					continue
 				url_map['url'] = url_or_none(fmt.get('url'))
 
 				if not url_map['url']:
-					url_map['cipher'] = fmt.get('cipher')
+					url_map['cipher'] = fmt.get('cipher') or fmt.get('signatureCipher')
 					if not url_map['cipher']:
 						continue
 					url_map['url_data'] = compat_parse_qs(url_map['cipher'])
