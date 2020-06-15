@@ -36,8 +36,7 @@ config.plugins.tmbd_yttrailer.search = ConfigSelection(choices = [("1", _("Press
 
 from YouTubeVideoUrl import YouTubeVideoUrl
 
-API_KEY = 'AIzaSyDo0EKjcqXPqoMwmWHMwFAdpwF9K8_p6T0'
-
+API_KEY = 'AIzaSyA6suJMbELHQC9MG8VOq7J6LudvuU-Kcrw'
 
 class tmbdYTTrailer:
 	def __init__(self, session):

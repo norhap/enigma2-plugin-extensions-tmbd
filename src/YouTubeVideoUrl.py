@@ -1,18 +1,22 @@
 # -*- coding: UTF-8 -*-
 # This video extraction code based on youtube-dl: https://github.com/rg3/youtube-dl
 
+from __future__ import print_function
+
 import codecs
 import json
 import re
 
-from urllib import urlencode
-from urllib2 import urlopen, URLError, HTTPError
-from urlparse import urljoin, urlparse
-
 from Components.config import config
 
-from . import sslContext
-from jsinterp import JSInterpreter
+from .compat import compat_ssl_urlopen
+from .compat import compat_str
+from .compat import compat_urlencode
+from .compat import compat_URLError
+from .compat import compat_urljoin
+from .compat import compat_urlparse
+from .compat import compat_unquote_to_bytes
+from .jsinterp import JSInterpreter
 
 
 PRIORITY_VIDEO_FORMAT = []
@@ -78,46 +82,27 @@ def try_get(src, getter, expected_type=None):
 
 
 def url_or_none(url):
-	if not url or not isinstance(url, unicode):
+	if not url or not isinstance(url, compat_str):
 		return None
 	url = url.strip()
 	return url if re.match(r'^(?:[a-zA-Z][\da-zA-Z.+-]*:)?//', url) else None
 
 
 def compat_urllib_parse_unquote(string):
-	if string == '':
+	if '%' not in string:
+		string.split
 		return string
-	res = string.split('%')
-	if len(res) == 1:
-		return string
-	# pct_sequence: contiguous sequence of percent-encoded bytes, decoded
-	pct_sequence = b''
-	string = res[0]
-	for item in res[1:]:
-		try:
-			if not item:
-				raise ValueError
-			pct_sequence += item[:2].decode('hex')
-			rest = item[2:]
-			if not rest:
-				# This segment was just a single percent-encoded character.
-				# May be part of a sequence of code units, so delay decoding.
-				# (Stored in pct_sequence).
-				continue
-		except ValueError:
-			rest = '%' + item
-		# Encountered non-percent-encoded characters. Flush the current
-		# pct_sequence.
-		string += pct_sequence.decode('utf-8', 'replace') + rest
-		pct_sequence = b''
-	if pct_sequence:
-		# Flush the final pct_sequence
-		string += pct_sequence.decode('utf-8', 'replace')
-	return string
+	bits = re.compile(r'([\x00-\x7f]+)').split(string)
+	res = [bits[0]]
+	append = res.append
+	for i in range(1, len(bits), 2):
+		append(compat_unquote_to_bytes(bits[i]).decode('utf-8', 'replace'))
+		append(bits[i + 1])
+	return ''.join(res)
 
 
 def _parse_qsl(qs):
-	qs, _coerce_result = qs, unicode
+	qs, _coerce_result = qs, compat_str
 	pairs = [s2 for s1 in qs.split('&') for s2 in s1.split(';')]
 	r = []
 	for name_value in pairs:
@@ -167,32 +152,48 @@ def clean_html(html):
 class YouTubeVideoUrl():
 
 	def _download_webpage(self, url):
-		""" Returns a tuple (page content as string, URL handle) """
-		try:
-			if sslContext:
-				urlh = urlopen(url, context=sslContext)
+		""" Return the data of the page as a string """
+		content, urlh = self._download_webpage_handle(url)
+		return content
+
+	@staticmethod
+	def _guess_encoding_from_content(content_type, webpage_bytes):
+		m = re.match(r'[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+\s*;\s*charset=(.+)', content_type)
+		if m:
+			encoding = m.group(1)
+		else:
+			m = re.search(br'<meta[^>]+charset=[\'"]?([^\'")]+)[ /\'">]',
+					webpage_bytes[:1024])
+			if m:
+				encoding = m.group(1).decode('ascii')
+			elif webpage_bytes.startswith(b'\xff\xfe'):
+				encoding = 'utf-16'
 			else:
-				urlh = urlopen(url)
-		except URLError, e:
-			raise Exception(e.reason)
-		return urlh.read()
+				encoding = 'utf-8'
+
+		return encoding
 
 	def _download_webpage_handle(self, url_or_request):
 		""" Returns a tuple (page content as string, URL handle) """
 
 		# Strip hashes from the URL (#1038)
-		if isinstance(url_or_request, (unicode, str)):
+		if isinstance(url_or_request, (compat_str, str)):
 			url_or_request = url_or_request.partition('#')[0]
 
 		try:
-			if sslContext:
-				urlh = urlopen(url_or_request, context=sslContext)
-			else:
-				urlh = urlopen(url_or_request)
-		except URLError, e:
+			urlh = compat_ssl_urlopen(url_or_request)
+		except compat_URLError as e:
 			raise Exception(e.reason)
 
-		content = urlh.read()
+		content_type = urlh.headers.get('Content-Type', '')
+		webpage_bytes = urlh.read()
+		encoding = self._guess_encoding_from_content(content_type, webpage_bytes)
+
+		try:
+			content = webpage_bytes.decode(encoding, 'replace')
+		except:
+			content = webpage_bytes.decode('utf-8', 'replace')
+
 		return (content, urlh)
 
 	def _search_regex(self, pattern, string, group=None):
@@ -200,7 +201,7 @@ class YouTubeVideoUrl():
 		Perform a regex search on the given string, using a single or a list of
 		patterns returning the first matching group.
 		"""
-		if isinstance(pattern, (str, unicode, type(re.compile('')))):
+		if isinstance(pattern, (str, compat_str, type(re.compile('')))):
 			mobj = re.search(pattern, string, 0)
 		else:
 			for p in pattern:
@@ -214,7 +215,7 @@ class YouTubeVideoUrl():
 			else:
 				return mobj.group(group)
 		else:
-			print '[YouTubeVideoUrl] unable extract pattern from string!'
+			print('[YouTubeVideoUrl] unable extract pattern from string!')
 			return ''
 
 	def _decrypt_signature(self, s, player_url):
@@ -226,7 +227,7 @@ class YouTubeVideoUrl():
 		if player_url[:2] == '//':
 			player_url = 'https:' + player_url
 		elif not re.match(r'https?://', player_url):
-			player_url = urljoin('https://www.youtube.com', player_url)
+			player_url = compat_urljoin('https://www.youtube.com', player_url)
 		try:
 			func = self._extract_signature_function(player_url)
 			return func(s)
@@ -282,7 +283,7 @@ class YouTubeVideoUrl():
 
 		def _get_urls(_manifest):
 			lines = _manifest.split('\n')
-			urls = filter(lambda l: l and not l.startswith('#'), lines)
+			urls = [l for l in lines if l and not l.startswith('#')]
 			return urls
 
 		manifest = self._download_webpage(manifest_url)
@@ -310,12 +311,13 @@ class YouTubeVideoUrl():
 				return json.loads(uppercase_escape(config))
 
 	def extract(self, video_id):
+
 		url = 'https://www.youtube.com/watch?v=%s&gl=US&hl=en&has_verified=1&bpctr=9999999999' % video_id
 
 		# Get video webpage
 		video_webpage, urlh = self._download_webpage_handle(url)
 
-		qs = compat_parse_qs(urlparse(urlh.geturl()).query)
+		qs = compat_parse_qs(compat_urlparse(urlh.geturl()).query)
 		video_id = qs.get('v', [None])[0] or video_id
 
 		if not video_webpage:
@@ -340,7 +342,7 @@ class YouTubeVideoUrl():
 			# this can be viewed without login into Youtube
 			url = 'https://www.youtube.com/embed/%s' % video_id
 			embed_webpage = self._download_webpage(url)
-			data = urlencode({
+			data = compat_urlencode({
 					'video_id': video_id,
 					'eurl': 'https://youtube.googleapis.com/v/' + video_id,
 					'sts': self._search_regex(r'"sts"\s*:\s*(\d+)', embed_webpage),
@@ -363,7 +365,7 @@ class YouTubeVideoUrl():
 				args = ytplayer_config['args']
 				if args.get('url_encoded_fmt_stream_map'):
 					# Convert to the same format returned by compat_parse_qs
-					video_info = dict((k, [v]) for k, v in args.items())
+					video_info = dict((k, [v]) for k, v in list(args.items()))
 				if args.get('livestream') == '1' or args.get('live_playback') == 1:
 					is_live = True
 				if not player_response:
@@ -408,11 +410,11 @@ class YouTubeVideoUrl():
 					if not url_map['cipher']:
 						continue
 					url_map['url_data'] = compat_parse_qs(url_map['cipher'])
-					url_map['url'] = url_or_none(try_get(url_map['url_data'], lambda x: x['url'][0], unicode))
+					url_map['url'] = url_or_none(try_get(url_map['url_data'], lambda x: x['url'][0], compat_str))
 					if not url_map['url']:
 						continue
 				else:
-					url_map['url_data'] = compat_parse_qs(urlparse(url_map['url']).query)
+					url_map['url_data'] = compat_parse_qs(compat_urlparse(url_map['url']).query)
 
 				stream_type = try_get(url_map['url_data'], lambda x: x['stream_type'][0])
 				# Unsupported FORMAT_STREAM_TYPE_OTF
@@ -422,7 +424,7 @@ class YouTubeVideoUrl():
 				url_map['format_id'] = fmt.get('itag') or url_map['url_data']['itag'][0]
 				if not url_map['format_id']:
 					continue
-				url_map['format_id'] = unicode(url_map['format_id'])
+				url_map['format_id'] = compat_str(url_map['format_id'])
 
 				formats.append(url_map)
 
@@ -485,7 +487,7 @@ class YouTubeVideoUrl():
 					elif 's' in url_map['url_data']:
 						encrypted_sig = url_map['url_data']['s'][0]
 						signature = self._decrypt_signature(encrypted_sig, player_url)
-						sp = try_get(url_map['url_data'], lambda x: x['sp'][0], unicode) or 'signature'
+						sp = try_get(url_map['url_data'], lambda x: x['sp'][0], compat_str) or 'signature'
 						url += '&%s=%s' % (sp, signature)
 				if 'ratebypass' not in url_map['url']:
 					url += '&ratebypass=yes'
@@ -494,9 +496,9 @@ class YouTubeVideoUrl():
 				url_or_none(try_get(
 					player_response,
 					lambda x: x['streamingData']['hlsManifestUrl'],
-					unicode))
+					compat_str))
 				or url_or_none(try_get(
-					video_info, lambda x: x['hlsvp'][0], unicode)))
+					video_info, lambda x: x['hlsvp'][0], compat_str)))
 			if manifest_url:
 				url_map = self._extract_from_m3u8(manifest_url)
 
@@ -507,24 +509,24 @@ class YouTubeVideoUrl():
 						break
 				# If anything not found, used first in the list if it not in ignore map
 				if not url:
-					for url_map_key in url_map.keys():
+					for url_map_key in list(url_map.keys()):
 						if url_map_key not in IGNORE_VIDEO_FORMAT:
 							url = url_map[url_map_key]
 							break
 				if not url:
-					url = url_map.values()[0]
+					url = list(url_map.values())[0]
 		if not url:
 			error_message = clean_html(try_get(
 					player_response,
 					lambda x: x['playabilityStatus']['reason'],
-					unicode))
+					compat_str))
 			if not error_message:
 				error_message = clean_html(try_get(
-					video_info, lambda x: x['reason'][0], unicode))
+					video_info, lambda x: x['reason'][0], compat_str))
 			if not error_message and try_get(
 					player_response,
 					lambda x: x['streamingData']['licenseInfos'],
-					unicode):
+					compat_str):
 				error_message = 'This video is DRM protected!'
 			if not error_message:
 				error_message = 'No supported formats found in video info!'
