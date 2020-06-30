@@ -17,6 +17,7 @@ from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Screens.InfoBar import InfoBar, MoviePlayer
+from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.BoundFunction import boundFunction
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS
@@ -36,24 +37,64 @@ config.plugins.tmbd_yttrailer.search = ConfigSelection(choices = [("1", _("Press
 
 from YouTubeVideoUrl import YouTubeVideoUrl
 
+def GetKey(x):
+	p = 3
+	while True:
+		if p > len(x):
+			break
+		pl = len(str(p))
+		x = x[:p] + x[p+pl:]
+		p += 12 - pl
+	x = x.replace('w_OizD', 'a')
+	x = x.replace('Xhi_Lo', 'A')
+	return x
+
 API_KEY = 'AIzaSyA6suJMbELHQC9MG8VOq7J6LudvuU-Kcrw'
+
+if os.path.exists('/etc/enigma2/YouTube.key'):
+	try:
+		for line in open('/etc/enigma2/YouTube.key').readlines():
+			line = line.strip().replace(' ', '')
+			if len(line) < 30 or line[0] == '#' or '=' not in line:
+				continue
+			line = line.split('=', 1)
+			if line[1][:1] == '"' or line[1][:1] == "'":
+				line[1] = line[1][1:]
+			if line[1][-1:] == '"' or line[1][-1:] == "'":
+				line[1] = line[1][:-1]
+			if line[1][:4] == 'GET_':
+				line[1] = GetKey(line[1][4:])
+			if 'API_KEY' in line[0]:
+				API_KEY = line[1]
+			elif 'CLIENT_ID' in line[0]:
+				YOUTUBE_API_CLIENT_ID = line[1]
+			elif 'CLIENT_SECRET' in line[0]:
+				YOUTUBE_API_CLIENT_SECRET = line[1]
+	except Exception as ex:
+		print('[YouTube] Error in read YouTube.key:', ex)
 
 class tmbdYTTrailer:
 	def __init__(self, session):
 		self.session = session
 		self.ytdl = YouTubeVideoUrl()
+		self.errorTaimer = eTimer()
+		self.errorTaimer.callback.append(self.errorTaimerStop)
+		self.show_error = False
 
 	def showTrailer(self, eventname):
 		if eventname:
+			self.show_error = False
 			feeds = self.getYTFeeds(eventname, 1)
 			if not feeds:
-				self.showError()
+				if not self.errorTaimer.isActive():
+					self.errorTaimer.start(1000, True)
 			else:
 				ref = self.setServiceReference(feeds[0])
 				if ref:
 					self.session.open(tmbdTrailerPlayer, ref)
 				else:
-					self.showError()
+					if not self.errorTaimer.isActive():
+						self.errorTaimer.start(1000, True)
 
 	def getYTFeeds(self, eventname, max_results):
 		if config.plugins.tmbd_yttrailer.best_resolution.value not in ['35', '18', '5', '17']:
@@ -93,9 +134,16 @@ class tmbdYTTrailer:
 			return ref
 		return None
 
+	def errorTaimerStop(self):
+		if not self.errorTaimer.isActive() and not self.show_error:
+			self.show_error = True
+			self.showError()
+
 	def showError(self):
-		from Screens.MessageBox import MessageBox
-		self.session.open(MessageBox, _('Problems with YT-Feeds!'), MessageBox.TYPE_INFO)
+		try:
+			self.session.open(MessageBox, _('Problems with YT-Feeds!'), MessageBox.TYPE_INFO, timeout=3)
+		except:
+			pass
 
 
 class TmbdYTTrailerList(Screen, tmbdYTTrailer):
@@ -145,10 +193,8 @@ class TmbdYTTrailerList(Screen, tmbdYTTrailer):
 			self['list'].setList(self.feeds)
 			self.createThumbnails()
 		elif not manual:
-			# I hope that happens rarely, so set up timer only here
-			self.errorTaimer = eTimer()
-			self.errorTaimer.timeout.callback.append(self.errorTaimerStop)
-			self.errorTaimer.start(1)
+			if not self.errorTaimer.isActive():
+				self.errorTaimer.start(1000, True)
 
 	def menuPressed(self):
 		self.session.openWithCallback(self.setSearchString, VirtualKeyBoard, title = _("Enter text for search YT-Trailer:"))
@@ -218,24 +264,21 @@ class TmbdYTTrailerList(Screen, tmbdYTTrailer):
 	def okPressed(self):
 		entry = self['list'].getCurrent()
 		if not entry:
-			self.showError()
+			if not self.errorTaimer.isActive():
+				self.errorTaimer.start(1000, True)
 		else:
 			ref = self.setServiceReference(entry)
 			if ref:
 				self.session.open(tmbdTrailerPlayer, ref)
 			else:
-				self.showError()
+				if not self.errorTaimer.isActive():
+					self.errorTaimer.start(1000, True)
 
 	def errorTaimerStop(self):
-		self.errorTaimer.stop()
-		del self.errorTaimer
-		self.showError()
-		self.close()
-
-	def showError(self):
-		from Screens.MessageBox import MessageBox
-		self.session.open(MessageBox, _('Problems with YT-Feeds!'), MessageBox.TYPE_INFO)
-
+		if not self.errorTaimer.isActive() and not self.show_error:
+			self.show_error = True
+			self.showError()
+			self.close()
 
 class tmbdTrailerPlayer(MoviePlayer):
 	def __init__(self, session, service):
