@@ -41,7 +41,15 @@ from Screens.Standby import TryQuitMainloop
 from meta import MetaParser, getctime, fileSize
 import kinopoisk, urllib2, tmbdYTTrailer
 
-plugin_version = "8.4"
+try:
+	from Plugins.Extensions.SubsSupport.subtitles import E2SubsSeeker, SubsSearch, initSubsSettings, SubsSetupGeneral, SubsSearchSettings, SubsSetupExternal, SubsSetupEmbedded
+	from Plugins.Extensions.SubsSupport.subtitlesdvb import SubsSupportDVB, SubsSetupDVBPlayer
+	from Plugins.Extensions.SubsSupport.e2_utils import isFullHD
+	SubsSupport = True
+except ImportError:
+	SubsSupport = False
+
+plugin_version = "8.5"
 
 epg_furtherOptions = False
 if hasattr(EPGSelection, "furtherOptions"):
@@ -856,8 +864,22 @@ class TMBD(Screen):
 		if config.plugins.tmbd.alrernative_locale.value and config.plugins.tmbd.alrernative_locale.value != config.plugins.tmbd.locale.value:
 			list.append((_("Search on alternative language"), self.alternativeSearch))
 		list.append((_("Search TV-series"), self.TVseriesSearch))
+		if SubsSupport and self.curResult:
+			list.append((_("SubsSupport downloader"), self.searchSubs))
 		list.append((_("Settings"), self.Menu2))
 		self.session.openWithCallback(self.menuCallback, ChoiceBox, list = list, title= _("Select action:"))
+
+	def searchSubs(self):
+		if self.curResult:
+			current = self["menu"].l.getCurrentSelection()
+			if current:
+				namedetals = self['menu'].l.getCurrentSelection()[0]
+				namedetals = namedetals[:-7]
+				try:
+					settings = initSubsSettings().search
+					self.session.open(SubsSearch, E2SubsSeeker(self.session, settings), settings, searchTitles=[namedetals], standAlone=True)
+				except:
+					pass
 
 	def Menu2(self):
 		self.session.openWithCallback(self.workingFinished, TMBDSettings)
