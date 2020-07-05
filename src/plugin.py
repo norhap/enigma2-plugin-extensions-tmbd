@@ -874,7 +874,7 @@ class TMBD(Screen):
 			current = self["menu"].l.getCurrentSelection()
 			if current:
 				namedetals = self['menu'].l.getCurrentSelection()[0]
-				namedetals = namedetals[:-7]
+				#namedetals = namedetals[:-7]
 				try:
 					settings = initSubsSettings().search
 					self.session.open(SubsSearch, E2SubsSeeker(self.session, settings), settings, searchTitles=[namedetals], standAlone=True)
@@ -938,7 +938,7 @@ class TMBD(Screen):
 			Extratext2 = ""
 			namedetals2 = ""
 			if len(movie2):
-					TSFILE = movie2
+				TSFILE = movie2
 			else:
 				return
 			current = self["menu"].l.getCurrentSelection()
@@ -1248,7 +1248,7 @@ class TMBD(Screen):
 			current = self["menu"].l.getCurrentSelection()
 			if current:
 				namedetals = self['menu'].l.getCurrentSelection()[0]
-				namedetals = namedetals[:-7]
+				#namedetals = namedetals[:-7]
 				self.session.open(tmbdYTTrailer.TmbdYTTrailerList, namedetals)
 
 	def workingFinished(self, callback=None):
