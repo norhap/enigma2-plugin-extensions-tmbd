@@ -27,6 +27,7 @@ from Components.Input import Input
 from Screens.Console import Console
 from Screens.InputBox import InputBox
 from Components.ProgressBar import ProgressBar
+from Components.Language import language
 from Components.Sources.StaticText import StaticText
 from Components.config import config, ConfigSubsection, ConfigYesNo, ConfigText, getConfigListEntry, ConfigSelection, ConfigInteger
 from Tools.Directories import fileExists, resolveFilename, SCOPE_PLUGINS
@@ -49,7 +50,7 @@ try:
 except ImportError:
 	SubsSupport = False
 
-plugin_version = "8.5"
+plugin_version = "8.6"
 
 epg_furtherOptions = False
 if hasattr(EPGSelection, "furtherOptions"):
@@ -109,7 +110,7 @@ def GetLanguageCode():
 	return TMDB_LANGUAGE_CODES.get(lang, 'rus')
 
 config.plugins.tmbd = ConfigSubsection()
-config.plugins.tmbd.locale = ConfigText(default="en", fixed_size = False)
+config.plugins.tmbd.locale = ConfigText(default = "ru" if "ru" in language.getActiveLanguage() else "en", fixed_size = False)
 config.plugins.tmbd.alrernative_locale = ConfigText(default="en", fixed_size = False)
 config.plugins.tmbd.available_languages = ConfigSelection(choices = [("1", _("Press OK"))], default = "1")
 config.plugins.tmbd.skins = ConfigSelection(default = "0", choices = [("0", _("Small poster")), ("1", _("Large poster"))])
