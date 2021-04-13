@@ -122,40 +122,40 @@ def GetLanguageCode():
 	return TMDB_LANGUAGE_CODES.get(lang, 'rus')
 
 config.plugins.tmbd = ConfigSubsection()
-config.plugins.tmbd.locale = ConfigText(default = "ru" if "ru" in language.getActiveLanguage() else "en", fixed_size = False)
-config.plugins.tmbd.alrernative_locale = ConfigText(default="en", fixed_size = False)
-config.plugins.tmbd.available_languages = ConfigSelection(choices = [("1", _("Press OK"))], default = "1")
-config.plugins.tmbd.skins = ConfigSelection(default = "0", choices = [("0", _("Small poster")), ("1", _("Large poster"))])
+config.plugins.tmbd.locale = ConfigText(default="ru" if "ru" in language.getActiveLanguage() else "en", fixed_size=False)
+config.plugins.tmbd.alrernative_locale = ConfigText(default="en", fixed_size=False)
+config.plugins.tmbd.available_languages = ConfigSelection(choices=[("1", _("Press OK"))], default="1")
+config.plugins.tmbd.skins = ConfigSelection(default="0", choices=[("0", _("Small poster")), ("1", _("Large poster"))])
 config.plugins.tmbd.enabled = ConfigYesNo(default=True)
-config.plugins.tmbd.virtual_text = ConfigSelection(default = "0", choices = [("0", _("< empty >")), ("1", _("< text >"))])
+config.plugins.tmbd.virtual_text = ConfigSelection(default="0", choices=[("0", _("< empty >")), ("1", _("< text >"))])
 config.plugins.tmbd.menu = ConfigYesNo(default=True)
-config.plugins.tmbd.menu_profile = ConfigSelection(default = "0", choices = [("0", _("only current profile")), ("1", _("List: themoviedb.org / kinopoisk.ru")), ("2", _("List: kinopoisk.ru / themoviedb.org"))])
+config.plugins.tmbd.menu_profile = ConfigSelection(default="0", choices=[("0", _("only current profile")), ("1", _("List: themoviedb.org / kinopoisk.ru")), ("2", _("List: kinopoisk.ru / themoviedb.org"))])
 config.plugins.tmbd.add_tmbd_to_epg = ConfigYesNo(default=False)
 config.plugins.tmbd.add_tmbd_to_multi = ConfigYesNo(default=False)
 config.plugins.tmbd.add_tmbd_to_graph = ConfigYesNo(default=False)
 config.plugins.tmbd.add_ext_menu = ConfigYesNo(default=False)
-config.plugins.tmbd.ext_menu_event = ConfigSelection(default = "0", choices = [("0", _("only current event")), ("1", _("choice now/next event"))])
+config.plugins.tmbd.ext_menu_event = ConfigSelection(default="0", choices=[("0", _("only current event")), ("1", _("choice now/next event"))])
 config.plugins.tmbd.no_event = ConfigYesNo(default=False)
 config.plugins.tmbd.test_connect = ConfigYesNo(default=False)
-config.plugins.tmbd.exit_key = ConfigSelection(default = "0", choices = [("0", _("close")), ("1", _("ask user"))])
-config.plugins.tmbd.profile = ConfigSelection(default = "0", choices = [("0", _("themoviedb.org")), ("1", _("kinopoisk.ru (only russian language)"))])
+config.plugins.tmbd.exit_key = ConfigSelection(default="0", choices=[("0", _("close")), ("1", _("ask user"))])
+config.plugins.tmbd.profile = ConfigSelection(default="0", choices=[("0", _("themoviedb.org")), ("1", _("kinopoisk.ru (only russian language)"))])
 config.plugins.tmbd.position_x = ConfigInteger(default=100)
 config.plugins.tmbd.position_y = ConfigInteger(default=100)
 config.plugins.tmbd.new_movieselect = ConfigYesNo(default=True)
 config.plugins.tmbd.size = ConfigSelection(choices=["285x398", "185x278", "130x200", "104x150"], default="130x200")
 config.plugins.tmbd.hotkey = ConfigSelection([(x[0],x[1]) for x in TMBDInfoBarKeys], "none")
-config.plugins.tmbd.movielist_profile = ConfigSelection(default = "1", choices = [("0", _("only current profile")), ("1", _("List: themoviedb.org / kinopoisk.ru")), ("2", _("List: kinopoisk.ru / themoviedb.org"))])
-config.plugins.tmbd.kinopoisk_data = ConfigSelection(choices = [("1", _("Press OK"))], default = "1")
-config.plugins.tmbd.yt_setup = ConfigSelection(choices = [("1", _("Press OK"))], default = "1")
+config.plugins.tmbd.movielist_profile = ConfigSelection(default="1", choices=[("0", _("only current profile")), ("1", _("List: themoviedb.org / kinopoisk.ru")), ("2", _("List: kinopoisk.ru / themoviedb.org"))])
+config.plugins.tmbd.kinopoisk_data = ConfigSelection(choices=[("1", _("Press OK"))], default="1")
+config.plugins.tmbd.yt_setup = ConfigSelection(choices=[("1", _("Press OK"))], default="1")
 config.plugins.tmbd.add_tmbd_to_nstreamvod = ConfigYesNo(default=False)
 config.plugins.tmbd.add_vcs_to_nstreamvod = ConfigYesNo(default=False)
 config.plugins.tmbd.show_in_furtheroptionsmenu = ConfigYesNo(default=True)
 if epg_furtherOptions:
-	config.plugins.tmbd.yt_event_menu = ConfigSelection(default="3", choices = [("0", _("disabled")),("1", _("EPGSelection (context menu)")), ("2", _("EventView (context menu)/EventInfo plugins")), ("3", _("EPGSelection/EventView/EventInfo plugins"))])
+	config.plugins.tmbd.yt_event_menu = ConfigSelection(default="3", choices=[("0", _("disabled")),("1", _("EPGSelection (context menu)")), ("2", _("EventView (context menu)/EventInfo plugins")), ("3", _("EPGSelection/EventView/EventInfo plugins"))])
 else:
-	config.plugins.tmbd.yt_event_menu = ConfigSelection(default="2", choices = [("0", _("disabled")), ("2", _("EventView (context menu)/EventInfo plugins"))])
-config.plugins.tmbd.yt_start = ConfigSelection(default = "0", choices = [("0", _("show list")), ("1", _("run first"))])
-config.plugins.tmbd.cover_dir = ConfigText(default="/media/hdd/", fixed_size = False)
+	config.plugins.tmbd.yt_event_menu = ConfigSelection(default="2", choices=[("0", _("disabled")), ("2", _("EventView (context menu)/EventInfo plugins"))])
+config.plugins.tmbd.yt_start = ConfigSelection(default="0", choices=[("0", _("show list")), ("1", _("run first"))])
+config.plugins.tmbd.cover_dir = ConfigText(default="/media/hdd/", fixed_size=False)
 
 try:
 	screenWidth = getDesktop(0).size().width()
@@ -217,10 +217,10 @@ def TMBDChannelContextMenu__init__(self, session, csel):
 			if config.plugins.tmbd.menu.value:
 				if config.plugins.tmbd.menu_profile.value == "0":
 					callFunction = self.showServiceInformations2 
-					self["menu"].list.insert(1, ChoiceEntryComponent(text = (_("TMBD Details"), boundFunction(callFunction,1)), key = "bullet"))
+					self["menu"].list.insert(1, ChoiceEntryComponent(text=(_("TMBD Details"), boundFunction(callFunction,1)), key="bullet"))
 				else:
 					callFunction = self.profileContextMenuCallback 
-					self["menu"].list.insert(1, ChoiceEntryComponent(text = (_("TMBD Details"), boundFunction(callFunction,1)), key = "bullet"))
+					self["menu"].list.insert(1, ChoiceEntryComponent(text=(_("TMBD Details"), boundFunction(callFunction,1)), key="bullet"))
 
 def showServiceInformations2(self, profile=False):
 		global eventname
@@ -262,7 +262,7 @@ def profileContextMenuCallback(self, add):
 				(_("kinopoisk.ru"), boundFunction(self.showServiceInformations2, profile=True)),
 				(_("themoviedb.org"), boundFunction(self.showServiceInformations2, profile=False)),
 			]
-	self.session.openWithCallback(self.profileMenuCallback, ChoiceBox, title= _("Choice profile in search:"), list = options)
+	self.session.openWithCallback(self.profileMenuCallback, ChoiceBox, title=_("Choice profile in search:"), list=options)
 
 def profileMenuCallback(self, ret):
 	ret and ret[1]()
@@ -859,8 +859,8 @@ class TMBD(Screen):
 		self.session.openWithCallback(
 			self.menuCallback,
 			ChoiceBox,
-			list = list,
-			title= _("What exactly do you want to delete?"),
+			list=list,
+			title=_("What exactly do you want to delete?"),
 		)
 
 	def contextMenuPressed(self):
@@ -882,7 +882,7 @@ class TMBD(Screen):
 		if SubsSupport and self.curResult:
 			list.append((_("SubsSupport downloader"), self.searchSubs))
 		list.append((_("Settings"), self.Menu2))
-		self.session.openWithCallback(self.menuCallback, ChoiceBox, list = list, title= _("Select action:"))
+		self.session.openWithCallback(self.menuCallback, ChoiceBox, list=list, title=_("Select action:"))
 
 	def searchSubs(self):
 		if self.curResult:
@@ -925,7 +925,7 @@ class TMBD(Screen):
 			(_("Yes,but write new meta-file"), self.writeMeta),
 			(_("No"), self.exitChoice),
 		]
-		self.session.openWithCallback(self.menuCallback, ChoiceBox, title= _("Save poster and info for:\n %s ?") % (name), list = list)
+		self.session.openWithCallback(self.menuCallback, ChoiceBox, title=_("Save poster and info for:\n %s ?") % (name), list=list)
 
 	def exitChoice(self):
 		self.close()
@@ -1246,7 +1246,7 @@ class TMBD(Screen):
 				except OSError:
 					pass
 
-	def menuCallback(self, ret = None):
+	def menuCallback(self, ret=None):
 		ret and ret[1]()
 
 	def searchYttrailer3(self):
@@ -1277,13 +1277,13 @@ class TMBD(Screen):
 		self.gotSearchString(ret=self.eventName)
 
 	def openKeyBoard(self):
-		self.session.openWithCallback(self.gotSearchString, InputBox, title = _("Edit text to search for"), text=eventname, visible_width = 40, maxSize=False, type=Input.TEXT)
+		self.session.openWithCallback(self.gotSearchString, InputBox, title=_("Edit text to search for"), text=eventname, visible_width=40, maxSize=False, type=Input.TEXT)
 
 	def openVirtualKeyBoard(self):
 		if config.plugins.tmbd.virtual_text.value == "0":
-			self.session.openWithCallback(self.gotSearchString, VirtualKeyBoard, title = _("Enter text to search for"))
+			self.session.openWithCallback(self.gotSearchString, VirtualKeyBoard, title=_("Enter text to search for"))
 		else:
-			self.session.openWithCallback(self.gotSearchString, VirtualKeyBoard, title = _("Edit text to search for"), text=eventname)
+			self.session.openWithCallback(self.gotSearchString, VirtualKeyBoard, title=_("Edit text to search for"), text=eventname)
 
 	def openChannelSelection(self):
 		self.session.openWithCallback(self.gotSearchString, TMBDChannelSelection)
@@ -1458,7 +1458,7 @@ class TMBDSettings(Screen, ConfigListScreen):
 				<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/green25.png" position="485,450" size="235,44" zPosition="1" alphatest="on" />
 			</screen>"""
 
-	def __init__(self, session, args = None):
+	def __init__(self, session, args=None):
 		Screen.__init__(self, session)
 		self.setTitle(_("Settings TMBD Details Plugin...") + " " + plugin_version)
 		self['key_red'] = Button(_('Cancel'))
@@ -1543,7 +1543,7 @@ class TMBDSettings(Screen, ConfigListScreen):
 			#self.session.open(MessageBox, "en/eng', ru/rus, fr/fra, bg/bul, it/ita, po/pol, lv/lav, de/ger, da/dan, nl/dut, fi/fin, el/gre, he/heb, hu/hun, no/nor, pt/por, ro/ron, sk/slo, sl/slv, es/est, sv/swe, tr/tur, uk/ukr, cz/cze", MessageBox.TYPE_INFO)
 		elif sel == config.plugins.tmbd.cover_dir or sel == config.plugins.tmbd.locale or sel == config.plugins.tmbd.alrernative_locale:
 			text = str(self["config"].getCurrent()[1].getText())
-			self.session.openWithCallback(self.textCallback, VirtualKeyBoard, text = text)
+			self.session.openWithCallback(self.textCallback, VirtualKeyBoard, text=text)
 
 	def availableLanguagesPressed(self):
 		list = [
@@ -1596,7 +1596,7 @@ class TMBDSettings(Screen, ConfigListScreen):
 			("uk" + _(" as alternative language"), "uk"),
 			("cz" + _(" as alternative language"), "cz")
 		]
-		self.session.openWithCallback(self.menuCallback, ChoiceBox, list = list, title= _("Select action:"))
+		self.session.openWithCallback(self.menuCallback, ChoiceBox, list=list, title=_("Select action:"))
 
 	def menuCallback(self, ret=None):
 		if ret:
@@ -2166,7 +2166,7 @@ class KinoRu(Screen):
 				id = id[:-3]
 			url = 'http://st.kinopoisk.ru/images/film/%s.jpg' % (id)
 			user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.53.11 (KHTML, like Gecko) Version/5.1.3 Safari/534.53.10'
-			req = urllib2.Request(url, headers = {'User-agent': user_agent, 'Accept': 'text/html'})
+			req = urllib2.Request(url, headers={'User-agent': user_agent, 'Accept': 'text/html'})
 			try:
 				res = urllib2.urlopen(req)
 			except:
@@ -2191,8 +2191,8 @@ class KinoRu(Screen):
 		self.session.openWithCallback(
 			self.menuCallback,
 			ChoiceBox,
-			list = list,
-			title= _("What exactly do you want to delete?"),
+			list=list,
+			title=_("What exactly do you want to delete?"),
 		)
 
 	def contextMenuPressed(self):
@@ -2213,8 +2213,8 @@ class KinoRu(Screen):
 		self.session.openWithCallback(
 			self.menuCallback,
 			ChoiceBox,
-			list = list,
-			title= _("Select action:"),
+			list=list,
+			title=_("Select action:"),
 		)
 
 	def Menu2(self):
@@ -2231,8 +2231,8 @@ class KinoRu(Screen):
 		self.session.openWithCallback(
 			self.menuCallback,
 			ChoiceBox,
-			title= _("Save poster and info for:\n %s ?") % (name),
-			list = list,
+			title=_("Save poster and info for:\n %s ?") % (name),
+			list=list,
 		)
 
 	def exitChoice(self):
@@ -2518,18 +2518,18 @@ class KinoRu(Screen):
 		self.working = False
 
 	def openKeyBoard(self):
-		self.session.openWithCallback(self.gotSearchString, InputBox, title = _("Edit text to search for"), text=eventname, visible_width = 40, maxSize=False, type=Input.TEXT)
+		self.session.openWithCallback(self.gotSearchString, InputBox, title=_("Edit text to search for"), text=eventname, visible_width=40, maxSize=False, type=Input.TEXT)
 
 	def openVirtualKeyBoard(self):
 		if config.plugins.tmbd.virtual_text.value == "0":
-			self.session.openWithCallback(self.gotSearchString, VirtualKeyBoard, title = _("Enter text to search for"))
+			self.session.openWithCallback(self.gotSearchString, VirtualKeyBoard, title=_("Enter text to search for"))
 		else:
-			self.session.openWithCallback(self.gotSearchString, VirtualKeyBoard, title = _("Edit text to search for"), text=eventname)
+			self.session.openWithCallback(self.gotSearchString, VirtualKeyBoard, title=_("Edit text to search for"), text=eventname)
 
 	def openChannelSelection(self):
 		self.session.openWithCallback(self.gotSearchString, TMBDChannelSelection)
 
-	def gotSearchString(self, ret = None):
+	def gotSearchString(self, ret=None):
 		if ret:
 			global total
 			self.eventName = ret
@@ -3033,7 +3033,7 @@ class EventChoiseList:
 			keyslist.extend( [ "1", "2" ] )
 			eventlist.append((_('Change profile'), self.ChangeProfile))
 			keyslist.append('blue')
-			dlg = self.session.openWithCallback(self.menuCallback,ChoiceBox,list = eventlist,keys = keyslist,title= _("%s\nProfile: %s\nSelect event for search:") % (cur_name, profile))
+			dlg = self.session.openWithCallback(self.menuCallback,ChoiceBox,list=eventlist,keys=keyslist,title=_("%s\nProfile: %s\nSelect event for search:") % (cur_name, profile))
 			dlg.setTitle(_("TMBD Details"))
 		elif event_now and not event_next:
 			self.Nowevent()
@@ -3067,7 +3067,7 @@ class EventChoiseList:
 		else:
 			self.session.open(KinoRu, eventname, False)
 
-	def menuCallback(self, ret = None):
+	def menuCallback(self, ret=None):
 		ret and ret[1]()
 
 class MovielistProfileList(Screen):
@@ -3103,9 +3103,9 @@ class MovielistProfileList(Screen):
 	def okClicked(self):
 		sel = self["list"].getCurrent()
 		if sel == _("kinopoisk.ru"):
-			self.session.open(KinoRu, self.eventname, movielist = True)
+			self.session.open(KinoRu, self.eventname, movielist=True)
 		if sel == _("themoviedb.org"):
-			self.session.open(TMBD, self.eventname, movielist = True)
+			self.session.open(TMBD, self.eventname, movielist=True)
 
 def eventinfo(session, eventName="", **kwargs):
 	if eventName != "":
@@ -3247,7 +3247,7 @@ class TMBDInfoBar:
 			keyslist.extend( [ "1", "2" ] )
 			eventlist.append((_('Change profile'), self.ChangeProfile))
 			keyslist.append('blue')
-			dlg = self.session.openWithCallback(self.menuCallback,ChoiceBox,list = eventlist,keys = keyslist,title= _("%s\nProfile: %s\nSelect event for search:") % (cur_name, profile))
+			dlg = self.session.openWithCallback(self.menuCallback,ChoiceBox,list=eventlist,keys=keyslist,title=_("%s\nProfile: %s\nSelect event for search:") % (cur_name, profile))
 			dlg.setTitle(_("TMBD Details"))
 		elif event_now and not event_next:
 			self.Nowevent()
@@ -3281,7 +3281,7 @@ class TMBDInfoBar:
 		else:
 			self.session.open(KinoRu, eventname, False)
 
-	def menuCallback(self, ret = None):
+	def menuCallback(self, ret=None):
 		ret and ret[1]()
 
 def movielist(session, service, **kwargs):
@@ -3295,9 +3295,9 @@ def movielist(session, service, **kwargs):
 	eventname = eventName
 	if config.plugins.tmbd.movielist_profile.value == "0":
 		if config.plugins.tmbd.profile.value == "0":
-			session.open(TMBD, eventname, movielist = True)
+			session.open(TMBD, eventname, movielist=True)
 		else:
-			session.open(KinoRu, eventname, movielist = True)
+			session.open(KinoRu, eventname, movielist=True)
 	else:
 		session.open(MovielistProfileList, eventname)
 
@@ -3397,21 +3397,21 @@ def Plugins(**kwargs):
 				fnc=eventinfo,
 				),
 				PluginDescriptor(name=_("Search movie in TMBD"),
-				description = _("Search movie in TMBD"),
-				where = PluginDescriptor.WHERE_MOVIELIST,
-				fnc = movielist,
+				description=_("Search movie in TMBD"),
+				where=PluginDescriptor.WHERE_MOVIELIST,
+				fnc=movielist,
 				),
 				PluginDescriptor(
-				where = PluginDescriptor.WHERE_SESSIONSTART,
-				fnc = autostart_ChannelContextMenu,
+				where=PluginDescriptor.WHERE_SESSIONSTART,
+				fnc=autostart_ChannelContextMenu,
 				),
 				PluginDescriptor(
-				where = PluginDescriptor.WHERE_SESSIONSTART,
-				fnc = sessionstart,
+				where=PluginDescriptor.WHERE_SESSIONSTART,
+				fnc=sessionstart,
 				),
 				PluginDescriptor(
-				where = PluginDescriptor.WHERE_AUTOSTART,
-				fnc = autostart,
+				where=PluginDescriptor.WHERE_AUTOSTART,
+				fnc=autostart,
 				),
 				PluginDescriptor(name=_("Poster Preview (TMBD)"),
 				description=_("Poster Preview (TMBD)"),
@@ -3437,21 +3437,21 @@ def Plugins(**kwargs):
 				fnc=eventinfo,
 				),
 				PluginDescriptor(name=_("Search movie in TMBD"),
-				description = _("Search for movie in TMBD"),
-				where = PluginDescriptor.WHERE_MOVIELIST,
-				fnc = movielist,
+				description=_("Search for movie in TMBD"),
+				where=PluginDescriptor.WHERE_MOVIELIST,
+				fnc=movielist,
 				),
 				PluginDescriptor(
-				where = PluginDescriptor.WHERE_SESSIONSTART,
-				fnc = autostart_ChannelContextMenu,
+				where=PluginDescriptor.WHERE_SESSIONSTART,
+				fnc=autostart_ChannelContextMenu,
 				),
 				PluginDescriptor(
-				where = PluginDescriptor.WHERE_SESSIONSTART,
-				fnc = sessionstart,
+				where=PluginDescriptor.WHERE_SESSIONSTART,
+				fnc=sessionstart,
 				),
 				PluginDescriptor(
-				where = PluginDescriptor.WHERE_AUTOSTART,
-				fnc = autostart,
+				where=PluginDescriptor.WHERE_AUTOSTART,
+				fnc=autostart,
 				),
 				PluginDescriptor(name=_("Poster Preview (TMBD)"),
 				description=_("Poster Preview (TMBD)"),
@@ -3460,15 +3460,15 @@ def Plugins(**kwargs):
 				),
 			]
 	if epg_furtherOptions and config.plugins.tmbd.show_in_furtheroptionsmenu.value:
-		path.append(PluginDescriptor(name = _("Search event in TMBD"), where = PluginDescriptor.WHERE_EVENTINFO, fnc = epgfurther))
+		path.append(PluginDescriptor(name=_("Search event in TMBD"), where=PluginDescriptor.WHERE_EVENTINFO, fnc=epgfurther))
 	yt_event_menu = config.plugins.tmbd.yt_event_menu.value
 	if yt_event_menu != "0":
 		if yt_event_menu == "1":
-			path.append(PluginDescriptor(name = _("Search yt-trailer for event"), where = PluginDescriptor.WHERE_EVENTINFO, fnc = ytfurther))
+			path.append(PluginDescriptor(name=_("Search yt-trailer for event"), where=PluginDescriptor.WHERE_EVENTINFO, fnc=ytfurther))
 		elif yt_event_menu == "2":
-			path.append(PluginDescriptor(name = _("Search yt-trailer for event"), where = PluginDescriptor.WHERE_EVENTINFO, fnc = yteventinfo))
+			path.append(PluginDescriptor(name=_("Search yt-trailer for event"), where=PluginDescriptor.WHERE_EVENTINFO, fnc=yteventinfo))
 		else:
 			if epg_furtherOptions:
-				path.append(PluginDescriptor(name = _("Search yt-trailer for event"), where = PluginDescriptor.WHERE_EVENTINFO, fnc = ytfurther))
-			path.append(PluginDescriptor(name = _("Search yt-trailer for event"), where = PluginDescriptor.WHERE_EVENTINFO, fnc = yteventinfo))
+				path.append(PluginDescriptor(name=_("Search yt-trailer for event"), where=PluginDescriptor.WHERE_EVENTINFO, fnc=ytfurther))
+			path.append(PluginDescriptor(name=_("Search yt-trailer for event"), where=PluginDescriptor.WHERE_EVENTINFO, fnc=yteventinfo))
 	return path
