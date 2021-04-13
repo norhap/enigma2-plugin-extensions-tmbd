@@ -302,7 +302,7 @@ class FileEngine(CacheEngine):
     def _read(self, date):
         try:
             self.cachefd.seek(0)
-            version, count = self._struct.unpack(\
+            version, count = self._struct.unpack(
                                     self.cachefd.read(self._struct.size))
             if version != self._version:
                 # old version, break out and well rewrite when finished

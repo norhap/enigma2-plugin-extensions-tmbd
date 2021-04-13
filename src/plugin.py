@@ -516,12 +516,14 @@ class TMBD(Screen):
 		global testOK
 		link = "down"
 		for iface in self.get_iface_list():
-			if "lo" in iface: continue
+			if "lo" in iface:
+				continue
 			if os.path.exists("/sys/class/net/%s/operstate"%(iface)):
 				fd = open("/sys/class/net/%s/operstate"%(iface), "r")
 				link = fd.read().strip()
 				fd.close()
-			if link != "down": break
+			if link != "down":
+				break
 		if link != "down":
 			s = socket(AF_INET, SOCK_STREAM)
 			s.settimeout(self.testTime)
@@ -998,9 +1000,9 @@ class TMBD(Screen):
 						Extratext2 += " %s" % (actors)
 					except:
 						pass
-				metaParser = MetaParser();
+				metaParser = MetaParser()
 				metaParser.name = namedetals2
-				metaParser.description = Extratext2;
+				metaParser.description = Extratext2
 				if os.path.exists(TSFILE + '.meta') and movie2.endswith(".ts"):
 					readmetafile = open("%s.meta"%(movie2), "r")
 					linecnt = 0
@@ -1014,13 +1016,13 @@ class TMBD(Screen):
 					readmetafile.close()
 				else:
 					metaParser.ref = eServiceReference('1:0:0:0:0:0:0:0:0:0:')
-				metaParser.time_create = getctime(TSFILE);
-				metaParser.tags = '';
-				metaParser.length = 0;
-				metaParser.filesize = fileSize(TSFILE);
-				metaParser.service_data = '';
-				metaParser.data_ok = 1;
-				metaParser.updateMeta(TSFILE);
+				metaParser.time_create = getctime(TSFILE)
+				metaParser.tags = ''
+				metaParser.length = 0
+				metaParser.filesize = fileSize(TSFILE)
+				metaParser.service_data = ''
+				metaParser.data_ok = 1
+				metaParser.updateMeta(TSFILE)
 				self.session.open(MessageBox, _("Write to new meta-file for:\n") + "%s" % (TSFILE), MessageBox.TYPE_INFO, timeout=3)
 				self.timer = eTimer()
 				self.timer.callback.append(self.savePosterInfo)
@@ -1117,21 +1119,21 @@ class TMBD(Screen):
 					descrip += " %s %s\n" % (_("Actors:"), actors)
 				except:
 					pass
-			Extratext = Extratext.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-');
+			Extratext = Extratext.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-')
 			Extratext = self.Cutext(Extratext)
-			descrip = descrip.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-');
-			namedetals = namedetals.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-');
-			sed = ShortEventDescriptor([]);
-			sed.setIso639LanguageCode(GetLanguageCode());
-			sed.setEventName(namedetals);
-			sed.setText(Extratext);
-			eed = ExtendedEventDescriptor([]);
-			eed.setIso639LanguageCode(GetLanguageCode());
-			eed.setText(descrip);
-			newEvent = Event();
-			newEvent.setShortEventDescriptor(sed);
-			newEvent.setExtendedEventDescriptor(eed);
-			ret = newEvent.saveToFile(EITFILE);
+			descrip = descrip.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-')
+			namedetals = namedetals.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-')
+			sed = ShortEventDescriptor([])
+			sed.setIso639LanguageCode(GetLanguageCode())
+			sed.setEventName(namedetals)
+			sed.setText(Extratext)
+			eed = ExtendedEventDescriptor([])
+			eed.setIso639LanguageCode(GetLanguageCode())
+			eed.setText(descrip)
+			newEvent = Event()
+			newEvent.setShortEventDescriptor(sed)
+			newEvent.setExtendedEventDescriptor(eed)
+			ret = newEvent.saveToFile(EITFILE)
 			self.session.open(MessageBox, _("Write event to new eit-file:\n") + "%s\n" % (EITFILE) + _("%d bytes") % (ret), MessageBox.TYPE_INFO, timeout=3)
 
 	def Cutext(self, text):
@@ -1530,7 +1532,8 @@ class TMBDSettings(Screen, ConfigListScreen):
 	def keyOK(self):
 		ConfigListScreen.keyOK(self)
 		sel = self["config"].getCurrent() and self["config"].getCurrent()[1]
-		if not sel: return
+		if not sel:
+			return
 		if sel == config.plugins.tmbd.kinopoisk_data:
 			self.session.open(KinopoiskConfiguration)
 		elif sel == config.plugins.tmbd.yt_setup:
@@ -1863,12 +1866,14 @@ class KinoRu(Screen):
 		global testOK
 		link = "down"
 		for iface in self.get_iface_list():
-			if "lo" in iface: continue
+			if "lo" in iface:
+				continue
 			if os.path.exists("/sys/class/net/%s/operstate"%(iface)):
 				fd = open("/sys/class/net/%s/operstate"%(iface), "r")
 				link = fd.read().strip()
 				fd.close()
-			if link != "down": break
+			if link != "down":
+				break
 		if link != "down":
 			s = socket(AF_INET, SOCK_STREAM)
 			s.settimeout(self.testTime)
@@ -2297,9 +2302,9 @@ class KinoRu(Screen):
 					Extratext2 += " %s /" % (self.countrie)
 				if self.cast:
 					Extratext2 += " %s" % (self.cast)
-				metaParser = MetaParser();
+				metaParser = MetaParser()
 				metaParser.name = namedetals2
-				metaParser.description = Extratext2;
+				metaParser.description = Extratext2
 				if os.path.exists(TSFILE + '.meta') and movie2.endswith(".ts"):
 					readmetafile = open("%s.meta"%(movie2), "r")
 					linecnt = 0
@@ -2313,13 +2318,13 @@ class KinoRu(Screen):
 					readmetafile.close()
 				else:
 					metaParser.ref = eServiceReference('1:0:0:0:0:0:0:0:0:0:')
-				metaParser.time_create = getctime(TSFILE);
-				metaParser.tags = '';
-				metaParser.length = 0;
-				metaParser.filesize = fileSize(TSFILE);
-				metaParser.service_data = '';
-				metaParser.data_ok = 1;
-				metaParser.updateMeta(TSFILE);
+				metaParser.time_create = getctime(TSFILE)
+				metaParser.tags = ''
+				metaParser.length = 0
+				metaParser.filesize = fileSize(TSFILE)
+				metaParser.service_data = ''
+				metaParser.data_ok = 1
+				metaParser.updateMeta(TSFILE)
 				self.session.open(MessageBox, _("Write to new meta-file for:\n") + "%s" % (TSFILE), MessageBox.TYPE_INFO, timeout=3)
 				self.timer = eTimer()
 				self.timer.callback.append(self.savePosterInfo)
@@ -2358,21 +2363,21 @@ class KinoRu(Screen):
 				descrip += " %s %s\n" % (_("Actors:"), self.cast)
 			if self.duplicated:
 				descrip += " %s %s\n" % (_("Roles duplicated:"), self.duplicated)
-			Extratext = Extratext.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-');
+			Extratext = Extratext.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-')
 			Extratext = self.Cutext(Extratext)
-			descrip = descrip.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-');
-			namedetals = namedetals.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-');
-			sed = ShortEventDescriptor([]);
-			sed.setIso639LanguageCode('rus');
-			sed.setEventName(namedetals);
-			sed.setText(Extratext);
-			eed = ExtendedEventDescriptor([]);
-			eed.setIso639LanguageCode('rus');
-			eed.setText(descrip);
-			newEvent = Event();
-			newEvent.setShortEventDescriptor(sed);
-			newEvent.setExtendedEventDescriptor(eed);
-			ret = newEvent.saveToFile(EITFILE);
+			descrip = descrip.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-')
+			namedetals = namedetals.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-')
+			sed = ShortEventDescriptor([])
+			sed.setIso639LanguageCode('rus')
+			sed.setEventName(namedetals)
+			sed.setText(Extratext)
+			eed = ExtendedEventDescriptor([])
+			eed.setIso639LanguageCode('rus')
+			eed.setText(descrip)
+			newEvent = Event()
+			newEvent.setShortEventDescriptor(sed)
+			newEvent.setExtendedEventDescriptor(eed)
+			ret = newEvent.saveToFile(EITFILE)
 			self.session.open(MessageBox, _("Write event to new eit-file:\n") + "%s\n" % (EITFILE) + _("%d bytes") % (ret), MessageBox.TYPE_INFO, timeout=3)
 
 	def Cutext(self, text):
@@ -3342,7 +3347,8 @@ def epgfurther(session, selectedevent, **kwargs):
 			session.open(KinoRu, eventName)
 
 def yteventinfo(session, eventName="", **kwargs):
-	if session is None: return
+	if session is None:
+		return
 	if eventName != "":
 		eventName = cutName(eventName)
 		if config.plugins.tmbd.yt_start.value == "0":

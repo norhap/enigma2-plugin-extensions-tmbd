@@ -809,7 +809,7 @@ class ReverseCrew(Movie):
 class Collection(NameRepr, Element):
     id = Datapoint('id', initarg=1)
     name = Datapoint('name')
-    backdrop = Datapoint('backdrop_path', handler=Backdrop, \
+    backdrop = Datapoint('backdrop_path', handler=Backdrop,
                          raw=False, default=None)
     poster = Datapoint('poster_path', handler=Poster, raw=False, default=None)
     members = Datalist('parts', handler=Movie)

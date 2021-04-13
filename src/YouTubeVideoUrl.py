@@ -365,7 +365,7 @@ class YouTubeVideoUrl():
 		if 'conn' in video_info and video_info['conn'][0][:4] == 'rtmp':
 			print('[YouTubeVideoUrl] Try rtmp url')
 			url = video_info['conn'][0]
-		elif not is_live and (streaming_formats or len(video_info.get('url_encoded_fmt_stream_map', [''])[0]) >= 1 or \
+		elif not is_live and (streaming_formats or len(video_info.get('url_encoded_fmt_stream_map', [''])[0]) >= 1 or
 			len(video_info.get('adaptive_fmts', [''])[0]) >= 1):
 			print('[YouTubeVideoUrl] Try fmt url')
 			encoded_url_map = video_info.get('url_encoded_fmt_stream_map', [''])[0] + \
