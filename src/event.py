@@ -225,16 +225,16 @@ class Event:
 			sbuf = array.array('B', '\0' * (length + 2))	# +2 for tag and length bytes
 			sbuf[0] = self.EIT_SHORT_EVENT_DESCRIPTOR
 			sbuf[1] = length
-			for i in range(2,5):
+			for i in range(2, 5):
 				sbuf[i] = ord(lang[i - 2])
 			sbuf[5] = namelen
 			if namelen:
-				for i in range(6,6 + namelen):
+				for i in range(6, 6 + namelen):
 					sbuf[i] = ord(name[i - 6])
 			sbuf[6 + namelen] = textlen
 			if textlen:
 				sbuf[7 + namelen] = 1
-				for i in range(7 + namelen,7 + namelen + textlen):
+				for i in range(7 + namelen, 7 + namelen + textlen):
 					sbuf[i] = ord(text[i - 7 - namelen])
 			buffer.extend(sbuf)
 			descriptorsLoopLength += length + 2
@@ -262,12 +262,12 @@ class Event:
 				ebuf[0] = self.EIT_EXTENDED_EVENT_DESCRIPTOR
 				ebuf[1] = length
 				ebuf[2] = (descrIndex << 4) | lastDescriptorNumber
-				for i in range(3,6):
+				for i in range(3, 6):
 					ebuf[i] = ord(lang[i - 3])
 				ebuf[6] = itemlen
 				ebuf[7 + itemlen] = curtextlen + tablelen
 				if curtextlen:
-					for i in range(8 + itemlen,8 + itemlen + curtextlen + tablelen):
+					for i in range(8 + itemlen, 8 + itemlen + curtextlen + tablelen):
 						ebuf[i] = ord(curtext[i - 8 - itemlen])
 				
 				buffer.extend(ebuf)
@@ -359,8 +359,8 @@ class Event:
 			fromBCD(self.durationBcd)
 
 	def setDuration(self, value):
-		(h,m) = divmod(value, 3600)
-		(m,s) = divmod(m, 60)
+		(h, m) = divmod(value, 3600)
+		(m, s) = divmod(m, 60)
 		self.setDurationBcd((toBCD(h) << 16) | (toBCD(m) << 8) | toBCD(s))
 
 	def getRunningStatus(self):

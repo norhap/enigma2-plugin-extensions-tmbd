@@ -45,7 +45,7 @@ def fileSize(basename):
 	slice = 0
 	while True:
 		slice += 1
-		size = getsize("%s.%03d" % (basename,slice))
+		size = getsize("%s.%03d" % (basename, slice))
 		if not size:
 			break
 		filesize += size

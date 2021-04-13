@@ -142,29 +142,29 @@ iso6937 = [
 0x0138, 0x00E6, 0x0111, 0x00F0, 0x0127, 0x0131, 0x0133, 0x0140, 0x0142, 0x00F8, 0x0153, 0x00DF, 0x00FE, 0x0167, 0x014B, 0x00AD]
 
 LANGUAGES = {
-	 0: ['','---'],
+	 0: ['', '---'],
 	# Danish, Dutch, English, Faeroese, Finnish, French, German, Icelandic, Irish, Italian,
 	# Norwegian, Portuguese, Rhaeto-Romanic, Scottish Gaelic, Spanish, Catalan, and Swedish
 	# Albanian, Indonesian, Afrikaans and Swahili
-	 1: ['dan','dut','eng','fao','fin','fra','ger','ice','ita','nor','por','roh','gae','gdh','esl','spa','cat','sve','swe','alb','ind','afr','swa'],
+	 1: ['dan', 'dut', 'eng', 'fao', 'fin', 'fra', 'ger', 'ice', 'ita', 'nor', 'por', 'roh', 'gae', 'gdh', 'esl', 'spa', 'cat', 'sve', 'swe', 'alb', 'ind', 'afr', 'swa'],
 	# Bosnian, Polish, Croatian, Czech, Slovak, Slovene, and Hungarian
-	 2: ['bos','pol','cro','cze','ces','slo','slk','slv','hun'],
+	 2: ['bos', 'pol', 'cro', 'cze', 'ces', 'slo', 'slk', 'slv', 'hun'],
 	# Turkish, Maltese, and Esperanto
-	 3: ['tur','mlt','epo'],
+	 3: ['tur', 'mlt', 'epo'],
 	# Estonian, Latvian, Lithuanian, Greenlandic, and Sami
-	 4: ['est','lav','lit','kal','smi'],
+	 4: ['est', 'lav', 'lit', 'kal', 'smi'],
 	# Belarusian, Bulgarian, Macedonian, Russian, Serbian, and Ukrainian
-	 5: ['bel','bul','mac','mak','rus','srb','scc','srp','ukr'],
+	 5: ['bel', 'bul', 'mac', 'mak', 'rus', 'srb', 'scc', 'srp', 'ukr'],
 	# Arabic
 	 6: ['ara'],
 	# Greek Modern and Ancient
-	 7: ['gre','ell','grc'],
+	 7: ['gre', 'ell', 'grc'],
 	# Hebrew
 	 8: ['heb'],
 	# Icelandic letters with Turkish
-	 9: ['ice','isl'],
+	 9: ['ice', 'isl'],
 	# Nordic languages
-	10: ['dan','fao','nor','sve','swe'],
+	10: ['dan', 'fao', 'nor', 'sve', 'swe'],
 	# Thai
 	11: ['tha'],
 	# non-existent
@@ -172,11 +172,11 @@ LANGUAGES = {
 	# Baltic languages: Latvian
 	13: ['lav'],
 	# Gaelic and the Breton
-	14: ['gae','gdh','bre'],
+	14: ['gae', 'gdh', 'bre'],
 	# French, Finnish and Estonian
-	15: ['fra','fre','fin','est'],
+	15: ['fra', 'fre', 'fin', 'est'],
 	# Albanian, Croatian, Hungarian, Italian, Polish, Romanian and Slovene, but also Finnish, French, German and Irish Gaelic (new orthography)
-	16: ['alb','sqi','cro','scr','hun','ita','pol','ron','rum','slv','fin','fra','fre','deu','ger','gai','iri'],
+	16: ['alb', 'sqi', 'cro', 'scr', 'hun', 'ita', 'pol', 'ron', 'rum', 'slv', 'fin', 'fra', 'fre', 'deu', 'ger', 'gai', 'iri'],
 }
 
 def recode(d, cp):
@@ -223,7 +223,7 @@ def convertDVBUTF8(data, length, table=None):
 
 	i = t = 0
 
-	if data[0] in range(1,12):
+	if data[0] in range(1, 12):
 		# For Thai providers, encoding char is present but faulty.
 		if (table != 11):
 			table = data[i] + 4
@@ -254,7 +254,7 @@ def convertDVBUTF8(data, length, table=None):
 	elif data[0] == 0x1F:
 		print "convertDVBUTF8(): unsup. BBC Freesat Huffman enc."
 		i += 1
-	elif data[0] in [0x0,0xC,0xD,0xE,0xF] + range(0x16,0x1F):
+	elif data[0] in [0x0, 0xC, 0xD, 0xE, 0xF] + range(0x16, 0x1F):
 		print "convertDVBUTF8(): reserved %d" % (data[0])
 		i += 1
 
@@ -312,7 +312,7 @@ def convertUTF8DVB(string, table):
 				break
 			c2 = ord(string[i])
 			c = ((c1 & 0x3F) << 6) + (c2 & 0x3F)
-			if table in (0,1) or (c1 < 0xA0):
+			if table in (0, 1) or (c1 < 0xA0):
 				pass
 			else:
 				if coding_table is None:
@@ -321,7 +321,7 @@ def convertUTF8DVB(string, table):
 							if table in LANGUAGES[j]:
 								table = j
 								break
-					if table in range(2,17) and table != 12:
+					if table in range(2, 17) and table != 12:
 						coding_table = eval('c8859%d' % (table))
 					else:
 						print "unknown coding table:", table
@@ -339,9 +339,9 @@ def convertUTF8DVB(string, table):
 			print 'error'
 		i += 1
 	if res:
-		if table in (1,2,3,4,16):
+		if table in (1, 2, 3, 4, 16):
 			pref = '\20\0' + chr(table)
-		elif table in range(5,16):
+		elif table in range(5, 16):
 			pref = chr(table - 4)
 		else:
 			pref = '\0'

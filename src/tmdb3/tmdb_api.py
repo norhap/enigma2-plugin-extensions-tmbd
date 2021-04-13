@@ -100,8 +100,8 @@ def process_date(datestr):
         import sys
         import warnings
         import traceback
-        _,_,tb = sys.exc_info()
-        f,l,_,_ = traceback.extract_tb(tb)[-1]
+        _, _, tb = sys.exc_info()
+        f, l, _, _ = traceback.extract_tb(tb)[-1]
         warnings.warn_explicit(('"{0}" is not a supported date format. ' +
                                 'Please fix upstream data at ' +
                                 'http://www.themoviedb.org.'
@@ -440,7 +440,7 @@ class Trailer(Element):
 
 class YoutubeTrailer(Trailer):
     def geturl(self):
-        self.source = self.source.encode('ascii',errors='ignore')
+        self.source = self.source.encode('ascii', errors='ignore')
         return "http://www.youtube.com/watch?v={0}".format(self.source)
 
     def __repr__(self):

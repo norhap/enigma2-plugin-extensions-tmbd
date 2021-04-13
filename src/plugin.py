@@ -100,14 +100,14 @@ SIOCGIFCONF = 0x8912
 BYTES = 4096
 
 TMBDInfoBarKeys = [
-	["none",_("NONE"),["KEY_RESERVED"]],
-	["Red",_("RED"),["KEY_RED"]],
-	["Green",_("GREEN"),["KEY_GREEN"]],
-	["Yellow",_("YELLOW"),["KEY_YELLOW"]],
-	["Radio",_("RADIO"),["KEY_RADIO"]],
-	["Text",_("TEXT"),["KEY_TEXT"]],
-	["Tv",_("TV"),["KEY_TV"]],
-	["Help",_("HELP"),["KEY_HELP"]],
+	["none", _("NONE"), ["KEY_RESERVED"]],
+	["Red", _("RED"), ["KEY_RED"]],
+	["Green", _("GREEN"), ["KEY_GREEN"]],
+	["Yellow", _("YELLOW"), ["KEY_YELLOW"]],
+	["Radio", _("RADIO"), ["KEY_RADIO"]],
+	["Text", _("TEXT"), ["KEY_TEXT"]],
+	["Tv", _("TV"), ["KEY_TV"]],
+	["Help", _("HELP"), ["KEY_HELP"]],
 ]
 
 def cutName(eventName=""):
@@ -143,7 +143,7 @@ config.plugins.tmbd.position_x = ConfigInteger(default=100)
 config.plugins.tmbd.position_y = ConfigInteger(default=100)
 config.plugins.tmbd.new_movieselect = ConfigYesNo(default=True)
 config.plugins.tmbd.size = ConfigSelection(choices=["285x398", "185x278", "130x200", "104x150"], default="130x200")
-config.plugins.tmbd.hotkey = ConfigSelection([(x[0],x[1]) for x in TMBDInfoBarKeys], "none")
+config.plugins.tmbd.hotkey = ConfigSelection([(x[0], x[1]) for x in TMBDInfoBarKeys], "none")
 config.plugins.tmbd.movielist_profile = ConfigSelection(default="1", choices=[("0", _("only current profile")), ("1", _("List: themoviedb.org / kinopoisk.ru")), ("2", _("List: kinopoisk.ru / themoviedb.org"))])
 config.plugins.tmbd.kinopoisk_data = ConfigSelection(choices=[("1", _("Press OK"))], default="1")
 config.plugins.tmbd.yt_setup = ConfigSelection(choices=[("1", _("Press OK"))], default="1")
@@ -151,7 +151,7 @@ config.plugins.tmbd.add_tmbd_to_nstreamvod = ConfigYesNo(default=False)
 config.plugins.tmbd.add_vcs_to_nstreamvod = ConfigYesNo(default=False)
 config.plugins.tmbd.show_in_furtheroptionsmenu = ConfigYesNo(default=True)
 if epg_furtherOptions:
-	config.plugins.tmbd.yt_event_menu = ConfigSelection(default="3", choices=[("0", _("disabled")),("1", _("EPGSelection (context menu)")), ("2", _("EventView (context menu)/EventInfo plugins")), ("3", _("EPGSelection/EventView/EventInfo plugins"))])
+	config.plugins.tmbd.yt_event_menu = ConfigSelection(default="3", choices=[("0", _("disabled")), ("1", _("EPGSelection (context menu)")), ("2", _("EventView (context menu)/EventInfo plugins")), ("3", _("EPGSelection/EventView/EventInfo plugins"))])
 else:
 	config.plugins.tmbd.yt_event_menu = ConfigSelection(default="2", choices=[("0", _("disabled")), ("2", _("EventView (context menu)/EventInfo plugins"))])
 config.plugins.tmbd.yt_start = ConfigSelection(default="0", choices=[("0", _("show list")), ("1", _("run first"))])
@@ -217,10 +217,10 @@ def TMBDChannelContextMenu__init__(self, session, csel):
 			if config.plugins.tmbd.menu.value:
 				if config.plugins.tmbd.menu_profile.value == "0":
 					callFunction = self.showServiceInformations2 
-					self["menu"].list.insert(1, ChoiceEntryComponent(text=(_("TMBD Details"), boundFunction(callFunction,1)), key="bullet"))
+					self["menu"].list.insert(1, ChoiceEntryComponent(text=(_("TMBD Details"), boundFunction(callFunction, 1)), key="bullet"))
 				else:
 					callFunction = self.profileContextMenuCallback 
-					self["menu"].list.insert(1, ChoiceEntryComponent(text=(_("TMBD Details"), boundFunction(callFunction,1)), key="bullet"))
+					self["menu"].list.insert(1, ChoiceEntryComponent(text=(_("TMBD Details"), boundFunction(callFunction, 1)), key="bullet"))
 
 def showServiceInformations2(self, profile=False):
 		global eventname
@@ -271,7 +271,7 @@ class TMBDChannelSelection(SimpleChannelSelection):
 	def __init__(self, session):
 		SimpleChannelSelection.__init__(self, session, _("Channel Selection"))
 		self.skinName = "SimpleChannelSelection"
-		self["ChannelSelectEPGActions"] = ActionMap(["ChannelSelectEPGActions"],{"showEPGList": self.channelSelected})
+		self["ChannelSelectEPGActions"] = ActionMap(["ChannelSelectEPGActions"], {"showEPGList": self.channelSelected})
 
 	def channelSelected(self):
 		ref = self.getCurrentSelection()
@@ -716,7 +716,7 @@ class TMBD(Screen):
 				if rating != '' and rating != "0.0":
 					try:
 						Ratingtext = _("User Rating") + ": " + rating + " / 10"
-						self.ratingstars = int(10 * round(float(rating.replace(',','.')),1))
+						self.ratingstars = int(10 * round(float(rating.replace(',', '.')), 1))
 						if self.ratingstars > 0:
 							self["stars"].setValue(self.ratingstars)
 							self["stars"].show()
@@ -901,7 +901,7 @@ class TMBD(Screen):
 
 	def TVseriesSearch(self):
 		if config.plugins.tmbd.alrernative_locale.value and config.plugins.tmbd.alrernative_locale.value != config.plugins.tmbd.locale.value:
-			menu = [(_("Main language"), "main"),(_("Alternative language"), "alter")]
+			menu = [(_("Main language"), "main"), (_("Alternative language"), "alter")]
 			def SearchAction(choice):
 				if choice is not None:
 					if choice[1] == "main":
@@ -1426,10 +1426,10 @@ class KinopoiskConfiguration(Screen):
 		if returnValue is not None:
 			if returnValue is "all":
 				cmd = "cp /usr/lib/enigma2/python/Plugins/Extensions/TMBD/profile/kinopoiskall.py /usr/lib/enigma2/python/Plugins/Extensions/TMBD/kinopoisk.py && echo 'Done...\nTo apply the changes required restart GUI!' "
-				self.session.openWithCallback(self.restartGui, Console,_("Option for all images"),[cmd])
+				self.session.openWithCallback(self.restartGui, Console, _("Option for all images"), [cmd])
 			elif returnValue is "new": 
 				cmd = "cp /usr/lib/enigma2/python/Plugins/Extensions/TMBD/profile/kinopoisklmxl.py /usr/lib/enigma2/python/Plugins/Extensions/TMBD/kinopoisk.py && echo 'Done...\nTo apply the changes required restart GUI!' "
-				self.session.openWithCallback(self.restartGui, Console,_("Option only python 2.7 images"),[cmd])
+				self.session.openWithCallback(self.restartGui, Console, _("Option only python 2.7 images"), [cmd])
 
 	def restartGui(self):
 		self.session.openWithCallback(self.restartGuiAnswer, MessageBox, _("Restart the GUI now?"), MessageBox.TYPE_YESNO)
@@ -1472,7 +1472,7 @@ class TMBDSettings(Screen, ConfigListScreen):
 	def initConfig(self):
 		def getPrevValues(section):
 			res = {}
-			for (key,val) in section.content.items.items():
+			for (key, val) in section.content.items.items():
 				if isinstance(val, ConfigSubsection):
 					res[key] = getPrevValues(val)
 				else:
@@ -1630,7 +1630,7 @@ class TMBDSettings(Screen, ConfigListScreen):
 
 	def exit(self):
 		def setPrevValues(section, values):
-			for (key,val) in section.content.items.items():
+			for (key, val) in section.content.items.items():
 				value = values.get(key, None)
 				if value is not None:
 					if isinstance(val, ConfigSubsection):
@@ -2071,7 +2071,7 @@ class KinoRu(Screen):
 						Ratingtext = ''
 						if rating != '':
 							Ratingtext = _("User Rating") + ": " + rating + " / 10"
-							self.ratingstars = int(10 * round(float(rating.replace(',','.')),1))
+							self.ratingstars = int(10 * round(float(rating.replace(',', '.')), 1))
 							self["stars"].show()
 							self["stars"].setValue(self.ratingstars)
 							self["starsbg"].show()
@@ -2174,7 +2174,7 @@ class KinoRu(Screen):
 				res = None
 			if res != None:
 				page = res.read()
-				file = open('/tmp/preview.jpg','w')
+				file = open('/tmp/preview.jpg', 'w')
 				file.write(page)
 				file.close()
 				self["kino"].hide()
@@ -2289,7 +2289,7 @@ class KinoRu(Screen):
 				except:
 					namedetals2 = current[0]
 				namedetals2 = namedetals2[:-6]
-				namedetals2 = namedetals2.replace('\n','')
+				namedetals2 = namedetals2.replace('\n', '')
 				if movie2.endswith(".ts"):
 					name = namedetals2
 				else:
@@ -3033,7 +3033,7 @@ class EventChoiseList:
 			keyslist.extend(["1", "2"])
 			eventlist.append((_('Change profile'), self.ChangeProfile))
 			keyslist.append('blue')
-			dlg = self.session.openWithCallback(self.menuCallback,ChoiceBox,list=eventlist,keys=keyslist,title=_("%s\nProfile: %s\nSelect event for search:") % (cur_name, profile))
+			dlg = self.session.openWithCallback(self.menuCallback, ChoiceBox, list=eventlist, keys=keyslist, title=_("%s\nProfile: %s\nSelect event for search:") % (cur_name, profile))
 			dlg.setTitle(_("TMBD Details"))
 		elif event_now and not event_next:
 			self.Nowevent()
@@ -3247,7 +3247,7 @@ class TMBDInfoBar:
 			keyslist.extend(["1", "2"])
 			eventlist.append((_('Change profile'), self.ChangeProfile))
 			keyslist.append('blue')
-			dlg = self.session.openWithCallback(self.menuCallback,ChoiceBox,list=eventlist,keys=keyslist,title=_("%s\nProfile: %s\nSelect event for search:") % (cur_name, profile))
+			dlg = self.session.openWithCallback(self.menuCallback, ChoiceBox, list=eventlist, keys=keyslist, title=_("%s\nProfile: %s\nSelect event for search:") % (cur_name, profile))
 			dlg.setTitle(_("TMBD Details"))
 		elif event_now and not event_next:
 			self.Nowevent()
