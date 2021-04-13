@@ -752,7 +752,7 @@ class TMBD(Screen):
 					pass
 				Extratext = ""
 				try:
-					genres = [ x.name.encode('utf-8', 'ignore') for x in movie.genres ]
+					genres = [x.name.encode('utf-8', 'ignore') for x in movie.genres]
 				except:
 					genres =[]
 				if len(genres) > 0:
@@ -762,7 +762,7 @@ class TMBD(Screen):
 					except:
 						pass
 				try:
-					crew = [ x.name.encode('utf-8', 'ignore') for x in movie.crew if x.job == 'Director' ]
+					crew = [x.name.encode('utf-8', 'ignore') for x in movie.crew if x.job == 'Director']
 				except:
 					crew =[]
 				if len(crew) > 0:
@@ -772,7 +772,7 @@ class TMBD(Screen):
 					except:
 						pass
 				try:
-					crew1 = [ x.name.encode('utf-8', 'ignore') for x in movie.crew if x.job == 'Producer' ]
+					crew1 = [x.name.encode('utf-8', 'ignore') for x in movie.crew if x.job == 'Producer']
 				except:
 					crew1 =[]
 				if len(crew1) > 0:
@@ -782,7 +782,7 @@ class TMBD(Screen):
 					except:
 						pass
 				try:
-					cast = [ x.name.encode('utf-8', 'ignore') for x in movie.cast ]
+					cast = [x.name.encode('utf-8', 'ignore') for x in movie.cast]
 				except:
 					cast =[]
 				if len(cast) > 0:
@@ -793,7 +793,7 @@ class TMBD(Screen):
 						pass
 				Extratext2 = ""
 				try:
-					studios = [ x.name.encode('utf-8', 'ignore') for x in movie.studios ]
+					studios = [x.name.encode('utf-8', 'ignore') for x in movie.studios]
 				except:
 					studios =[]
 				if len(studios) > 0:
@@ -816,7 +816,7 @@ class TMBD(Screen):
 					except:
 						pass
 				try:
-					countries = [ x.name for x in movie.countries ]
+					countries = [x.name for x in movie.countries]
 				except:
 					countries = []
 				if len(countries) > 0:
@@ -965,19 +965,19 @@ class TMBD(Screen):
 					return
 				if not movie2.endswith(".ts"):
 					if namedetals2 != "":
-						Extratext2 = "%s /" % ( namedetals2)
+						Extratext2 = "%s /" % (namedetals2)
 				try:
-					genres = [ x.name.encode('utf-8', 'ignore') for x in movie.genres ]
+					genres = [x.name.encode('utf-8', 'ignore') for x in movie.genres]
 				except:
 					genres =[]
 				if len(genres) > 0:
 					try:
 						genre = ', '.join(genres)
-						Extratext2 += " %s /" % ( genre)
+						Extratext2 += " %s /" % (genre)
 					except:
 						pass
 				try:
-					countries = [ x.name for x in movie.countries ]
+					countries = [x.name for x in movie.countries]
 				except:
 					countries = []
 				if len(countries) > 0:
@@ -991,7 +991,7 @@ class TMBD(Screen):
 					except:
 						pass
 				try:
-					cast = [ x.name.encode('utf-8', 'ignore') for x in movie.cast ]
+					cast = [x.name.encode('utf-8', 'ignore') for x in movie.cast]
 				except:
 					cast =[]
 				if len(cast) > 0:
@@ -1054,7 +1054,7 @@ class TMBD(Screen):
 			except:
 				return
 			try:
-				countries = [ x.name for x in movie.countries ]
+				countries = [x.name for x in movie.countries]
 			except:
 				countries = []
 			if len(countries) > 0:
@@ -1068,7 +1068,7 @@ class TMBD(Screen):
 				except:
 					pass
 			try:
-				genres = [ x.name.encode('utf-8', 'ignore') for x in movie.genres ]
+				genres = [x.name.encode('utf-8', 'ignore') for x in movie.genres]
 			except:
 				genres =[]
 			if len(genres) > 0:
@@ -1110,7 +1110,7 @@ class TMBD(Screen):
 				except:
 					pass
 			try:
-				cast = [ x.name.encode('utf-8', 'ignore') for x in movie.cast ]
+				cast = [x.name.encode('utf-8', 'ignore') for x in movie.cast]
 			except:
 				cast =[]
 			if len(cast) > 0:
@@ -1471,7 +1471,7 @@ class TMBDSettings(Screen, ConfigListScreen):
 
 	def initConfig(self):
 		def getPrevValues(section):
-			res = { }
+			res = {}
 			for (key,val) in section.content.items.items():
 				if isinstance(val, ConfigSubsection):
 					res[key] = getPrevValues(val)
@@ -2293,7 +2293,7 @@ class KinoRu(Screen):
 				if movie2.endswith(".ts"):
 					name = namedetals2
 				else:
-					Extratext2 = "%s" % ( namedetals2)
+					Extratext2 = "%s" % (namedetals2)
 				if self.genres:
 					genre = self.genres
 					genre = genre.replace('...', '')
@@ -3021,7 +3021,7 @@ class EventChoiseList:
 			eventName = event_next.getEventName().split("(")[0].strip()
 			eventname_next = cutName(eventName)
 		if event_now and event_next:
-			keyslist = [ ]
+			keyslist = []
 			eventlist = [
 			(_("Now: %s") % (eventname_now), self.Nowevent),
 			(_("Next: %s") % (eventname_next), self.Nextevent),
@@ -3030,7 +3030,7 @@ class EventChoiseList:
 				profile = "themoviedb.org"
 			else:
 				profile = "kinopoisk.ru"
-			keyslist.extend( [ "1", "2" ] )
+			keyslist.extend(["1", "2"])
 			eventlist.append((_('Change profile'), self.ChangeProfile))
 			keyslist.append('blue')
 			dlg = self.session.openWithCallback(self.menuCallback,ChoiceBox,list=eventlist,keys=keyslist,title=_("%s\nProfile: %s\nSelect event for search:") % (cur_name, profile))
@@ -3164,7 +3164,7 @@ class TMBDInfoBar:
 		self.session = session
 		self.infobar = infobar
 		self.lastKey = None
-		self.hotkeys = { }
+		self.hotkeys = {}
 		for x in TMBDInfoBarKeys:
 			self.hotkeys[x[0]] = [KEYIDS[key] for key in x[2]]
 		eActionMap.getInstance().bindAction('', -10, self.keyPressed)
@@ -3235,7 +3235,7 @@ class TMBDInfoBar:
 			eventName = event_next.getEventName().split("(")[0].strip()
 			eventname_next = cutName(eventName)
 		if event_now and event_next:
-			keyslist = [ ]
+			keyslist = []
 			eventlist = [
 			(_("Now: %s") % (eventname_now), self.Nowevent),
 			(_("Next: %s") % (eventname_next), self.Nextevent),
@@ -3244,7 +3244,7 @@ class TMBDInfoBar:
 				profile = "themoviedb.org"
 			else:
 				profile = "kinopoisk.ru"
-			keyslist.extend( [ "1", "2" ] )
+			keyslist.extend(["1", "2"])
 			eventlist.append((_('Change profile'), self.ChangeProfile))
 			keyslist.append('blue')
 			dlg = self.session.openWithCallback(self.menuCallback,ChoiceBox,list=eventlist,keys=keyslist,title=_("%s\nProfile: %s\nSelect event for search:") % (cur_name, profile))

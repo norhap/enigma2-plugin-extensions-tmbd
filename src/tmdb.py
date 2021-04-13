@@ -91,25 +91,25 @@ def main():
     print p.sizes()
     print p.geturl()
     print p.geturl('w300')
-    crew = [ x.name for x in movie.crew if x.job == 'Director' ]
+    crew = [x.name for x in movie.crew if x.job == 'Director']
     print crew
-    crew = [ x.name for x in movie.crew if x.job == 'Author' ]
+    crew = [x.name for x in movie.crew if x.job == 'Author']
     print crew
-    crew = [ x.name for x in movie.crew if x.job == 'Producer' ]
+    crew = [x.name for x in movie.crew if x.job == 'Producer']
     print crew
-    crew = [ x.name for x in movie.crew if x.job == 'Director of Photography' ]
+    crew = [x.name for x in movie.crew if x.job == 'Director of Photography']
     print crew
-    crew = [ x.name for x in movie.crew if x.job == 'Editor' ]
+    crew = [x.name for x in movie.crew if x.job == 'Editor']
     print crew
-    crew = [ x.name for x in movie.crew if x.job == 'Production Design' ]
+    crew = [x.name for x in movie.crew if x.job == 'Production Design']
     print crew
-    cast = [ x.name for x in movie.cast ]
+    cast = [x.name for x in movie.cast]
     print cast
-    genres = [ x.name for x in movie.genres ]
+    genres = [x.name for x in movie.genres]
     print genres
-    studios = [ x.name for x in movie.studios ]
+    studios = [x.name for x in movie.studios]
     print studios
-    countries = [ x.name for x in movie.countries ]
+    countries = [x.name for x in movie.countries]
     print countries
 
 

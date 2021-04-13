@@ -88,7 +88,7 @@ class TMDBCacheDirectoryError(TMDBCacheError):
         self.filename = filename
 
 
-class TMDBImageSizeError(TMDBError ):
+class TMDBImageSizeError(TMDBError):
     pass
 
 

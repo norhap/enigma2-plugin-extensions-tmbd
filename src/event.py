@@ -109,7 +109,7 @@ class ExtendedEventDescriptor:
 		self.iso639LanguageCode = '---'
 		self.descriptorNumber = 0
 		self.lastDescriptorNumber = 0
-		self.items = [ ]
+		self.items = []
 		self.text = ''
 		
 		bufferLen = len(buffer)

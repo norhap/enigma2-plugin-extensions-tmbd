@@ -168,7 +168,7 @@ LANGUAGES = {
 	# Thai
 	11: ['tha'],
 	# non-existent
-	12: [ ],
+	12: [],
 	# Baltic languages: Latvian
 	13: ['lav'],
 	# Gaelic and the Breton
@@ -279,15 +279,15 @@ def convertDVBUTF8(data, length, table=None):
 			res[t+1] = chr((code &  0x3F) | 0x80)
 			t += 2
 		elif (code < 0x10000):	# three bytes mapping
-			res[t+0] = chr( (code >> 12)   | 0xE0)
+			res[t+0] = chr((code >> 12)   | 0xE0)
 			res[t+1] = chr(((code >> 6)    & 0x3F) | 0x80)
-			res[t+2] = chr( (code &  0x3F) | 0x80)
+			res[t+2] = chr((code &  0x3F) | 0x80)
 			t += 3
 		else:
-			res[t+0]= chr( (code >> 18)  | 0xF0)
+			res[t+0]= chr((code >> 18)  | 0xF0)
 			res[t+1]= chr(((code >> 12)  & 0x3F) | 0x80)
 			res[t+2]= chr(((code >> 6)   & 0x3F) | 0x80)
-			res[t+3]= chr( (code &  0x3F)| 0x80)
+			res[t+3]= chr((code &  0x3F)| 0x80)
 			t += 4
 		if (t+4 > 2047):
 			print "convertDVBUTF8():  buffer to small.. break now"
