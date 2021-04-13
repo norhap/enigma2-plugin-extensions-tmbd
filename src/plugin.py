@@ -169,9 +169,9 @@ def_SelectionEventInfo_updateEventInfo = None
 def new_SelectionEventInfo_updateEventInfo(self):
 	serviceref = self.getCurrent()
 	if config.plugins.tmbd.new_movieselect.value:
-		if serviceref and serviceref.type == eServiceReference.idUser+1:
+		if serviceref and serviceref.type == eServiceReference.idUser + 1:
 			pathname = serviceref.getPath()
-			if len(pathname) > 2 and os.path.exists(pathname[:-2]+'eit'):
+			if len(pathname) > 2 and os.path.exists(pathname[:-2] + 'eit'):
 				serviceref = eServiceReference(serviceref.toString())
 				serviceref.type = eServiceReference.idDVB
 	self["Service"].newService(serviceref)
@@ -185,7 +185,7 @@ def new_MovieSelection_showEventInformation(self):
 		if l is not None:
 			serviceref = l[0]
 			pathname = serviceref and serviceref.getPath() or ''
-			if len(pathname) > 2 and os.path.exists(pathname[:-2]+'eit'):
+			if len(pathname) > 2 and os.path.exists(pathname[:-2] + 'eit'):
 				serviceref = eServiceReference(serviceref.toString())
 				serviceref.type = eServiceReference.idDVB
 				info = eServiceCenter.getInstance().info(serviceref)
@@ -212,7 +212,7 @@ def TMBDChannelContextMenu__init__(self, session, csel):
 		current_sel_flags = current.flags
 		inBouquetRootList = current_root and current_root.getPath().find('FROM BOUQUET "bouquets.') != -1
 		inBouquet = csel.getMutableList() is not None
-		isPlayable = not (current_sel_flags & (eServiceReference.isMarker|eServiceReference.isDirectory))
+		isPlayable = not (current_sel_flags & (eServiceReference.isMarker | eServiceReference.isDirectory))
 		if isPlayable and current and current.valid():
 			if config.plugins.tmbd.menu.value:
 				if config.plugins.tmbd.menu_profile.value == "0":
@@ -510,7 +510,7 @@ class TMBD(Screen):
 		bytelen = struct.unpack('iL', fcntl.ioctl(sck.fileno(), SIOCGIFCONF, struct.pack('iL', BYTES, names.buffer_info()[0])))[0]
 		sck.close()
 		namestr = names.tostring()
-		return [namestr[i:i+32].split('\0', 1)[0] for i in range(0, bytelen, 32)]
+		return [namestr[i:i + 32].split('\0', 1)[0] for i in range(0, bytelen, 32)]
 
 	def test(self):
 		global testOK
@@ -518,8 +518,8 @@ class TMBD(Screen):
 		for iface in self.get_iface_list():
 			if "lo" in iface:
 				continue
-			if os.path.exists("/sys/class/net/%s/operstate"%(iface)):
-				fd = open("/sys/class/net/%s/operstate"%(iface), "r")
+			if os.path.exists("/sys/class/net/%s/operstate" % (iface)):
+				fd = open("/sys/class/net/%s/operstate" % (iface), "r")
 				link = fd.read().strip()
 				fd.close()
 			if link != "down":
@@ -716,7 +716,7 @@ class TMBD(Screen):
 				if rating != '' and rating != "0.0":
 					try:
 						Ratingtext = _("User Rating") + ": " + rating + " / 10"
-						self.ratingstars = int(10*round(float(rating.replace(',','.')),1))
+						self.ratingstars = int(10 * round(float(rating.replace(',','.')),1))
 						if self.ratingstars > 0:
 							self["stars"].setValue(self.ratingstars)
 							self["stars"].show()
@@ -754,7 +754,7 @@ class TMBD(Screen):
 				try:
 					genres = [x.name.encode('utf-8', 'ignore') for x in movie.genres]
 				except:
-					genres =[]
+					genres = []
 				if len(genres) > 0:
 					try:
 						genre = ', '.join(genres)
@@ -764,7 +764,7 @@ class TMBD(Screen):
 				try:
 					crew = [x.name.encode('utf-8', 'ignore') for x in movie.crew if x.job == 'Director']
 				except:
-					crew =[]
+					crew = []
 				if len(crew) > 0:
 					try:
 						directors = ', '.join(crew)
@@ -774,7 +774,7 @@ class TMBD(Screen):
 				try:
 					crew1 = [x.name.encode('utf-8', 'ignore') for x in movie.crew if x.job == 'Producer']
 				except:
-					crew1 =[]
+					crew1 = []
 				if len(crew1) > 0:
 					try:
 						producers = ', '.join(crew1)
@@ -784,7 +784,7 @@ class TMBD(Screen):
 				try:
 					cast = [x.name.encode('utf-8', 'ignore') for x in movie.cast]
 				except:
-					cast =[]
+					cast = []
 				if len(cast) > 0:
 					try:
 						actors = ', '.join(cast)
@@ -795,7 +795,7 @@ class TMBD(Screen):
 				try:
 					studios = [x.name.encode('utf-8', 'ignore') for x in movie.studios]
 				except:
-					studios =[]
+					studios = []
 				if len(studios) > 0:
 					try:
 						studio = ', '.join(studios)
@@ -823,7 +823,7 @@ class TMBD(Screen):
 					try:
 						country = ''
 						for name in countries:
-							country += '%s, '% str(name)
+							country += '%s, ' % str(name)
 						if country != '':
 							country = country[:-2]
 							Extratext2 += "%s: %s\n" % (_("Country"), country)
@@ -969,7 +969,7 @@ class TMBD(Screen):
 				try:
 					genres = [x.name.encode('utf-8', 'ignore') for x in movie.genres]
 				except:
-					genres =[]
+					genres = []
 				if len(genres) > 0:
 					try:
 						genre = ', '.join(genres)
@@ -984,7 +984,7 @@ class TMBD(Screen):
 					try:
 						country = ''
 						for name in countries:
-							country += '%s, '% str(name)
+							country += '%s, ' % str(name)
 						if country != '':
 							country = country[:-2]
 							Extratext2 += " %s /" % (country)
@@ -993,7 +993,7 @@ class TMBD(Screen):
 				try:
 					cast = [x.name.encode('utf-8', 'ignore') for x in movie.cast]
 				except:
-					cast =[]
+					cast = []
 				if len(cast) > 0:
 					try:
 						actors = ', '.join(cast)
@@ -1004,7 +1004,7 @@ class TMBD(Screen):
 				metaParser.name = namedetals2
 				metaParser.description = Extratext2
 				if os.path.exists(TSFILE + '.meta') and movie2.endswith(".ts"):
-					readmetafile = open("%s.meta"%(movie2), "r")
+					readmetafile = open("%s.meta" % (movie2), "r")
 					linecnt = 0
 					line = readmetafile.readline()
 					if line:
@@ -1038,7 +1038,7 @@ class TMBD(Screen):
 			return ''
 
 	def savedescrip(self):
-		global  movie2
+		global movie2
 		descrip = ""
 		Extratext = ""
 		namedetals = ""
@@ -1061,7 +1061,7 @@ class TMBD(Screen):
 				try:
 					country = ''
 					for name in countries:
-						country += '%s, '% str(name)
+						country += '%s, ' % str(name)
 					if country != '':
 						country = country[:-2]
 						Extratext = "%s %s\n" % (_("Country:"), country)
@@ -1070,7 +1070,7 @@ class TMBD(Screen):
 			try:
 				genres = [x.name.encode('utf-8', 'ignore') for x in movie.genres]
 			except:
-				genres =[]
+				genres = []
 			if len(genres) > 0:
 				try:
 					genre = ', '.join(genres)
@@ -1112,7 +1112,7 @@ class TMBD(Screen):
 			try:
 				cast = [x.name.encode('utf-8', 'ignore') for x in movie.cast]
 			except:
-				cast =[]
+				cast = []
 			if len(cast) > 0:
 				try:
 					actors = ', '.join(cast)
@@ -1153,7 +1153,7 @@ class TMBD(Screen):
 			if movie2.endswith(".ts"):
 				if os.path.exists(movie2 + '.meta'):
 					try:
-						readmetafile = open("%s.meta"%(movie2), "r")
+						readmetafile = open("%s.meta" % (movie2), "r")
 						name_cur = readmetafile.readline()[0:-1]
 						name_cover = name_cur + '.jpg'
 					except:
@@ -1206,7 +1206,7 @@ class TMBD(Screen):
 				if movie2.endswith(".ts"):
 					if os.path.exists(movie2 + '.meta'):
 						try:
-							readmetafile = open("%s.meta"%(movie2), "r")
+							readmetafile = open("%s.meta" % (movie2), "r")
 							name_cur = readmetafile.readline()[0:-1]
 							name_cover = name_cur + '.jpg'
 						except:
@@ -1860,7 +1860,7 @@ class KinoRu(Screen):
 		bytelen = struct.unpack('iL', fcntl.ioctl(sck.fileno(), SIOCGIFCONF, struct.pack('iL', BYTES, names.buffer_info()[0])))[0]
 		sck.close()
 		namestr = names.tostring()
-		return [namestr[i:i+32].split('\0', 1)[0] for i in range(0, bytelen, 32)]
+		return [namestr[i:i + 32].split('\0', 1)[0] for i in range(0, bytelen, 32)]
 
 	def test(self):
 		global testOK
@@ -1868,8 +1868,8 @@ class KinoRu(Screen):
 		for iface in self.get_iface_list():
 			if "lo" in iface:
 				continue
-			if os.path.exists("/sys/class/net/%s/operstate"%(iface)):
-				fd = open("/sys/class/net/%s/operstate"%(iface), "r")
+			if os.path.exists("/sys/class/net/%s/operstate" % (iface)):
+				fd = open("/sys/class/net/%s/operstate" % (iface), "r")
 				link = fd.read().strip()
 				fd.close()
 			if link != "down":
@@ -2071,7 +2071,7 @@ class KinoRu(Screen):
 						Ratingtext = ''
 						if rating != '':
 							Ratingtext = _("User Rating") + ": " + rating + " / 10"
-							self.ratingstars = int(10*round(float(rating.replace(',','.')),1))
+							self.ratingstars = int(10 * round(float(rating.replace(',','.')),1))
 							self["stars"].show()
 							self["stars"].setValue(self.ratingstars)
 							self["starsbg"].show()
@@ -2306,7 +2306,7 @@ class KinoRu(Screen):
 				metaParser.name = namedetals2
 				metaParser.description = Extratext2
 				if os.path.exists(TSFILE + '.meta') and movie2.endswith(".ts"):
-					readmetafile = open("%s.meta"%(movie2), "r")
+					readmetafile = open("%s.meta" % (movie2), "r")
 					linecnt = 0
 					line = readmetafile.readline()
 					if line:
@@ -2397,7 +2397,7 @@ class KinoRu(Screen):
 			if movie2.endswith(".ts"):
 				if os.path.exists(movie2 + '.meta'):
 					try:
-						readmetafile = open("%s.meta"%(movie2), "r")
+						readmetafile = open("%s.meta" % (movie2), "r")
 						name_cur = readmetafile.readline()[0:-1]
 						name_cover = name_cur + '.jpg'
 					except:
@@ -2450,7 +2450,7 @@ class KinoRu(Screen):
 				if movie2.endswith(".ts"):
 					if os.path.exists(movie2 + '.meta'):
 						try:
-							readmetafile = open("%s.meta"%(movie2), "r")
+							readmetafile = open("%s.meta" % (movie2), "r")
 							name_cur = readmetafile.readline()[0:-1]
 							name_cover = name_cur + '.jpg'
 						except:
@@ -2733,8 +2733,8 @@ class MovielistPreview():
 			if movie and self.mayShow and config.plugins.tmbd.enabled.value:
 				png2 = os.path.split(movie)[1]
 				if movie.endswith(".ts"):
-					if fileExists("%s.meta"%(movie)):
-						readmetafile = open("%s.meta"%(movie), "r")
+					if fileExists("%s.meta" % (movie)):
+						readmetafile = open("%s.meta" % (movie), "r")
 						servicerefname = readmetafile.readline()[0:-1]
 						eventname = readmetafile.readline()[0:-1]
 						readmetafile.close()
@@ -3287,7 +3287,7 @@ class TMBDInfoBar:
 def movielist(session, service, **kwargs):
 	global name
 	global eventname
-	eventName=""
+	eventName = ""
 	serviceHandler = eServiceCenter.getInstance()
 	info = serviceHandler.info(service)
 	name = info and info.getName(service) or ''

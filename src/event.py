@@ -27,7 +27,7 @@ from dvbstring import convertDVBUTF8, convertUTF8DVB
 def fromBCD(bcd):
 	if ((bcd & 0xF0) >= 0xA0) or ((bcd & 0xF) >= 0xA):
 		return -1
-	return ((bcd & 0xF0) >> 4)*10 + (bcd & 0xF)
+	return ((bcd & 0xF0) >> 4) * 10 + (bcd & 0xF)
 
 def toBCD(dec):
 	if (dec >= 100):
@@ -39,18 +39,18 @@ def parseDVBtime(t1, t2, t3, t4, t5):
 	jdn = mjd + 2400001
 	
 	a = jdn + 32044
-	b = int((4*a+3)/146097)
-	c = a - int((146097*b)/4)
-	d = int((4*c+3)/1461)
-	e = c - int((1461*d)/4)
-	m = int((5*e+2)/153)
+	b = int((4 * a + 3) / 146097)
+	c = a - int((146097 * b) / 4)
+	d = int((4 * c + 3) / 1461)
+	e = c - int((1461 * d) / 4)
+	m = int((5 * e + 2) / 153)
 	
-	year = 100*b + d - 4800 + m/10
-	mon = m + 3 - (m/10)*12
-	mday = e - int((153*m+2)/5) + 1
+	year = 100 * b + d - 4800 + m / 10
+	mon = m + 3 - (m / 10) * 12
+	mday = e - int((153 * m + 2) / 5) + 1
 	hour = fromBCD(t3)
-	min  = fromBCD(t4)
-	sec  = fromBCD(t5)
+	min = fromBCD(t4)
+	sec = fromBCD(t5)
 	return time.mktime((year, mon, mday, hour, min, sec, 0, 0, 0))
 	
 
@@ -67,11 +67,11 @@ class ShortEventDescriptor:
 			eventNameLength = buffer[5]
 			headerLength += eventNameLength
 			if headerLength < bufferLen:
-				self.eventName = convertDVBUTF8([x for x in buffer[6:6+eventNameLength]], eventNameLength)
+				self.eventName = convertDVBUTF8([x for x in buffer[6:6 + eventNameLength]], eventNameLength)
 				textLength = buffer[6 + eventNameLength]
 				headerLength += textLength
 				if headerLength < bufferLen:
-					self.text = convertDVBUTF8([x for x in buffer[7+eventNameLength:7+eventNameLength+textLength]], textLength)
+					self.text = convertDVBUTF8([x for x in buffer[7 + eventNameLength:7 + eventNameLength + textLength]], textLength)
 
 	def getIso639LanguageCode(self):
 		return self.iso639LanguageCode
@@ -94,7 +94,7 @@ class ShortEventDescriptor:
 class ExtendedEvent:
 	def __init__(self, buffer):
 		self.itemDescriptionLength = buffer[0]
-		self.itemDescription = [x for x in buffer[1:1+self.itemDescriptionLength]]
+		self.itemDescription = [x for x in buffer[1:1 + self.itemDescriptionLength]]
 		self.itemLength = buffer[self.itemDescriptionLength + 1]
 		self.item = [x for x in buffer[self.itemDescriptionLength + 2:self.itemDescriptionLength + 2 + self.itemLength]]
 
@@ -123,13 +123,13 @@ class ExtendedEventDescriptor:
 			if headerLength < bufferLen:
 				i = 0
 				while i < lengthOfItems:
-					e = ExtendedEvent(buffer[i+7:])
+					e = ExtendedEvent(buffer[i + 7:])
 					self.items.append(e)
 					i += e.itemDescriptionLength + e.itemLength + 2
 				textLength = buffer[lengthOfItems + 7]
 				headerLength += textLength
 				if headerLength < bufferLen:
-					self.text = convertDVBUTF8([x for x in buffer[8+lengthOfItems:8+lengthOfItems+textLength]], textLength)
+					self.text = convertDVBUTF8([x for x in buffer[8 + lengthOfItems:8 + lengthOfItems + textLength]], textLength)
 
 	def getIso639LanguageCode(self):
 		return self.iso639LanguageCode
@@ -163,15 +163,15 @@ class ExtendedEventDescriptor:
 
 
 class Event:
-	EIT_LOOP_SIZE                 = 12
-	EIT_LENGTH                    = 4108
-	MAX_DESCRIPTOR_LOOP_LENGTH    = 4095
-	EIT_SHORT_EVENT_DESCRIPTOR    = 0x4d
+	EIT_LOOP_SIZE = 12
+	EIT_LENGTH = 4108
+	MAX_DESCRIPTOR_LOOP_LENGTH = 4095
+	EIT_SHORT_EVENT_DESCRIPTOR = 0x4d
 	EIT_EXTENDED_EVENT_DESCRIPTOR = 0x4e
 	
 	def __init__(self, buffer=None):
 		if buffer is None:
-			buffer = [0]*12
+			buffer = [0] * 12
 		self.__readFromBuffer(buffer)
 	
 	def __readFromBuffer(self, buffer):
@@ -197,47 +197,47 @@ class Event:
 					self.extendedEventDescriptor.setText(self.extendedEventDescriptor.getText() + eed.getText())
 			else:
 				pass
-			i += buffer[i+1] + 2
+			i += buffer[i + 1] + 2
 	
 	def __saveToBuffer(self, buffer):
 		buffer[0] = self.eventId >> 8
-		buffer[1] = self.eventId &  0xff
+		buffer[1] = self.eventId & 0xff
 		buffer[2] = self.startTimeMjd >> 8
-		buffer[3] = self.startTimeMjd &  0xff
+		buffer[3] = self.startTimeMjd & 0xff
 		buffer[4] = self.startTimeBcd >> 16
-		buffer[5] =(self.startTimeBcd >> 8) & 0xff
-		buffer[6] = self.startTimeBcd &  0xff
+		buffer[5] = (self.startTimeBcd >> 8) & 0xff
+		buffer[6] = self.startTimeBcd & 0xff
 		buffer[7] = self.durationBcd >> 16
-		buffer[8] =(self.durationBcd >> 8) & 0xff
-		buffer[9] = self.durationBcd &  0xff
+		buffer[8] = (self.durationBcd >> 8) & 0xff
+		buffer[9] = self.durationBcd & 0xff
 		
 		descriptorsLoopLength = 0
 		if not self.shortEventDescriptor is None:
 			lang = self.shortEventDescriptor.getIso639LanguageCode()
 			table, name = convertUTF8DVB(self.shortEventDescriptor.getEventName(), lang)
-			name = table + name[0:248-len(table)]		# may be '250-len(table)'???
+			name = table + name[0:248 - len(table)]		# may be '250-len(table)'???
 			namelen = len(name)
 			table, text = convertUTF8DVB(self.shortEventDescriptor.getText(), lang)
-			text = table + text[0:248-namelen-len(table)]	# may be '250-namelen-len(table)'???
+			text = table + text[0:248 - namelen - len(table)]	# may be '250-namelen-len(table)'???
 			textlen = len(text)
 			length = 5 + namelen + textlen			# max. length == 253 (or 255???)
 			
-			sbuf = array.array('B', '\0'*(length+2))	# +2 for tag and length bytes
+			sbuf = array.array('B', '\0' * (length + 2))	# +2 for tag and length bytes
 			sbuf[0] = self.EIT_SHORT_EVENT_DESCRIPTOR
 			sbuf[1] = length
 			for i in range(2,5):
-				sbuf[i] = ord(lang[i-2])
+				sbuf[i] = ord(lang[i - 2])
 			sbuf[5] = namelen
 			if namelen:
-				for i in range(6,6+namelen):
-					sbuf[i] = ord(name[i-6])
-			sbuf[6+namelen] = textlen
+				for i in range(6,6 + namelen):
+					sbuf[i] = ord(name[i - 6])
+			sbuf[6 + namelen] = textlen
 			if textlen:
-				sbuf[7+namelen] = 1
-				for i in range(7+namelen,7+namelen+textlen):
-					sbuf[i] = ord(text[i-7-namelen])
+				sbuf[7 + namelen] = 1
+				for i in range(7 + namelen,7 + namelen + textlen):
+					sbuf[i] = ord(text[i - 7 - namelen])
 			buffer.extend(sbuf)
-			descriptorsLoopLength += length+2
+			descriptorsLoopLength += length + 2
 		
 		if not self.extendedEventDescriptor is None:
 			itemlen = 0
@@ -245,33 +245,33 @@ class Event:
 			table, text = convertUTF8DVB(self.extendedEventDescriptor.getText(), lang)
 			textlen = min(self.MAX_DESCRIPTOR_LOOP_LENGTH, len(text))
 			tablelen = len(table)
-			MAX_LEN = 247-tablelen	# may be '249-tablelen'???
-			lastDescriptorNumber = (textlen + MAX_LEN-1) / MAX_LEN - 1
+			MAX_LEN = 247 - tablelen	# may be '249-tablelen'???
+			lastDescriptorNumber = (textlen + MAX_LEN - 1) / MAX_LEN - 1
 			remainingTextLength = textlen - lastDescriptorNumber * MAX_LEN
-			while (lastDescriptorNumber+1) * 256 + descriptorsLoopLength > self.MAX_DESCRIPTOR_LOOP_LENGTH:
+			while (lastDescriptorNumber + 1) * 256 + descriptorsLoopLength > self.MAX_DESCRIPTOR_LOOP_LENGTH:
 				lastDescriptorNumber -= 1
 				remainingTextLength = MAX_LEN
 			
 			descrIndex = 0
 			while descrIndex <= lastDescriptorNumber:
 				curtextlen = descrIndex < lastDescriptorNumber and MAX_LEN or remainingTextLength
-				curtext = table + text[descrIndex*MAX_LEN:descrIndex*MAX_LEN+curtextlen]
-				length = 6 + itemlen + curtextlen+tablelen	# max. length == 253 (or 255???)
+				curtext = table + text[descrIndex * MAX_LEN:descrIndex * MAX_LEN + curtextlen]
+				length = 6 + itemlen + curtextlen + tablelen	# max. length == 253 (or 255???)
 				
-				ebuf = array.array('B', '\0'*(length+2))	# +2 for tag and length bytes
+				ebuf = array.array('B', '\0' * (length + 2))	# +2 for tag and length bytes
 				ebuf[0] = self.EIT_EXTENDED_EVENT_DESCRIPTOR
 				ebuf[1] = length
 				ebuf[2] = (descrIndex << 4) | lastDescriptorNumber
 				for i in range(3,6):
-					ebuf[i] = ord(lang[i-3])
+					ebuf[i] = ord(lang[i - 3])
 				ebuf[6] = itemlen
-				ebuf[7+itemlen] = curtextlen + tablelen
+				ebuf[7 + itemlen] = curtextlen + tablelen
 				if curtextlen:
-					for i in range(8+itemlen,8+itemlen+curtextlen+tablelen):
-						ebuf[i] = ord(curtext[i-8-itemlen])
+					for i in range(8 + itemlen,8 + itemlen + curtextlen + tablelen):
+						ebuf[i] = ord(curtext[i - 8 - itemlen])
 				
 				buffer.extend(ebuf)
-				descriptorsLoopLength += length+2
+				descriptorsLoopLength += length + 2
 				descrIndex += 1
 		
 		buffer[10] = ((self.runningStatus & 0x07) >> 5) | ((self.freeCaMode & 0x01) >> 1) | ((descriptorsLoopLength >> 8) & 0x0f)
@@ -292,7 +292,7 @@ class Event:
 	
 	def saveToFile(self, filename):
 		try:
-			buffer = array.array('B', '\0'*12)
+			buffer = array.array('B', '\0' * 12)
 			self.__saveToBuffer(buffer)
 			res = buffer.buffer_info()[1]
 			fd = open(filename, 'wb')
@@ -338,11 +338,11 @@ class Event:
 
 	def setStartTime(self, value):
 		t = time.gmtime(value)
-		a = (14 - t.tm_mon)/12
+		a = (14 - t.tm_mon) / 12
 		y = t.tm_year + 4800 - a
-		m = t.tm_mon + 12*a - 3
-		jdn = t.tm_mday + ((153*m + 2)/5) + (365*y) + (y/4) - (y/100) + (y/400) - 32045
-		mjd  = int(jdn + ((t.tm_hour-12)/24.00) + (t.tm_min/1440.00) + (t.tm_sec/86400.00) - 2400000.5)
+		m = t.tm_mon + 12 * a - 3
+		jdn = t.tm_mday + ((153 * m + 2) / 5) + (365 * y) + (y / 4) - (y / 100) + (y / 400) - 32045
+		mjd = int(jdn + ((t.tm_hour - 12) / 24.00) + (t.tm_min / 1440.00) + (t.tm_sec / 86400.00) - 2400000.5)
 		bcd = (toBCD(t.tm_hour) << 16) | (toBCD(t.tm_min) << 8) | toBCD(t.tm_sec)
 		self.setStartTimeMjd(mjd)
 		self.setStartTimeBcd(bcd)
@@ -354,7 +354,7 @@ class Event:
 		self.durationBcd = value
 
 	def getDuration(self):
-		return  fromBCD(self.durationBcd >> 16) * 3600 + \
+		return fromBCD(self.durationBcd >> 16) * 3600 + \
 			fromBCD(self.durationBcd >> 8) * 60 + \
 			fromBCD(self.durationBcd)
 

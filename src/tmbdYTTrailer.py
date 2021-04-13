@@ -43,7 +43,7 @@ def GetKey(x):
 		if p > len(x):
 			break
 		pl = len(str(p))
-		x = x[:p] + x[p+pl:]
+		x = x[:p] + x[p + pl:]
 		p += 12 - pl
 	x = x.replace('w_OizD', 'a')
 	x = x.replace('Xhi_Lo', 'A')

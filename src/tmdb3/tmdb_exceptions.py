@@ -28,7 +28,7 @@ class TMDBError(Exception):
     def __init__(self, msg=None, errno=0):
         self.errno = errno
         if errno == 0:
-            self.errno = getattr(self, 'TMDB'+self.__class__.__name__, errno)
+            self.errno = getattr(self, 'TMDB' + self.__class__.__name__, errno)
         self.args = (msg,)
 
 

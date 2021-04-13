@@ -24,39 +24,39 @@ author = "Alex Vasilyev / mod Dima73"
 usage_examples = ""
 
 U8Translit = {
-	0x0410: "A",	0x0430: "a",	# "А", "а",
-	0x0411: "B",	0x0431: "b",	# "Б", "б",
-	0x0412: "V",	0x0432: "v",	# "В", "в",
-	0x0413: "G",	0x0433: "g",	# "Г", "г",
-	0x0414: "D",	0x0434: "d",	# "Д", "д",
-	0x0415: "E",	0x0435: "e",	# "Е", "е",
-	0x0401: "Yo",	0x0451: "yo",	# "Ё", "ё",
-	0x0416: "Zh",	0x0436: "zh",	# "Ж", "ж",
-	0x0417: "Z",	0x0437: "z",	# "З", "з",
-	0x0418: "I",	0x0438: "i",	# "И", "и",
-	0x0419: "J",	0x0439: "j",	# "Й", "й",
-	0x041a: "K",	0x043a: "k",	# "К", "к",
-	0x041b: "L",	0x043b: "l",	# "Л", "л",
-	0x041c: "M",	0x043c: "m",	# "М", "м",
-	0x041d: "N",	0x043d: "n",	# "Н", "н",
-	0x041e: "O",	0x043e: "o",	# "О", "о",
-	0x041f: "P",	0x043f: "p",	# "П", "п",
-	0x0420: "R",	0x0440: "r",	# "Р", "р",
-	0x0421: "S",	0x0441: "s",	# "С", "с",
-	0x0422: "T",	0x0442: "t",	# "Т", "т",
-	0x0423: "U",	0x0443: "u",	# "У", "у",
-	0x0424: "F",	0x0444: "f",	# "Ф", "ф",
-	0x0425: "H",	0x0445: "h",	# "Х", "х",
-	0x0426: "Ts",	0x0446: "ts",	# "Ц", "ц",
-	0x0427: "Ch",	0x0447: "ch",	# "Ч", "ч",
-	0x0428: "Sh",	0x0448: "sh",	# "Ш", "ш",
-	0x0429: "Sch",	0x0449: "sch",	# "Щ", "щ",
-	0x042a: "'",	0x044a: "'",	# "Ъ", "ъ",
-	0x042b: "Yi",	0x044b: "yi",	# "Ы", "ы",
-	0x042c: "'",	0x044c: "'",	# "Ь", "ь",
-	0x042d: "E",	0x044d: "e",	# "Э", "э",
-	0x042e: "Yu",	0x044e: "yu",	# "Ю", "ю",
-	0x042f: "Ya",	0x044f: "ya",	# "Я", "я",
+	0x0410: "A", 0x0430: "a", # "А", "а",
+	0x0411: "B", 0x0431: "b", # "Б", "б",
+	0x0412: "V", 0x0432: "v", # "В", "в",
+	0x0413: "G", 0x0433: "g", # "Г", "г",
+	0x0414: "D", 0x0434: "d", # "Д", "д",
+	0x0415: "E", 0x0435: "e", # "Е", "е",
+	0x0401: "Yo", 0x0451: "yo", # "Ё", "ё",
+	0x0416: "Zh", 0x0436: "zh", # "Ж", "ж",
+	0x0417: "Z", 0x0437: "z", # "З", "з",
+	0x0418: "I", 0x0438: "i", # "И", "и",
+	0x0419: "J", 0x0439: "j", # "Й", "й",
+	0x041a: "K", 0x043a: "k", # "К", "к",
+	0x041b: "L", 0x043b: "l", # "Л", "л",
+	0x041c: "M", 0x043c: "m", # "М", "м",
+	0x041d: "N", 0x043d: "n", # "Н", "н",
+	0x041e: "O", 0x043e: "o", # "О", "о",
+	0x041f: "P", 0x043f: "p", # "П", "п",
+	0x0420: "R", 0x0440: "r", # "Р", "р",
+	0x0421: "S", 0x0441: "s", # "С", "с",
+	0x0422: "T", 0x0442: "t", # "Т", "т",
+	0x0423: "U", 0x0443: "u", # "У", "у",
+	0x0424: "F", 0x0444: "f", # "Ф", "ф",
+	0x0425: "H", 0x0445: "h", # "Х", "х",
+	0x0426: "Ts", 0x0446: "ts", # "Ц", "ц",
+	0x0427: "Ch", 0x0447: "ch", # "Ч", "ч",
+	0x0428: "Sh", 0x0448: "sh", # "Ш", "ш",
+	0x0429: "Sch", 0x0449: "sch", # "Щ", "щ",
+	0x042a: "'", 0x044a: "'", # "Ъ", "ъ",
+	0x042b: "Yi", 0x044b: "yi", # "Ы", "ы",
+	0x042c: "'", 0x044c: "'", # "Ь", "ь",
+	0x042d: "E", 0x044d: "e", # "Э", "э",
+	0x042e: "Yu", 0x044e: "yu", # "Ю", "ю",
+	0x042f: "Ya", 0x044f: "ya", # "Я", "я",
 	}
 
 def comment_out(str):
@@ -88,8 +88,8 @@ def print_exception(str):
 
 def title_correction(title):
     try:
-        regexp= re.compile(r'<.*?>')
-        title = regexp.sub('',  title)
+        regexp = re.compile(r'<.*?>')
+        title = regexp.sub('', title)
         return title
     except:
         return title
@@ -104,18 +104,18 @@ def getText(title):
 				outstr += U8Translit[i]
 			else:
 				outstr += c.encode("utf-8")
-	print  '%s' % (outstr)
+	print '%s' % (outstr)
 	return outstr
 
 #Замена различных спецсимволов и тегов HTML на обычные символы, 
 #возможно есть более правильное решение, но вроде и это работает.
-def  normilize_string(processingstring):
+def normilize_string(processingstring):
     try:
         symbols_to_remove = {'&#160;':' ', '&nbsp;':' ', '&#161;':'¡', '&iexcl;':'¡', '&#162;':'¢', '&cent;':'¢', '&#163;':'£',  
         '&pound;':'£', '&#164;':'¤', '&curren;':'¤', '&#165;':'¥', '&yen;':'¥', '&#166;':'¦', '&brvbar;':'¦', '&brkbar;':',',
-        '&#167;':'§', '&sect;':'§', '&#168;':'¨', '&uml;':'¨',  '&#169;':'©', '&copy;':'©', '&#170;':'ª', '&ordf;':'ª',  '&#171;':'«', 
+        '&#167;':'§', '&sect;':'§', '&#168;':'¨', '&uml;':'¨', '&#169;':'©', '&copy;':'©', '&#170;':'ª', '&ordf;':'ª', '&#171;':'«', 
         '&laquo;':'«', '&#172;':'¬', '&not;':'¬', '&#173;':' ', '&shy;':'­ ', '&#174;':'®', '&reg;':'®',
-        '&#175;':'¯', '&macr;':'¯',  '&#176;':'°', '&deg;':'°', '&#177;':'±', '&plusmn;':'±', '&#178;':'²', '&sup2;':'²', 
+        '&#175;':'¯', '&macr;':'¯', '&#176;':'°', '&deg;':'°', '&#177;':'±', '&plusmn;':'±', '&#178;':'²', '&sup2;':'²', 
         '&#179;':'³', '&sup3;':'³', '&#180;':'´', '&acute;':'´', '&#181;':'µ', '&micro;':'µ', '&#182;':'¶', '&para;':'¶', 
         '&#183;':'·', '&middot;':'·', '&#184;':'¸', '&cedil;':'¸', '&#185;':'¹', '&sup1;':'¹', '&#186;':'º', '&ordm;':'º', 
         '&#187;':'»', '&raquo;':'»', '&#188;':'¼', '&frac14;':'¼', '&#189;':'½', '&frac12;':'½', '&#190;':'¾', '&frac34;':'¾',
@@ -123,7 +123,7 @@ def  normilize_string(processingstring):
         '&#195;':'Ã', '&Atilde;':'Ã', '&#196;':'Ä', '&Auml;':'Ä', '&#197;':'Å', '&Aring;':'Å', '&#198;':'Æ', '&AElig;':'Æ', 
         '&#199;':'Ç', '&Ccedil;':'Ç', '&#200;':'È', '&Egrave;':'È', '&#201;':'É', '&Eacute;':'É', '&#202;':'Ê', '&Ecirc;':'Ê', 
         '&#203;':'Ë', '&Euml;':'Ë', '&#204;':'Ì', '&Igrave;':'Ì', '&#205;':'Í', '&Iacute;':'Í', '&#206;':'Î', '&Icirc;':'Î', 
-        '&#207;':'Ï', '&Iuml;':'Ï', '&#208;':'Ð', '&ETH;':'Ð',  '&#209;':'Ñ', '&Ntilde;':'Ñ', '&#210;':'Ò', '&Ograve;':'Ò', 
+        '&#207;':'Ï', '&Iuml;':'Ï', '&#208;':'Ð', '&ETH;':'Ð', '&#209;':'Ñ', '&Ntilde;':'Ñ', '&#210;':'Ò', '&Ograve;':'Ò', 
         '&#211;':'Ó', '&Oacute;':'Ó', '&#212;':'Ô', '&Ocirc;':'Ô', '&#213;':'Õ', '&Otilde;':'Õ', '&#214;':'Ö', '&Ouml;':'Ö',
         '&#215;':'×', '&times;':'×', '&#216;':'Ø', '&Oslash;':'Ø', '&#217;':'Ù', '&Ugrave;':'Ù', '&#218;':'Ú', '&Uacute;':'Ú', 
         '&#219;':'Û', '&Ucirc;':'Û', '&#220;':'Ü', '&Uuml;':'Ü', '&#221;':'Ý', '&Yacute;':'Ý', '&#222;':'Þ', '&THORN;':'Þ', 
@@ -135,9 +135,9 @@ def  normilize_string(processingstring):
         '&#243;':'ó', '&oacute;':'ó', '&#244;':'ô', '&ocirc;':'ô', '&#245;':'õ', '&otilde;':'õ', '&#246;':'ö', '&ouml;':'ö', 
         '&#247;':'÷', '&divide;':'÷', '&#248;':'ø', '&oslash;':'ø', '&#249;':'ù', '&ugrave;':'ù', '&#250;':'ú', '&uacute;':'ú', 
         '&#251;':'û', '&ucirc;':'û', '&#252;':'ü', '&uuml;':'ü', '&#253;':'ý', '&yacute;':'ý', '&#254;':'þ', '&thorn;':'þ', 
-        '&#255;':'ÿ', '&yuml;':'ÿ', '&#133;': '...', '&#151;':'-', '<br><br>':' ', '<br />':'',  '\r':'',  '\n':'', '  ':' '}
+        '&#255;':'ÿ', '&yuml;':'ÿ', '&#133;': '...', '&#151;':'-', '<br><br>':' ', '<br />':'', '\r':'', '\n':'', '  ':' '}
         for i in range(len(symbols_to_remove)):
-            processingstring = string.replace(processingstring,  unicode(symbols_to_remove.items()[i][0],  'utf-8'), unicode(symbols_to_remove.items()[i][1],  'utf-8'))
+            processingstring = string.replace(processingstring, unicode(symbols_to_remove.items()[i][0], 'utf-8'), unicode(symbols_to_remove.items()[i][1], 'utf-8'))
         return processingstring
     except:
         return ''
@@ -149,24 +149,24 @@ def outXML(rootElm):
     outfile.close()
 
 #Получение HTML страницы
-def get_page(address,  data=0,  title=''):
+def get_page(address, data=0, title=''):
     try:
         opener = urllib2.build_opener()
         
         if data == 0:
             #address = u'http://s.kinopoisk.ru' + address+urllib.quote(title.encode('utf8'))
-            address = u'http://www.kinopoisk.ru' + address+urllib.quote(title.encode('cp1251'))
+            address = u'http://www.kinopoisk.ru' + address + urllib.quote(title.encode('cp1251'))
         else:
             #address = u'http://www.kinopoisk.ru' + address+urllib.quote(title.encode('utf8'))
-            address = u'http://www.kinopoisk.ru' + address+urllib.quote(title.encode('cp1251'))
+            address = u'http://www.kinopoisk.ru' + address + urllib.quote(title.encode('cp1251'))
         
-        opener.addheaders = [("Host",  "www.kinopoisk.ru"), 
+        opener.addheaders = [("Host", "www.kinopoisk.ru"), 
                                 ('User-agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.53.11 (KHTML, like Gecko) Version/5.1.3 Safari/534.53.10'), 
-                                ("Accept",  "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"), 
-                                ("Accept-Language",  "ru,en-us;q=0.7,en;q=0.3"),
-                                ("Accept-Charset",  "windows-1251,utf-8;q=0.7,*;q=0.7"),
-                                ("Keep-Alive",  "300"),
-                                ("Connection",  "keep-alive")]
+                                ("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"), 
+                                ("Accept-Language", "ru,en-us;q=0.7,en;q=0.3"),
+                                ("Accept-Charset", "windows-1251,utf-8;q=0.7,*;q=0.7"),
+                                ("Keep-Alive", "300"),
+                                ("Connection", "keep-alive")]
         time.sleep(1.5)
         f = opener.open(address)
         return f.read().decode('utf8')
@@ -177,7 +177,7 @@ def get_page(address,  data=0,  title=''):
 #Ищем обои
 def search_fanart(uid):
     try:
-        data = get_page("/level/12/film/"+uid, 1)
+        data = get_page("/level/12/film/" + uid, 1)
         doc = html.document_fromstring(data)
         result = []
         
@@ -185,7 +185,7 @@ def search_fanart(uid):
         for poster in posterNodes:
             hrefTag = poster.xpath("a")
             if len(hrefTag):
-                posterURL= hrefTag[0].attrib["href"]
+                posterURL = hrefTag[0].attrib["href"]
                 result.append("http://www.kinopoisk.ru" + posterURL)
         return result
 
@@ -195,7 +195,7 @@ def search_fanart(uid):
 #Ищем обложки
 def search_poster(uid):
     try:
-        data = get_page("/level/17/film/"+uid, 1)
+        data = get_page("/level/17/film/" + uid, 1)
         doc = html.document_fromstring(data)
         result = []
         
@@ -204,7 +204,7 @@ def search_poster(uid):
 
             hrefTag = poster.xpath("a")
             if len(hrefTag):
-                posterURL= hrefTag[0].attrib["href"]
+                posterURL = hrefTag[0].attrib["href"]
                 result.append("http://www.kinopoisk.ru" + posterURL)
             
         return result
@@ -216,7 +216,7 @@ def search_poster(uid):
 def search_title(title):
     if not LMXL:
         return None
-    data = get_page("/index.php?first=no&what=&kp_query=",  1, title.decode('utf8'))
+    data = get_page("/index.php?first=no&what=&kp_query=", 1, title.decode('utf8'))
     doc = html.document_fromstring(data)
     search_results = []
     #Проверяем ту ли страницу (т.е. страницу с результатами поиска) мы получили
@@ -301,7 +301,7 @@ def search_data(uid):
                 #'fanart' : ''
             }
         
-        data = get_page("/level/1/film/"+uid, 1)
+        data = get_page("/level/1/film/" + uid, 1)
         doc = html.document_fromstring(data)
         titleNodes = doc.xpath("//h1[@class='moviename-big']")
         if len(titleNodes):
@@ -323,7 +323,7 @@ def search_data(uid):
                 filmdata['rating_count'] = ''
         infoNodes = doc.xpath("//table[@class='info']/*") 
         for infoNode in infoNodes:
-            dataNodes =infoNode.xpath("td")  
+            dataNodes = infoNode.xpath("td")  
             if dataNodes[0].text == u"год":
                 try:
                     filmdata['year'] = dataNodes[0].xpath("//table[@class='info']//td//div//a/text()")[0]
@@ -347,9 +347,9 @@ def search_data(uid):
                     filmdata['genre'] = ''
             elif dataNodes[0].text == u"время":
                 try:
-                    filmdata['runtime']  = dataNodes[1].text.split()[0]
+                    filmdata['runtime'] = dataNodes[1].text.split()[0]
                 except:
-                    filmdata['runtime']  = ''
+                    filmdata['runtime'] = ''
             elif dataNodes[0].text == u"рейтинг MPAA":
                 try:
                     filmdata['movie_rating'] = dataNodes[1].xpath("a")[0].attrib["href"].split("/")[-2]

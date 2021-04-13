@@ -87,7 +87,7 @@ class MetaParser:
 			if not line:
 				break
 			line = line.strip()
-			if   linecnt == 0:
+			if linecnt == 0:
 				self.ref = eServiceReference(line)
 			elif linecnt == 1:
 				self.name = line		# event name
@@ -135,7 +135,7 @@ class MetaParser:
 			# Remove trailing \r\n
 			line = line.strip()
 			
-			if   line.find("#SERVICE: ") == 0:
+			if line.find("#SERVICE: ") == 0:
 				ref = eServiceReference(line[10:])
 			elif line.find("#DESCRIPTION: ") == 0:
 				description = line[14:]

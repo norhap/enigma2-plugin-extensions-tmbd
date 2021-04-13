@@ -182,38 +182,38 @@ LANGUAGES = {
 def recode(d, cp):
 	if (d < 0xA0):
 		return d
-	if   cp == 0:		# ISO6937
-		return iso6937[d-0xA0]
+	if cp == 0:		# ISO6937
+		return iso6937[d - 0xA0]
 	elif cp == 1:		# 8859-1 <-> unicode mapping
 		return d
 	elif cp == 2:		# 8859-2 -> unicode mapping
-		return c88592[d-0xA0]
+		return c88592[d - 0xA0]
 	elif cp == 3:		# 8859-3 -> unicode mapping
-		return c88593[d-0xA0]
+		return c88593[d - 0xA0]
 	elif cp == 4:		# 8859-2 -> unicode mapping
-		return c88594[d-0xA0]
+		return c88594[d - 0xA0]
 	elif cp == 5:		# 8859-5 -> unicode mapping
-		return c88595[d-0xA0]
+		return c88595[d - 0xA0]
 	elif cp == 6:		# 8859-6 -> unicode mapping
-		return c88596[d-0xA0]
+		return c88596[d - 0xA0]
 	elif cp == 7:		# 8859-7 -> unicode mapping
-		return c88597[d-0xA0]
+		return c88597[d - 0xA0]
 	elif cp == 8:		# 8859-8 -> unicode mapping
-		return c88598[d-0xA0]
+		return c88598[d - 0xA0]
 	elif cp == 9:		# 8859-9 -> unicode mapping
-		return c88599[d-0xA0]
+		return c88599[d - 0xA0]
 	elif cp == 10:		# 8859-10 -> unicode mapping
-		return c885910[d-0xA0]
+		return c885910[d - 0xA0]
 	elif cp == 11:		# 8859-11 -> unicode mapping
-		return c885911[d-0xA0]
+		return c885911[d - 0xA0]
 	elif cp == 13:		# 8859-13 -> unicode mapping
-		return c885913[d-0xA0]
+		return c885913[d - 0xA0]
 	elif cp == 14:		# 8859-14 -> unicode mapping
-		return c885914[d-0xA0]
+		return c885914[d - 0xA0]
 	elif cp == 15:		# 8859-15 -> unicode mapping
-		return c885915[d-0xA0]
+		return c885915[d - 0xA0]
 	elif cp == 16:		# 8859-16 -> unicode mapping
-		return c885916[d-0xA0]
+		return c885916[d - 0xA0]
 	else:
 		return d
 
@@ -226,11 +226,11 @@ def convertDVBUTF8(data, length, table=None):
 	if data[0] in range(1,12):
 		# For Thai providers, encoding char is present but faulty.
 		if (table != 11):
-			table = data[i]+4
+			table = data[i] + 4
 		i += 1
 		#print "convertDVBUTF8(): (1..11)text encoded in ISO-8859-%d" % (table);
 	elif data[0] == 0x10:
-		n = (data[i+1] << 8) | data[i+2]
+		n = (data[i + 1] << 8) | data[i + 2]
 		#print "convertDVBUTF8(): (0x10)text encoded in ISO-8859-%d" % (n);
 		i += 3
 		if n == 12:
@@ -250,7 +250,7 @@ def convertDVBUTF8(data, length, table=None):
 		print "convertDVBUTF8(): unsup. Big5 subset of ISO/IEC 10646-1 enc."
 		i += 1
 	elif data[0] == 0x15: # UTF-8 encoding of ISO/IEC 10646-1
-		return ''.join([chr(x) for x in data[1:length-1]])
+		return ''.join([chr(x) for x in data[1:length - 1]])
 	elif data[0] == 0x1F:
 		print "convertDVBUTF8(): unsup. BBC Freesat Huffman enc."
 		i += 1
@@ -258,12 +258,12 @@ def convertDVBUTF8(data, length, table=None):
 		print "convertDVBUTF8(): reserved %d" % (data[0])
 		i += 1
 
-	res = [0]*2048
+	res = [0] * 2048
 	while (i < length):
 		code = 0
 		if (table == 65): # unicode
-			if (i+1 < length):
-				code = (data[i] << 8) | data[i+1]
+			if (i + 1 < length):
+				code = (data[i] << 8) | data[i + 1]
 				i += 2
 		else:
 			code = recode(data[i], table)
@@ -275,21 +275,21 @@ def convertDVBUTF8(data, length, table=None):
 			res[t] = chr(code)
 			t += 1
 		elif (code < 0x800):	# two byte mapping
-			res[t+0] = chr((code >> 6)    | 0xC0)
-			res[t+1] = chr((code &  0x3F) | 0x80)
+			res[t + 0] = chr((code >> 6) | 0xC0)
+			res[t + 1] = chr((code & 0x3F) | 0x80)
 			t += 2
 		elif (code < 0x10000):	# three bytes mapping
-			res[t+0] = chr((code >> 12)   | 0xE0)
-			res[t+1] = chr(((code >> 6)    & 0x3F) | 0x80)
-			res[t+2] = chr((code &  0x3F) | 0x80)
+			res[t + 0] = chr((code >> 12) | 0xE0)
+			res[t + 1] = chr(((code >> 6) & 0x3F) | 0x80)
+			res[t + 2] = chr((code & 0x3F) | 0x80)
 			t += 3
 		else:
-			res[t+0]= chr((code >> 18)  | 0xF0)
-			res[t+1]= chr(((code >> 12)  & 0x3F) | 0x80)
-			res[t+2]= chr(((code >> 6)   & 0x3F) | 0x80)
-			res[t+3]= chr((code &  0x3F)| 0x80)
+			res[t + 0] = chr((code >> 18) | 0xF0)
+			res[t + 1] = chr(((code >> 12) & 0x3F) | 0x80)
+			res[t + 2] = chr(((code >> 6) & 0x3F) | 0x80)
+			res[t + 3] = chr((code & 0x3F) | 0x80)
 			t += 4
-		if (t+4 > 2047):
+		if (t + 4 > 2047):
 			print "convertDVBUTF8():  buffer to small.. break now"
 			break
 	return ''.join([x for x in res if x != 0])
@@ -322,7 +322,7 @@ def convertUTF8DVB(string, table):
 								table = j
 								break
 					if table in range(2,17) and table != 12:
-						coding_table = eval('c8859%d'%(table))
+						coding_table = eval('c8859%d' % (table))
 					else:
 						print "unknown coding table:", table
 						coding_table = 0
@@ -342,7 +342,7 @@ def convertUTF8DVB(string, table):
 		if table in (1,2,3,4,16):
 			pref = '\20\0' + chr(table)
 		elif table in range(5,16):
-			pref = chr(table-4)
+			pref = chr(table - 4)
 		else:
 			pref = '\0'
 	else:

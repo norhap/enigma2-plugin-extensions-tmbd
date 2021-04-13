@@ -30,7 +30,7 @@ class datetime(_pydatetime):
     class _tzinfo(_pytzinfo):
         def __init__(self, direc='+', hr=0, min=0):
             if direc == '-':
-                hr = -1*int(hr)
+                hr = -1 * int(hr)
             self._offset = timedelta(hours=int(hr), minutes=int(min))
 
         def utcoffset(self, dt):
@@ -135,4 +135,4 @@ class Session(object):
 
     @property
     def callbackurl(self):
-        return "http://www.themoviedb.org/authenticate/"+self._authtoken
+        return "http://www.themoviedb.org/authenticate/" + self._authtoken

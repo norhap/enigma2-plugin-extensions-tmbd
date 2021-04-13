@@ -239,7 +239,7 @@ def searchCollection(query, locale=None):
 
 class CollectionSearchResult(SearchRepr, PagedRequest):
     """Stores a list of search matches."""
-    _name=None
+    _name = None
 
     def __init__(self, request, locale=None):
         if locale is None:
@@ -266,7 +266,7 @@ class Image(Element):
         if size not in self.sizes():
             raise TMDBImageSizeError
         url = Configuration.images['base_url'].rstrip('/')
-        return url+u'/{0}/{1}'.format(size, self.filename)
+        return url + u'/{0}/{1}'.format(size, self.filename)
 
     # sort preferring locale's language, but keep remaining ordering consistent
     def __lt__(self, other):
@@ -395,7 +395,7 @@ class Crew(Person):
 
 
 class Keyword(Element):
-    id   = Datapoint('id')
+    id = Datapoint('id')
     name = Datapoint('name')
 
     def __repr__(self):
