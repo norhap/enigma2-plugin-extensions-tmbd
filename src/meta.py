@@ -40,7 +40,7 @@ def fileSize(basename):
 		except:
 			res = 0
 		return res
-	
+
 	# get filesize
 	filesize = getsize(basename)
 	# handling for old splitted recordings (enigma 1)
@@ -65,7 +65,7 @@ class MetaParser:
 		self.tags = ''
 		self.service_data = ''
 		self.ref = eServiceReference('1:0:0:0:0:0:0:0:0:0:')
-	
+
 	def parseFile(self, basename):
 		# first, try parsing the .meta file
 		if not self.parseMeta(basename):
@@ -76,7 +76,7 @@ class MetaParser:
 		self.filesize = fileSize(basename)
 		self.time_create = getctime(basename)
 		return -1
-	
+
 	def parseMeta(self, tsname):
 		try:
 			f = open(tsname + ".meta", "r")
@@ -112,22 +112,22 @@ class MetaParser:
 		f.close()
 		self.data_ok = 1
 		return 0
-	
+
 	def parseRecordings(self, filename):
 		slash = filename.rfind('/')
 		if slash == -1:
 			return -1
-		
+
 		recordings = filename[0:slash] + "/recordings.epl"
 		try:
 			f = open(recordings, "r")
 		except:
 			#print "no recordings.epl found: %s" % (recordings);
 			return -1
-		
+
 		description = ''
 		ref = None
-		
+
 		while True:
 			line = f.readline()
 			if not line:
@@ -137,7 +137,7 @@ class MetaParser:
 				continue
 			# Remove trailing \r\n
 			line = line.strip()
-			
+
 			if line.find("#SERVICE: ") == 0:
 				ref = eServiceReference(line[10:])
 			elif line.find("#DESCRIPTION: ") == 0:
@@ -156,7 +156,7 @@ class MetaParser:
 				return 0
 		f.close()
 		return -1
-	
+
 	def updateMeta(self, tsname):
 		if not self.data_ok:
 			return -1

@@ -350,4 +350,3 @@ def convertUTF8DVB(string, table):
 	else:
 		pref = ''
 	return pref, res
-

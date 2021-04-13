@@ -120,7 +120,7 @@ class tmbdYTTrailer:
 		response = urlopen(url)
 		response = load(response)
 		for result in response.get('items', []):
-			videos.append((result['id']['videoId'], 
+			videos.append((result['id']['videoId'],
 				str(result['snippet']['title']),
 				str(result['snippet']['thumbnails']['default']['url']),
 				None))
@@ -347,13 +347,13 @@ class TmbdYTTrailerSetup(ConfigListScreen, Screen):
 			}, -2)
 		configlist = []
 		ConfigListScreen.__init__(self, configlist, session=session)
-		configlist.append(getConfigListEntry(_('Extended search filter'), 
+		configlist.append(getConfigListEntry(_('Extended search filter'),
 			config.plugins.tmbd_yttrailer.ext_descr,
 			_('Set extended search filter, e.g. ru.')))
 		configlist.append(getConfigListEntry(_('Best resolution for first found'),
 			config.plugins.tmbd_yttrailer.best_resolution,
 			_('What maximum resolution used, if available.\nIf you have a slow Internet connection, you can use a lower resolution.')))
-		configlist.append(getConfigListEntry(_('Results in list mode'), 
+		configlist.append(getConfigListEntry(_('Results in list mode'),
 			config.plugins.tmbd_yttrailer.max_results,
 			_('How many search results will be returned in list mode.')))
 		configlist.append(getConfigListEntry(_("Close Player with exit-key"),

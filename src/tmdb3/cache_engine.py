@@ -86,4 +86,3 @@ class CacheObject(object):
     @property
     def remaining(self):
         return max((self.creation + self.lifetime) - time.time(), 0)
-

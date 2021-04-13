@@ -322,7 +322,7 @@ def search_title(title):
         yearitems = re.compile('<span class="year">(.*?)</span>').findall(content_results)
         titleitems = re.compile('<p class="name"><a href="/film/.*?/sr/1/" .*? data-type=".*?">(.*?)</a> <span class="year">.*?</span></p>').findall(content_results)
         iditems = re.compile('<p class="name"><a href="/film/.*?/sr/1/" .*? data-id="(.*?)" data-type=".*?">.*?</a> <span class="year">.*?</span></p>').findall(content_results)
-        genres = re.compile('<span class="genres">(.*?)</span>').findall(results)     
+        genres = re.compile('<span class="genres">(.*?)</span>').findall(results)
         for titleitem in titleitems:
             search_results.append(normilize_string(titleitem))
 

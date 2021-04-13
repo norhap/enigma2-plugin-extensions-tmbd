@@ -73,7 +73,7 @@ TMDB_LANGUAGE_CODES = {
   'en': 'eng',
   'ru': 'rus',
   'fr': 'fra',
-  'bg': 'bul',  
+  'bg': 'bul',
   'it': 'ita',
   'po': 'pol',
   'lv': 'lav',
@@ -227,16 +227,16 @@ def TMBDChannelContextMenu__init__(self, session, csel):
 		if isPlayable and current and current.valid():
 			if config.plugins.tmbd.menu.value:
 				if config.plugins.tmbd.menu_profile.value == "0":
-					callFunction = self.showServiceInformations2 
+					callFunction = self.showServiceInformations2
 					self["menu"].list.insert(1, ChoiceEntryComponent(text=(_("TMBD Details"), boundFunction(callFunction, 1)), key="bullet"))
 				else:
-					callFunction = self.profileContextMenuCallback 
+					callFunction = self.profileContextMenuCallback
 					self["menu"].list.insert(1, ChoiceEntryComponent(text=(_("TMBD Details"), boundFunction(callFunction, 1)), key="bullet"))
 
 
 def showServiceInformations2(self, profile=False):
 		global eventname
-		service = self.csel.servicelist.getCurrent()  
+		service = self.csel.servicelist.getCurrent()
 		info = service and eServiceCenter.getInstance().info(service)
 		event = info and info.getEvent(service)
 		epg_name = ""
@@ -340,7 +340,7 @@ class TMBD(Screen):
 		<widget font="Regular;20" name="voteslabel" halign="left" position="790,57" size="290,23" foregroundColor="#00f0b400" transparent="1" />
 		<widget alphatest="blend" name="poster" position="30,60" size="285,398" />
 		<widget name="menu" position="325,100" scrollbarMode="showOnDemand" size="750,130" zPosition="3"  selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/button1080x25.png" />
-		<widget name="detailslabel" position="325,59" size="570,35" font="Regular;19" transparent="1" />  
+		<widget name="detailslabel" position="325,59" size="570,35" font="Regular;19" transparent="1" />
 		<widget font="Regular;20" name="castlabel" position="320,245" size="760,240" transparent="1" />
 		<widget font="Regular;20" name="extralabel" position="320,77" size="760,180" transparent="1" />
 		<widget font="Regular;18" name="statusbar" position="10,490" size="1080,20" transparent="1" />
@@ -394,7 +394,7 @@ class TMBD(Screen):
 		<widget font="Regular;30" name="voteslabel" halign="left" position="1185,85" size="435,34" foregroundColor="#00f0b400" transparent="1" />
 		<widget alphatest="blend" name="poster" position="45,90" size="427,597" />
 		<widget name="menu" position="487,150" scrollbarMode="showOnDemand" size="1125,195" zPosition="3"  selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/button1080x25.png" />
-		<widget name="detailslabel" position="487,88" size="855,52" font="Regular;28" transparent="1" />  
+		<widget name="detailslabel" position="487,88" size="855,52" font="Regular;28" transparent="1" />
 		<widget font="Regular;30" name="castlabel" position="480,367" size="1140,360" transparent="1" />
 		<widget font="Regular;30" name="extralabel" position="480,115" size="1140,270" transparent="1" />
 		<widget font="Regular;27" name="statusbar" position="15,735" size="1620,30" transparent="1" />
@@ -1447,7 +1447,7 @@ class KinopoiskConfiguration(Screen):
 			if returnValue is "all":
 				cmd = "cp /usr/lib/enigma2/python/Plugins/Extensions/TMBD/profile/kinopoiskall.py /usr/lib/enigma2/python/Plugins/Extensions/TMBD/kinopoisk.py && echo 'Done...\nTo apply the changes required restart GUI!' "
 				self.session.openWithCallback(self.restartGui, Console, _("Option for all images"), [cmd])
-			elif returnValue is "new": 
+			elif returnValue is "new":
 				cmd = "cp /usr/lib/enigma2/python/Plugins/Extensions/TMBD/profile/kinopoisklmxl.py /usr/lib/enigma2/python/Plugins/Extensions/TMBD/kinopoisk.py && echo 'Done...\nTo apply the changes required restart GUI!' "
 				self.session.openWithCallback(self.restartGui, Console, _("Option only python 2.7 images"), [cmd])
 
@@ -1673,7 +1673,7 @@ class KinoRu(Screen):
 		<widget font="Regular;20" name="voteslabel" halign="left" position="770,57" size="330,23" foregroundColor="#00f0b400" transparent="1" />
 		<widget alphatest="blend" name="poster" position="30,60" size="285,398" />
 		<widget name="menu" position="20,270" foregroundColor="#00f0b400" scrollbarMode="showOnDemand" size="1100,200" zPosition="1"  selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/button1080x25.png" />
-		<widget name="detailslabel" position="325,230" size="570,23" font="Regular;20" transparent="1" />  
+		<widget name="detailslabel" position="325,230" size="570,23" font="Regular;20" transparent="1" />
 		<widget font="Regular;20" name="castlabel" position="320,350" size="760,160" transparent="1" />
 		<widget font="Regular;20" name="extralabel" position="320,80" size="760,285" transparent="1" />
 		<widget font="Regular;22" name="titlelabel" position="380,85" foregroundColor="#00f0b400" size="700,340" transparent="1" />
@@ -1702,7 +1702,7 @@ class KinoRu(Screen):
 		<widget font="Regular;20" name="voteslabel" halign="left" position="770,57" size="330,23" foregroundColor="#00f0b400" transparent="1" />
 		<widget alphatest="blend" name="poster" position="30,80" size="110,170" />
 		<widget name="menu" position="20,270" foregroundColor="#00f0b400" scrollbarMode="showOnDemand" size="1100,200" zPosition="1"  selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/button1080x25.png" />
-		<widget name="detailslabel" position="325,230" size="570,23" font="Regular;20" transparent="1" />  
+		<widget name="detailslabel" position="325,230" size="570,23" font="Regular;20" transparent="1" />
 		<widget font="Regular;20" name="castlabel" position="20,295" size="1064,195" transparent="1" />
 		<widget font="Regular;20" name="extralabel" position="164,77" size="920,220" transparent="1" />
 		<widget font="Regular;22" name="titlelabel" position="380,85" foregroundColor="#00f0b400" size="700,340" transparent="1" />
@@ -1731,7 +1731,7 @@ class KinoRu(Screen):
 		<widget font="Regular;30" name="voteslabel" halign="left" position="1155,85" size="495,34" foregroundColor="#00f0b400" transparent="1" />
 		<widget alphatest="blend" name="poster" position="45,90" size="427,597" />
 		<widget name="menu" position="30,405" foregroundColor="#00f0b400" scrollbarMode="showOnDemand" size="1650,300" zPosition="1"  selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/button1080x25.png" />
-		<widget name="detailslabel" position="487,345" size="855,34" font="Regular;30" transparent="1" />  
+		<widget name="detailslabel" position="487,345" size="855,34" font="Regular;30" transparent="1" />
 		<widget font="Regular;30" name="castlabel" position="480,525" size="1140,240" transparent="1" />
 		<widget font="Regular;30" name="extralabel" position="480,120" size="1140,427" transparent="1" />
 		<widget font="Regular;33" name="titlelabel" foregroundColor="#00f0b400" position="570,127" size="1050,510" transparent="1" />
@@ -1774,7 +1774,7 @@ class KinoRu(Screen):
 		<widget name="menu"  position="10,235" size="580,155" zPosition="2" scrollbarMode="showOnDemand" />
 		<widget name="starsbg" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/starsbar_empty.png" position="340,40" zPosition="0" size="210,21" transparent="1" alphatest="on" />
 	<widget name="stars" position="340,40" size="210,21" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/starsbar_filled.png" transparent="1" />
-	</screen>"""  
+	</screen>"""
 
 	def __init__(self, session, eventName, callbackNeeded=False, movielist=False):
 		self.skin = self.chooseSkin()

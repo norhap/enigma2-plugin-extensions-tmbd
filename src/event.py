@@ -39,14 +39,14 @@ def toBCD(dec):
 def parseDVBtime(t1, t2, t3, t4, t5):
 	mjd = (t1 << 8) | t2
 	jdn = mjd + 2400001
-	
+
 	a = jdn + 32044
 	b = int((4 * a + 3) / 146097)
 	c = a - int((146097 * b) / 4)
 	d = int((4 * c + 3) / 1461)
 	e = c - int((1461 * d) / 4)
 	m = int((5 * e + 2) / 153)
-	
+
 	year = 100 * b + d - 4800 + m / 10
 	mon = m + 3 - (m / 10) * 12
 	mday = e - int((153 * m + 2) / 5) + 1
@@ -54,14 +54,14 @@ def parseDVBtime(t1, t2, t3, t4, t5):
 	min = fromBCD(t4)
 	sec = fromBCD(t5)
 	return time.mktime((year, mon, mday, hour, min, sec, 0, 0, 0))
-	
+
 
 class ShortEventDescriptor:
 	def __init__(self, buffer):
 		self.iso639LanguageCode = '---'
 		self.eventName = ''
 		self.text = ''
-		
+
 		bufferLen = len(buffer)
 		headerLength = 5
 		if headerLength < bufferLen:
@@ -115,7 +115,7 @@ class ExtendedEventDescriptor:
 		self.lastDescriptorNumber = 0
 		self.items = []
 		self.text = ''
-		
+
 		bufferLen = len(buffer)
 		headerLength = 6
 		if headerLength < bufferLen:
@@ -172,12 +172,12 @@ class Event:
 	MAX_DESCRIPTOR_LOOP_LENGTH = 4095
 	EIT_SHORT_EVENT_DESCRIPTOR = 0x4d
 	EIT_EXTENDED_EVENT_DESCRIPTOR = 0x4e
-	
+
 	def __init__(self, buffer=None):
 		if buffer is None:
 			buffer = [0] * 12
 		self.__readFromBuffer(buffer)
-	
+
 	def __readFromBuffer(self, buffer):
 		self.eventId = (buffer[0] << 8) | buffer[1]
 		self.startTimeMjd = (buffer[2] << 8) | buffer[3]			# modified julian date
@@ -202,7 +202,7 @@ class Event:
 			else:
 				pass
 			i += buffer[i + 1] + 2
-	
+
 	def __saveToBuffer(self, buffer):
 		buffer[0] = self.eventId >> 8
 		buffer[1] = self.eventId & 0xff
@@ -214,7 +214,7 @@ class Event:
 		buffer[7] = self.durationBcd >> 16
 		buffer[8] = (self.durationBcd >> 8) & 0xff
 		buffer[9] = self.durationBcd & 0xff
-		
+
 		descriptorsLoopLength = 0
 		if not self.shortEventDescriptor is None:
 			lang = self.shortEventDescriptor.getIso639LanguageCode()
@@ -225,7 +225,7 @@ class Event:
 			text = table + text[0:248 - namelen - len(table)]	# may be '250-namelen-len(table)'???
 			textlen = len(text)
 			length = 5 + namelen + textlen			# max. length == 253 (or 255???)
-			
+
 			sbuf = array.array('B', '\0' * (length + 2))	# +2 for tag and length bytes
 			sbuf[0] = self.EIT_SHORT_EVENT_DESCRIPTOR
 			sbuf[1] = length
@@ -242,7 +242,7 @@ class Event:
 					sbuf[i] = ord(text[i - 7 - namelen])
 			buffer.extend(sbuf)
 			descriptorsLoopLength += length + 2
-		
+
 		if not self.extendedEventDescriptor is None:
 			itemlen = 0
 			lang = self.extendedEventDescriptor.getIso639LanguageCode()
@@ -255,13 +255,13 @@ class Event:
 			while (lastDescriptorNumber + 1) * 256 + descriptorsLoopLength > self.MAX_DESCRIPTOR_LOOP_LENGTH:
 				lastDescriptorNumber -= 1
 				remainingTextLength = MAX_LEN
-			
+
 			descrIndex = 0
 			while descrIndex <= lastDescriptorNumber:
 				curtextlen = descrIndex < lastDescriptorNumber and MAX_LEN or remainingTextLength
 				curtext = table + text[descrIndex * MAX_LEN:descrIndex * MAX_LEN + curtextlen]
 				length = 6 + itemlen + curtextlen + tablelen	# max. length == 253 (or 255???)
-				
+
 				ebuf = array.array('B', '\0' * (length + 2))	# +2 for tag and length bytes
 				ebuf[0] = self.EIT_EXTENDED_EVENT_DESCRIPTOR
 				ebuf[1] = length
@@ -273,15 +273,15 @@ class Event:
 				if curtextlen:
 					for i in range(8 + itemlen, 8 + itemlen + curtextlen + tablelen):
 						ebuf[i] = ord(curtext[i - 8 - itemlen])
-				
+
 				buffer.extend(ebuf)
 				descriptorsLoopLength += length + 2
 				descrIndex += 1
-		
+
 		buffer[10] = ((self.runningStatus & 0x07) >> 5) | ((self.freeCaMode & 0x01) >> 1) | ((descriptorsLoopLength >> 8) & 0x0f)
 		buffer[11] = descriptorsLoopLength & 0xff
 		return buffer
-	
+
 	def readFromFile(self, filename):
 		buffer = None
 		try:
@@ -293,7 +293,7 @@ class Event:
 			print>>fd, 'readFromFile(): error:\n', traceback.format_exc()
 
 		return buffer is None and -1 or buffer.buffer_info()[1]
-	
+
 	def saveToFile(self, filename):
 		try:
 			buffer = array.array('B', '\0' * 12)
@@ -304,7 +304,7 @@ class Event:
 			fd.flush()
 			fd.close()
 			return res
-			
+
 		except:
 			import traceback
 			fd = open('/tmp/event.log', 'a+')
@@ -399,4 +399,3 @@ class Event:
 
 	def getExtendedDescription(self):
 		return self.extendedEventDescriptor and self.extendedEventDescriptor.getText() or ''
-

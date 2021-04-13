@@ -269,7 +269,7 @@ class FileEngine(CacheEngine):
     def get(self, date):
         self._init_cache()
         self._open('r+b')
-        
+
         with Flock(self.cachefd, Flock.LOCK_SH):
             # return any new objects in the cache
             return self._read(date)

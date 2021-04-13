@@ -59,7 +59,7 @@ __version__ = "v0.7.3"
 # 0.6.14 Add support for Lists
 # 0.6.15 Add ability to search Collections
 # 0.6.16 Make absent primary images return None (previously u'')
-# 0.6.17 Add userrating/votes to Image, add overview to Collection, remove 
+# 0.6.17 Add userrating/votes to Image, add overview to Collection, remove
 #           releasedate sorting from Collection Movies
 # 0.7.0  Add support for television series data
 # 0.7.1  Add rate limiter to cache engine
@@ -258,7 +258,7 @@ class Image(Element):
     width = Datapoint('width')
     language = Datapoint('iso_639_1')
     userrating = Datapoint('vote_average')
-    votes = Datapoint('vote_count') 
+    votes = Datapoint('vote_count')
 
     def sizes(self):
         return ['original']
@@ -503,7 +503,7 @@ class Genre(NameRepr, Element):
             def _populate(self):
                 return Request('genre/list', language=self._locale.language)
         return GenreList(locale=locale).genres
-        
+
 
 class Studio(NameRepr, Element):
     id = Datapoint('id', initarg=1)
@@ -958,4 +958,3 @@ class Series(Element):
 
     cast = Datalist('cast', handler=Cast, poller=_populate_cast, sort='order')
     crew = Datalist('crew', handler=Crew, poller=_populate_cast)
- 
