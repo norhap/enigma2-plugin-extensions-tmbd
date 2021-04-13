@@ -11,6 +11,8 @@
 from datetime import datetime as _pydatetime, \
                      tzinfo as _pytzinfo
 import re
+
+
 class datetime(_pydatetime):
     """Customized datetime class with ISO format parsing."""
     _reiso = re.compile('(?P<year>[0-9]{4})'
@@ -64,6 +66,7 @@ class datetime(_pydatetime):
             dt.append(0)
             dt.append(tz)
         return cls(*dt)
+
 
 from request import Request
 from tmdb_exceptions import *

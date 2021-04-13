@@ -15,6 +15,7 @@ class Engines(object):
     """
     Static collector for engines to register against.
     """
+
     def __init__(self):
         self._engines = {}
 
@@ -27,6 +28,7 @@ class Engines(object):
 
     def __contains__(self, key):
         return self._engines.__contains__(key)
+
 
 Engines = Engines()
 
@@ -52,10 +54,13 @@ class CacheEngine(object):
 
     def configure(self):
         raise RuntimeError
+
     def get(self, date):
         raise RuntimeError
+
     def put(self, key, value, lifetime):
         raise RuntimeError
+
     def expire(self, key):
         raise RuntimeError
 

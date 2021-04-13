@@ -110,6 +110,7 @@ TMBDInfoBarKeys = [
 	["Help", _("HELP"), ["KEY_HELP"]],
 ]
 
+
 def cutName(eventName=""):
 	if eventName:
 		eventName = eventName.replace('"', '').replace('Х/Ф', '').replace('М/Ф', '').replace('Х/ф', '').replace('.', '').replace(' | ', '')
@@ -117,9 +118,11 @@ def cutName(eventName=""):
 		return eventName
 	return ""
 
+
 def GetLanguageCode():
 	lang = config.plugins.tmbd.locale.value
 	return TMDB_LANGUAGE_CODES.get(lang, 'rus')
+
 
 config.plugins.tmbd = ConfigSubsection()
 config.plugins.tmbd.locale = ConfigText(default="ru" if "ru" in language.getActiveLanguage() else "en", fixed_size=False)
@@ -166,6 +169,8 @@ _session = None
 eventname = ""
 
 def_SelectionEventInfo_updateEventInfo = None
+
+
 def new_SelectionEventInfo_updateEventInfo(self):
 	serviceref = self.getCurrent()
 	if config.plugins.tmbd.new_movieselect.value:
@@ -176,7 +181,9 @@ def new_SelectionEventInfo_updateEventInfo(self):
 				serviceref.type = eServiceReference.idDVB
 	self["Service"].newService(serviceref)
 
+
 def_MovieSelection_showEventInformation = None
+
 
 def new_MovieSelection_showEventInformation(self):
 	evt = self["list"].getCurrentEvent()
@@ -193,7 +200,10 @@ def new_MovieSelection_showEventInformation(self):
 	if evt:
 		self.session.open(EventViewSimple, evt, ServiceReference(self.getCurrent()))
 
+
 baseChannelContextMenu__init__ = None
+
+
 def TMBDChannelContextMenuInit():
 	global baseChannelContextMenu__init__
 	if baseChannelContextMenu__init__ is None:
@@ -202,6 +212,7 @@ def TMBDChannelContextMenuInit():
 	ChannelContextMenu.showServiceInformations2 = showServiceInformations2
 	ChannelContextMenu.profileContextMenuCallback = profileContextMenuCallback
 	ChannelContextMenu.profileMenuCallback = profileMenuCallback
+
 
 def TMBDChannelContextMenu__init__(self, session, csel):
 	baseChannelContextMenu__init__(self, session, csel)
@@ -221,6 +232,7 @@ def TMBDChannelContextMenu__init__(self, session, csel):
 				else:
 					callFunction = self.profileContextMenuCallback 
 					self["menu"].list.insert(1, ChoiceEntryComponent(text=(_("TMBD Details"), boundFunction(callFunction, 1)), key="bullet"))
+
 
 def showServiceInformations2(self, profile=False):
 		global eventname
@@ -251,6 +263,7 @@ def showServiceInformations2(self, profile=False):
 			pass
 		self.close()
 
+
 def profileContextMenuCallback(self, add):
 	if config.plugins.tmbd.menu_profile.value == "1":
 		options = [
@@ -264,8 +277,10 @@ def profileContextMenuCallback(self, add):
 			]
 	self.session.openWithCallback(self.profileMenuCallback, ChoiceBox, title=_("Choice profile in search:"), list=options)
 
+
 def profileMenuCallback(self, ret):
 	ret and ret[1]()
+
 
 class TMBDChannelSelection(SimpleChannelSelection):
 	def __init__(self, session):
@@ -283,6 +298,7 @@ class TMBDChannelSelection(SimpleChannelSelection):
 	def epgClosed(self, ret=None):
 		if ret:
 			self.close(ret)
+
 
 class TMBDEPGSelection(EPGSelection):
 	def __init__(self, session, ref, openPlugin=True):
@@ -308,8 +324,10 @@ class TMBDEPGSelection(EPGSelection):
 		else:
 			self.close(eventname)
 
+
 testOK = None
 movie2 = ""
+
 
 class TMBD(Screen):
 	skin_hd1 = """
@@ -902,6 +920,7 @@ class TMBD(Screen):
 	def TVseriesSearch(self):
 		if config.plugins.tmbd.alrernative_locale.value and config.plugins.tmbd.alrernative_locale.value != config.plugins.tmbd.locale.value:
 			menu = [(_("Main language"), "main"), (_("Alternative language"), "alter")]
+
 			def SearchAction(choice):
 				if choice is not None:
 					if choice[1] == "main":
@@ -1398,6 +1417,7 @@ class TMBD(Screen):
 	def createSummary(self):
 		pass
 
+
 class KinopoiskConfiguration(Screen):
 	if screenWidth >= 1920:
 		skin = """
@@ -1437,6 +1457,7 @@ class KinopoiskConfiguration(Screen):
 	def restartGuiAnswer(self, answer):
 		if answer:
 			self.session.open(TryQuitMainloop, 3)
+
 
 class TMBDSettings(Screen, ConfigListScreen):
 	if screenWidth >= 1920:
@@ -1639,6 +1660,7 @@ class TMBDSettings(Screen, ConfigListScreen):
 						val.value = value
 		setPrevValues(self.TM_BD, self.prev_values)
 		self.save()
+
 
 class KinoRu(Screen):
 	skin_hd1 = """
@@ -2675,6 +2697,7 @@ class KinoRu(Screen):
 	def createSummary(self):
 		pass
 
+
 class MovielistPreviewScreen(Screen):
 	if screenWidth >= 1920:
 		skin = """
@@ -2688,6 +2711,7 @@ class MovielistPreviewScreen(Screen):
 				<widget name="background" position="0,0" size="130,200" zPosition="1" backgroundColor="#00000000" />
 				<widget name="preview" position="0,0" size="130,200" zPosition="2" alphatest="blend"/>
 			</screen>"""
+
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self["background"] = Label("")
@@ -2701,6 +2725,7 @@ class MovielistPreviewScreen(Screen):
 			self.instance.resize(eSize(int(size[0]), int(size[1])))
 			self["background"].instance.resize(eSize(int(size[0]), int(size[1])))
 			self["preview"].instance.resize(eSize(int(size[0]), int(size[1])))
+
 
 class MovielistPreview():
 	def __init__(self):
@@ -2776,7 +2801,9 @@ class MovielistPreview():
 		self.mayShow = True
 		self.dialog.show()
 
+
 movielistpreview = MovielistPreview()
+
 
 class MovielistPreviewPositionerCoordinateEdit(ConfigListScreen, Screen):
 	if screenWidth >= 1920:
@@ -2816,6 +2843,7 @@ class MovielistPreviewPositionerCoordinateEdit(ConfigListScreen, Screen):
 
 	def ok(self):
 		self.close([self.xEntry.value, self.yEntry.value])
+
 
 class MovielistPreviewPositioner(Screen):
 	if screenWidth >= 1920:
@@ -2932,6 +2960,7 @@ class MovielistPreviewPositioner(Screen):
 		config.plugins.tmbd.size.save()
 		self.__onShow()
 
+
 class MovielistPreviewMenu(Screen):
 	if screenWidth >= 1920:
 		skin = """
@@ -2943,6 +2972,7 @@ class MovielistPreviewMenu(Screen):
 			<screen position="center,center" size="420,105" title="%s">
 				<widget name="list" position="5,5" size="410,100" />
 			</screen>""" % _("Poster Preview")
+
 	def __init__(self, session, service):
 		Screen.__init__(self, session)
 		self.session = session
@@ -2971,7 +3001,9 @@ class MovielistPreviewMenu(Screen):
 			movielistpreview.dialog.hide()
 			self.session.open(MovielistPreviewPositioner)
 
+
 SelectionChanged = MovieList.selectionChanged
+
 
 def selectionChanged(instance):
 	global movie2
@@ -2983,19 +3015,30 @@ def selectionChanged(instance):
 		movie2 = curr.getPath()
 	else:
 		movielistpreview.hideDialog()
+
+
 MovieList.selectionChanged = selectionChanged
 
 Hide = MovieSelection.hide
+
+
 def hideMovieSelection(instance):
 	Hide(instance)
 	movielistpreview.hideDialog()
+
+
 MovieSelection.hide = hideMovieSelection
 
 Show = MovieSelection.show
+
+
 def showMovieSelection(instance):
 	Show(instance)
 	movielistpreview.showDialog()
+
+
 MovieSelection.show = showMovieSelection
+
 
 class EventChoiseList:
 	def __init__(self, session):
@@ -3070,6 +3113,7 @@ class EventChoiseList:
 	def menuCallback(self, ret=None):
 		ret and ret[1]()
 
+
 class MovielistProfileList(Screen):
 	if screenWidth >= 1920:
 		skin = """
@@ -3107,6 +3151,7 @@ class MovielistProfileList(Screen):
 		if sel == _("themoviedb.org"):
 			self.session.open(TMBD, self.eventname, movielist=True)
 
+
 def eventinfo(session, eventName="", **kwargs):
 	if eventName != "":
 		eventName = cutName(eventName)
@@ -3118,8 +3163,10 @@ def eventinfo(session, eventName="", **kwargs):
 		ref = session.nav.getCurrentlyPlayingServiceReference()
 		session.open(TMBDEPGSelection, ref)
 
+
 def main(session, **kwargs):
 	session.open(TMBDSettings)
+
 
 def main3(session, eventName="", **kwargs):
 	global eventname
@@ -3156,8 +3203,10 @@ def main3(session, eventName="", **kwargs):
 	else:
 		EventChoiseList(session)
 
+
 from keyids import KEYIDS
 from enigma import eActionMap
+
 
 class TMBDInfoBar:
 	def __init__(self, session, infobar):
@@ -3284,6 +3333,7 @@ class TMBDInfoBar:
 	def menuCallback(self, ret=None):
 		ret and ret[1]()
 
+
 def movielist(session, service, **kwargs):
 	global name
 	global eventname
@@ -3301,13 +3351,18 @@ def movielist(session, service, **kwargs):
 	else:
 		session.open(MovielistProfileList, eventname)
 
+
 def autostart_ChannelContextMenu(session, **kwargs):
 	TMBDChannelContextMenuInit()
 
+
 baseInfoBar__init__ = None
+
+
 def tmbdInfoBar__init__(self, session):
 	baseInfoBar__init__(self, session)
 	self.tmbdinfobar = TMBDInfoBar(session, self)
+
 
 def sessionstart(reason, **kwargs):
 	if reason == 0:
@@ -3322,6 +3377,7 @@ def sessionstart(reason, **kwargs):
 			def_MovieSelection_showEventInformation = MovieSelection.showEventInformation
 			MovieSelection.showEventInformation = new_MovieSelection_showEventInformation
 
+
 def autostart(reason, **kwargs):
 	if reason == 0:
 		pass
@@ -3331,8 +3387,10 @@ def autostart(reason, **kwargs):
 		#	baseInfoBar__init__ = InfoBar.__init__
 		#InfoBar.__init__ = tmbdInfoBar__init__
 
+
 def main2(session, service):
 	session.open(MovielistPreviewMenu, service)
+
 
 def epgfurther(session, selectedevent, **kwargs):
 	try:
@@ -3345,6 +3403,7 @@ def epgfurther(session, selectedevent, **kwargs):
 			session.open(TMBD, eventName)
 		else:
 			session.open(KinoRu, eventName)
+
 
 def yteventinfo(session, eventName="", **kwargs):
 	if session is None:
@@ -3370,6 +3429,7 @@ def yteventinfo(session, eventName="", **kwargs):
 				ytTrailer = tmbdYTTrailer.tmbdYTTrailer(session)
 				ytTrailer.showTrailer(eventName)
 
+
 def ytfurther(session, selectedevent, **kwargs):
 	try:
 		eventName = selectedevent[0].getEventName()
@@ -3382,6 +3442,7 @@ def ytfurther(session, selectedevent, **kwargs):
 		else:
 			ytTrailer = tmbdYTTrailer.tmbdYTTrailer(session)
 			ytTrailer.showTrailer(eventName)
+
 
 def Plugins(**kwargs):
 	if config.plugins.tmbd.add_ext_menu.value:

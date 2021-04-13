@@ -21,6 +21,7 @@ std_headers = {'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv
  'Accept': 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5',
  'Accept-Language': 'ru,en-us;q=0.7,en;q=0.3'}
 
+
 def comment_out(str):
     s = str
     try:

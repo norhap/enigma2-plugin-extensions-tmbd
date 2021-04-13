@@ -41,6 +41,7 @@ def prevImageIndex(movie):
         item = movie['images'].pop(-1)
         movie['images'].insert(0, item)
 
+
 def init_tmdb3(alternative_lang=None):
     import tmdb3
     tmdb3.set_key('1f834eb425728133b9a2c1c0c82980eb')

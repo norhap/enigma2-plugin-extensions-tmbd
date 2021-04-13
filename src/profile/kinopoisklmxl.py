@@ -59,6 +59,7 @@ U8Translit = {
 	0x042f: "Ya", 0x044f: "ya", # "Я", "я",
 	}
 
+
 def comment_out(str):
 	s = str
 	try:
@@ -68,9 +69,11 @@ def comment_out(str):
 
 	print("# %s" % (s,))
 
+
 def debug_out(str):
 	if VERBOSE:
 		comment_out(str)
+
 
 def response_out(str):
 	if DUMP_RESPONSE:
@@ -80,6 +83,7 @@ def response_out(str):
 		except:
 			pass
 		print(s)
+
 
 def print_exception(str):
 	for line in str.splitlines():
@@ -94,6 +98,7 @@ def title_correction(title):
     except:
         return title
         
+
 def getText(title):
 	instr = str(title)
 	outstr = ''
@@ -109,6 +114,8 @@ def getText(title):
 
 #Замена различных спецсимволов и тегов HTML на обычные символы, 
 #возможно есть более правильное решение, но вроде и это работает.
+
+
 def normilize_string(processingstring):
     try:
         symbols_to_remove = {'&#160;': ' ', '&nbsp;': ' ', '&#161;': '¡', '&iexcl;': '¡', '&#162;': '¢', '&cent;': '¢', '&#163;': '£',  
@@ -142,6 +149,7 @@ def normilize_string(processingstring):
     except:
         return ''
 
+
 def outXML(rootElm):
     outfile = sys.stdout
     handle = unicode(etree.tostring(rootElm, pretty_print=True, encoding='utf-8', xml_declaration=True), 'utf-8')
@@ -149,6 +157,8 @@ def outXML(rootElm):
     outfile.close()
 
 #Получение HTML страницы
+
+
 def get_page(address, data=0, title=''):
     try:
         opener = urllib2.build_opener()
@@ -175,6 +185,8 @@ def get_page(address, data=0, title=''):
         print_exception(traceback.format_exc())
 
 #Ищем обои
+
+
 def search_fanart(uid):
     try:
         data = get_page("/level/12/film/" + uid, 1)
@@ -193,6 +205,8 @@ def search_fanart(uid):
         print_exception(traceback.format_exc())
 
 #Ищем обложки
+
+
 def search_poster(uid):
     try:
         data = get_page("/level/17/film/" + uid, 1)
@@ -213,6 +227,8 @@ def search_poster(uid):
         print_exception(traceback.format_exc())
         
 #Получаем названия фильмов похожие на наш фильм
+
+
 def search_title(title):
     if not LMXL:
         return None
@@ -271,6 +287,8 @@ def search_title(title):
 
 #Ищем и отдаем метаданные фильма
 #def search_data(uid, rating_country):
+
+
 def search_data(uid):
     def addMultiValues(dataNode, xpathTuple):
         result = ''
@@ -414,6 +432,7 @@ def search_data(uid):
     except:
         print_exception(traceback.format_exc())
 
+
 def main():
 	pass
 #    parser = OptionParser(usage="""\
@@ -473,6 +492,7 @@ def main():
 #    else:
 #        parser.print_usage()
 #        sys.exit(1)
+
 
 if __name__ == '__main__':
 	try:

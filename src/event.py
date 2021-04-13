@@ -29,10 +29,12 @@ def fromBCD(bcd):
 		return -1
 	return ((bcd & 0xF0) >> 4) * 10 + (bcd & 0xF)
 
+
 def toBCD(dec):
 	if (dec >= 100):
 		return -1
 	return int(dec / 10) * 0x10 + (dec % 10)
+
 
 def parseDVBtime(t1, t2, t3, t4, t5):
 	mjd = (t1 << 8) | t2
@@ -91,6 +93,7 @@ class ShortEventDescriptor:
 	def setText(self, value):
 		self.text = value
 
+
 class ExtendedEvent:
 	def __init__(self, buffer):
 		self.itemDescriptionLength = buffer[0]
@@ -103,6 +106,7 @@ class ExtendedEvent:
 
 	def getItem(self):
 		return self.item
+
 
 class ExtendedEventDescriptor:
 	def __init__(self, buffer):

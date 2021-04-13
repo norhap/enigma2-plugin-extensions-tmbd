@@ -31,6 +31,7 @@ class Cache(object):
     wrapped function, pulling the output from local storage for
     subsequent calls with those inputs.
     """
+
     def __init__(self, engine=None, *args, **kwargs):
         self._engine = None
         self._data = {}

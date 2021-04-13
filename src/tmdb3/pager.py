@@ -99,6 +99,7 @@ class PagedRequest(PagedList):
     Derived PageList that provides a list-like object with automatic
     paging intended for use with search requests.
     """
+
     def __init__(self, request, handler=None):
         self._request = request
         if handler:

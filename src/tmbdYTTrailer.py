@@ -37,6 +37,7 @@ config.plugins.tmbd_yttrailer.search = ConfigSelection(choices=[("1", _("Press O
 
 from YouTubeVideoUrl import YouTubeVideoUrl
 
+
 def GetKey(x):
 	p = 3
 	while True:
@@ -48,6 +49,7 @@ def GetKey(x):
 	x = x.replace('w_OizD', 'a')
 	x = x.replace('Xhi_Lo', 'A')
 	return x
+
 
 API_KEY = 'AIzaSyA6suJMbELHQC9MG8VOq7J6LudvuU-Kcrw'
 
@@ -72,6 +74,7 @@ if os.path.exists('/etc/enigma2/YouTube.key'):
 				YOUTUBE_API_CLIENT_SECRET = line[1]
 	except Exception as ex:
 		print('[YouTube] Error in read YouTube.key:', ex)
+
 
 class tmbdYTTrailer:
 	def __init__(self, session):
@@ -163,6 +166,7 @@ class TmbdYTTrailerList(Screen, tmbdYTTrailer):
 			</widget>
 			<widget name="thumbnail" position="0,0" size="100,72" /> # Thumbnail size in list
 		</screen>"""
+
 	def __init__(self, session, eventname):
 		Screen.__init__(self, session)
 		tmbdYTTrailer.__init__(self, session)
@@ -280,6 +284,7 @@ class TmbdYTTrailerList(Screen, tmbdYTTrailer):
 			self.showError()
 			self.close()
 
+
 class tmbdTrailerPlayer(MoviePlayer):
 	def __init__(self, session, service):
 		MoviePlayer.__init__(self, session, service)
@@ -323,6 +328,7 @@ class tmbdTrailerPlayer(MoviePlayer):
 				show_choisebox(self.session)
 			except:
 				pass
+
 
 class TmbdYTTrailerSetup(ConfigListScreen, Screen):
 	def __init__(self, session):

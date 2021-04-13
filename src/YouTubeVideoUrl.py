@@ -39,6 +39,7 @@ def createPriorityFormats():
 		if itag == config.plugins.tmbd_yttrailer.best_resolution.value:
 			break
 
+
 createPriorityFormats()
 
 

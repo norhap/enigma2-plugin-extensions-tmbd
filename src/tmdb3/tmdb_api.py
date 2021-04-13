@@ -115,6 +115,7 @@ class Configuration(Element):
     def _populate(self):
         return Request('configuration')
 
+
 Configuration = Configuration()
 
 

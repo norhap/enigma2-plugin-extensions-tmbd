@@ -22,6 +22,7 @@
 import os
 from enigma import eServiceReference
 
+
 def getctime(basename):
 	try:
 		st = os.stat(basename)
@@ -29,6 +30,7 @@ def getctime(basename):
 	except:
 		time = 0
 	return time
+
 
 def fileSize(basename):
 	def getsize(filename):
@@ -50,6 +52,7 @@ def fileSize(basename):
 			break
 		filesize += size
 	return filesize
+
 
 class MetaParser:
 	def __init__(self):

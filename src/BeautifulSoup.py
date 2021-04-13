@@ -104,12 +104,14 @@ DEFAULT_OUTPUT_ENCODING = "utf-8"
 
 # First, the classes that represent markup elements.
 
+
 def sob(unicode, encoding):
     """Returns either the given Unicode string or its encoding."""
     if encoding is None:
         return unicode
     else:
         return unicode.encode(encoding)
+
 
 class PageElement:
     """Contains the navigational information for some part of the page
@@ -400,6 +402,7 @@ class PageElement:
                 s = unicode(s)
         return s
 
+
 class NavigableString(unicode, PageElement):
 
     def __new__(cls, value):
@@ -432,10 +435,12 @@ class NavigableString(unicode, PageElement):
     def decodeGivenEventualEncoding(self, eventualEncoding):
         return self
 
+
 class CData(NavigableString):
 
     def decodeGivenEventualEncoding(self, eventualEncoding):
         return u'<![CDATA[' + self + u']]>'
+
 
 class ProcessingInstruction(NavigableString):
 
@@ -445,13 +450,16 @@ class ProcessingInstruction(NavigableString):
             output = self.substituteEncoding(output, eventualEncoding)
         return u'<?' + output + u'?>'
 
+
 class Comment(NavigableString):
     def decodeGivenEventualEncoding(self, eventualEncoding):
         return u'<!--' + self + u'-->'
 
+
 class Declaration(NavigableString):
     def decodeGivenEventualEncoding(self, eventualEncoding):
         return u'<!' + self + u'>'
+
 
 class Tag(PageElement):
 
@@ -806,7 +814,6 @@ class Tag(PageElement):
         else:
             return self.encodeContents(encoding, prettyPrint, indentLevel)
 
-
     #Private methods
 
     def _getAttrMap(self):
@@ -838,6 +845,8 @@ class Tag(PageElement):
         raise StopIteration
 
 # Next, a couple classes to represent queries and their results.
+
+
 class SoupStrainer:
     """Encapsulates a number of ways of matching a markup element (tag or
     text)."""
@@ -958,20 +967,24 @@ class SoupStrainer:
                 result = matchAgainst == markup
         return result
 
+
 class ResultSet(list):
     """A ResultSet is just a list that keeps track of the SoupStrainer
     that created it."""
+
     def __init__(self, source):
         list.__init__([])
         self.source = source
 
 # Now, some helper functions.
 
+
 def isList(l):
     """Convenience method that works with all 2.x versions of Python
     to determine whether or not something is listlike."""
     return ((hasattr(l, '__iter__') and not isString(l))
             or (type(l) in (types.ListType, types.TupleType)))
+
 
 def isString(s):
     """Convenience method that works with all 2.x versions of Python
@@ -980,6 +993,7 @@ def isString(s):
         return isinstance(s, unicode) or isinstance(s, basestring)
     except NameError:
         return isinstance(s, str)
+
 
 def buildTagMap(default, *args):
     """Turns a list of maps, lists, or scalars into a single map.
@@ -1001,6 +1015,7 @@ def buildTagMap(default, *args):
     return built
 
 # Now, the parser classes.
+
 
 class HTMLParserBuilder(HTMLParser):
 
@@ -1324,7 +1339,6 @@ class BeautifulStoneSoup(Tag):
             self.previous = o
             self.currentTag.contents.append(o)
 
-
     def _popToTag(self, name, inclusivePop=True):
         """Pops the tag stack up to and including the most recent
         instance of the given tag. If inclusivePop is false, pops the tag
@@ -1348,7 +1362,6 @@ class BeautifulStoneSoup(Tag):
         return mostRecentTag
 
     def _smartPop(self, name):
-
         """We need to pop up to the previous tag of this type, unless
         one of this tag's nesting reset triggers comes between this
         tag and the previous tag of this type, OR unless this tag is a
@@ -1600,6 +1613,7 @@ class BeautifulSoup(BeautifulStoneSoup):
 class StopParsing(Exception):
     pass
 
+
 class ICantBelieveItsBeautifulSoup(BeautifulSoup):
 
     """The BeautifulSoup class is oriented towards skipping over
@@ -1636,6 +1650,7 @@ class ICantBelieveItsBeautifulSoup(BeautifulSoup):
                                 I_CANT_BELIEVE_THEYRE_NESTABLE_BLOCK_TAGS,
                                 I_CANT_BELIEVE_THEYRE_NESTABLE_INLINE_TAGS)
 
+
 class MinimalSoup(BeautifulSoup):
     """The MinimalSoup class is for parsing HTML that contains
     pathologically bad markup. It makes no assumptions about tag
@@ -1648,6 +1663,7 @@ class MinimalSoup(BeautifulSoup):
 
     RESET_NESTING_TAGS = buildTagMap('noscript')
     NESTABLE_TAGS = {}
+
 
 class BeautifulSOAP(BeautifulStoneSoup):
     """This class will push a tag with only a single string child into
@@ -1688,14 +1704,24 @@ class BeautifulSOAP(BeautifulStoneSoup):
 #"RobustParser.py" (or, in cases of extreme enterprisiness,
 #"RobustParserBeanInterface.class") and using the following
 #enterprise-friendly class aliases:
+
+
 class RobustXMLParser(BeautifulStoneSoup):
     pass
+
+
 class RobustHTMLParser(BeautifulSoup):
     pass
+
+
 class RobustWackAssHTMLParser(ICantBelieveItsBeautifulSoup):
     pass
+
+
 class RobustInsanelyWackAssHTMLParser(MinimalSoup):
     pass
+
+
 class SimplifyingSOAPParser(BeautifulSOAP):
     pass
 
@@ -1708,6 +1734,7 @@ class SimplifyingSOAPParser(BeautifulSOAP):
 # Universal Feed Parser. It does not rewrite the XML or HTML to
 # reflect a new encoding: that happens in BeautifulStoneSoup.handle_pi
 # (XML) and BeautifulSoup.start_meta (HTML).
+
 
 # Autodetects character encodings.
 # Download from http://chardet.feedparser.org/
@@ -1729,6 +1756,7 @@ try:
     import iconv_codec
 except ImportError:
     pass
+
 
 class UnicodeDammit:
     """A class for detecting the encoding of a *ML document and
@@ -1917,7 +1945,6 @@ class UnicodeDammit:
                 xml_encoding = sniffed_xml_encoding
         return xml_data, xml_encoding, sniffed_xml_encoding
 
-
     def find_codec(self, charset):
         return self._codec(self.CHARSET_ALIASES.get(charset, charset)) \
                or (charset and self._codec(charset.replace("-", ""))) \
@@ -1936,6 +1963,7 @@ class UnicodeDammit:
         return codec
 
     EBCDIC_TO_ASCII_MAP = None
+
     def _ebcdic_to_ascii(self, s):
         c = self.__class__
         if not c.EBCDIC_TO_ASCII_MAP:

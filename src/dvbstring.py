@@ -179,6 +179,7 @@ LANGUAGES = {
 	16: ['alb', 'sqi', 'cro', 'scr', 'hun', 'ita', 'pol', 'ron', 'rum', 'slv', 'fin', 'fra', 'fre', 'deu', 'ger', 'gai', 'iri'],
 }
 
+
 def recode(d, cp):
 	if (d < 0xA0):
 		return d
@@ -216,6 +217,7 @@ def recode(d, cp):
 		return c885916[d - 0xA0]
 	else:
 		return d
+
 
 def convertDVBUTF8(data, length, table=None):
 	if not length:
