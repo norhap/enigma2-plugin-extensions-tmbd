@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import httplib,urllib,re
+import httplib
+import urllib
+import re
 import urllib2
 try:
 	from lxml import html

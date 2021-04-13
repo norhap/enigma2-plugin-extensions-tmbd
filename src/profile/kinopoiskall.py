@@ -4,11 +4,14 @@ import re
 from urllib2 import Request, URLError, HTTPError, urlopen as urlopen2, quote as urllib2_quote, unquote as urllib2_unquote
 import urllib
 from socket import gaierror, error
-import httplib, urllib, re
+import httplib
+import urllib
+import re
 import urllib2
 import string
 import time
-import os, socket
+import os
+import socket
 import sys
 import traceback
 import codecs

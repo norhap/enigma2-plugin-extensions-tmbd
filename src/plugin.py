@@ -34,13 +34,25 @@ from Tools.Directories import fileExists, resolveFilename, SCOPE_PLUGINS
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from ServiceReference import ServiceReference
 from Screens.EventView import EventViewSimple
-import os, sys, re, gettext, random, tmdb, urllib, array, struct, fcntl, shutil
+import os
+import sys
+import re
+import gettext
+import random
+import tmdb
+import urllib
+import array
+import struct
+import fcntl
+import shutil
 from socket import socket, AF_INET, SOCK_STREAM, SOCK_DGRAM, SHUT_RDWR
 from event import Event, ShortEventDescriptor, ExtendedEventDescriptor
 from time import strftime, localtime, mktime
 from Screens.Standby import TryQuitMainloop
 from meta import MetaParser, getctime, fileSize
-import kinopoisk, urllib2, tmbdYTTrailer
+import kinopoisk
+import urllib2
+import tmbdYTTrailer
 
 try:
 	from Plugins.Extensions.SubsSupport.subtitles import E2SubsSeeker, SubsSearch, initSubsSettings, SubsSetupGeneral, SubsSearchSettings, SubsSetupExternal, SubsSetupEmbedded
