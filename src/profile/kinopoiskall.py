@@ -4,11 +4,14 @@ import re
 from urllib2 import Request, URLError, HTTPError, urlopen as urlopen2, quote as urllib2_quote, unquote as urllib2_unquote
 import urllib
 from socket import gaierror, error
-import httplib, urllib, re
+import httplib
+import urllib
+import re
 import urllib2
 import string
 import time
-import os, socket
+import os
+import socket
 import sys
 import traceback
 import codecs
@@ -17,6 +20,7 @@ std_headers = {'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv
  'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.7',
  'Accept': 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5',
  'Accept-Language': 'ru,en-us;q=0.7,en;q=0.3'}
+
 
 def comment_out(str):
     s = str
@@ -318,7 +322,7 @@ def search_title(title):
         yearitems = re.compile('<span class="year">(.*?)</span>').findall(content_results)
         titleitems = re.compile('<p class="name"><a href="/film/.*?/sr/1/" .*? data-type=".*?">(.*?)</a> <span class="year">.*?</span></p>').findall(content_results)
         iditems = re.compile('<p class="name"><a href="/film/.*?/sr/1/" .*? data-id="(.*?)" data-type=".*?">.*?</a> <span class="year">.*?</span></p>').findall(content_results)
-        genres = re.compile('<span class="genres">(.*?)</span>').findall(results)     
+        genres = re.compile('<span class="genres">(.*?)</span>').findall(results)
         for titleitem in titleitems:
             search_results.append(normilize_string(titleitem))
 

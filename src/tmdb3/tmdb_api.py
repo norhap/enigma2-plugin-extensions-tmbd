@@ -59,7 +59,7 @@ __version__ = "v0.7.3"
 # 0.6.14 Add support for Lists
 # 0.6.15 Add ability to search Collections
 # 0.6.16 Make absent primary images return None (previously u'')
-# 0.6.17 Add userrating/votes to Image, add overview to Collection, remove 
+# 0.6.17 Add userrating/votes to Image, add overview to Collection, remove
 #           releasedate sorting from Collection Movies
 # 0.7.0  Add support for television series data
 # 0.7.1  Add rate limiter to cache engine
@@ -100,8 +100,8 @@ def process_date(datestr):
         import sys
         import warnings
         import traceback
-        _,_,tb = sys.exc_info()
-        f,l,_,_ = traceback.extract_tb(tb)[-1]
+        _, _, tb = sys.exc_info()
+        f, l, _, _ = traceback.extract_tb(tb)[-1]
         warnings.warn_explicit(('"{0}" is not a supported date format. ' +
                                 'Please fix upstream data at ' +
                                 'http://www.themoviedb.org.'
@@ -114,6 +114,7 @@ class Configuration(Element):
 
     def _populate(self):
         return Request('configuration')
+
 
 Configuration = Configuration()
 
@@ -239,7 +240,7 @@ def searchCollection(query, locale=None):
 
 class CollectionSearchResult(SearchRepr, PagedRequest):
     """Stores a list of search matches."""
-    _name=None
+    _name = None
 
     def __init__(self, request, locale=None):
         if locale is None:
@@ -257,7 +258,7 @@ class Image(Element):
     width = Datapoint('width')
     language = Datapoint('iso_639_1')
     userrating = Datapoint('vote_average')
-    votes = Datapoint('vote_count') 
+    votes = Datapoint('vote_count')
 
     def sizes(self):
         return ['original']
@@ -266,7 +267,7 @@ class Image(Element):
         if size not in self.sizes():
             raise TMDBImageSizeError
         url = Configuration.images['base_url'].rstrip('/')
-        return url+u'/{0}/{1}'.format(size, self.filename)
+        return url + u'/{0}/{1}'.format(size, self.filename)
 
     # sort preferring locale's language, but keep remaining ordering consistent
     def __lt__(self, other):
@@ -395,7 +396,7 @@ class Crew(Person):
 
 
 class Keyword(Element):
-    id   = Datapoint('id')
+    id = Datapoint('id')
     name = Datapoint('name')
 
     def __repr__(self):
@@ -440,7 +441,7 @@ class Trailer(Element):
 
 class YoutubeTrailer(Trailer):
     def geturl(self):
-        self.source = self.source.encode('ascii',errors='ignore')
+        self.source = self.source.encode('ascii', errors='ignore')
         return "http://www.youtube.com/watch?v={0}".format(self.source)
 
     def __repr__(self):
@@ -502,7 +503,7 @@ class Genre(NameRepr, Element):
             def _populate(self):
                 return Request('genre/list', language=self._locale.language)
         return GenreList(locale=locale).genres
-        
+
 
 class Studio(NameRepr, Element):
     id = Datapoint('id', initarg=1)
@@ -809,7 +810,7 @@ class ReverseCrew(Movie):
 class Collection(NameRepr, Element):
     id = Datapoint('id', initarg=1)
     name = Datapoint('name')
-    backdrop = Datapoint('backdrop_path', handler=Backdrop, \
+    backdrop = Datapoint('backdrop_path', handler=Backdrop,
                          raw=False, default=None)
     poster = Datapoint('poster_path', handler=Poster, raw=False, default=None)
     members = Datalist('parts', handler=Movie)
@@ -957,4 +958,3 @@ class Series(Element):
 
     cast = Datalist('cast', handler=Cast, poller=_populate_cast, sort='order')
     crew = Datalist('crew', handler=Crew, poller=_populate_cast)
- 

@@ -53,6 +53,7 @@ from cache_engine import CacheEngine, CacheObject
 def _donothing(*args, **kwargs):
     pass
 
+
 try:
     import fcntl
 
@@ -268,7 +269,7 @@ class FileEngine(CacheEngine):
     def get(self, date):
         self._init_cache()
         self._open('r+b')
-        
+
         with Flock(self.cachefd, Flock.LOCK_SH):
             # return any new objects in the cache
             return self._read(date)
@@ -302,7 +303,7 @@ class FileEngine(CacheEngine):
     def _read(self, date):
         try:
             self.cachefd.seek(0)
-            version, count = self._struct.unpack(\
+            version, count = self._struct.unpack(
                                     self.cachefd.read(self._struct.size))
             if version != self._version:
                 # old version, break out and well rewrite when finished
@@ -366,7 +367,7 @@ class FileEngine(CacheEngine):
             data.position = end
 
             # write incremental update to free slot
-            self.cachefd.seek(4 + 16*(self.size-self.free))
+            self.cachefd.seek(4 + 16 * (self.size - self.free))
             data.dumpslot(self.cachefd)
             data.dumpdata(self.cachefd)
 
@@ -384,7 +385,7 @@ class FileEngine(CacheEngine):
             prev = None
             for d in data:
                 if prev == None:
-                    d.position = 4 + 16*size
+                    d.position = 4 + 16 * size
                 else:
                     d.position = prev.position + prev.size
                 d.dumpslot(self.cachefd)

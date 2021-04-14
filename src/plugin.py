@@ -34,13 +34,25 @@ from Tools.Directories import fileExists, resolveFilename, SCOPE_PLUGINS
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from ServiceReference import ServiceReference
 from Screens.EventView import EventViewSimple
-import os, sys, re, gettext, random, tmdb, urllib, array, struct, fcntl, shutil
+import os
+import sys
+import re
+import gettext
+import random
+import tmdb
+import urllib
+import array
+import struct
+import fcntl
+import shutil
 from socket import socket, AF_INET, SOCK_STREAM, SOCK_DGRAM, SHUT_RDWR
 from event import Event, ShortEventDescriptor, ExtendedEventDescriptor
 from time import strftime, localtime, mktime
 from Screens.Standby import TryQuitMainloop
 from meta import MetaParser, getctime, fileSize
-import kinopoisk, urllib2, tmbdYTTrailer
+import kinopoisk
+import urllib2
+import tmbdYTTrailer
 
 try:
 	from Plugins.Extensions.SubsSupport.subtitles import E2SubsSeeker, SubsSearch, initSubsSettings, SubsSetupGeneral, SubsSearchSettings, SubsSetupExternal, SubsSetupEmbedded
@@ -61,7 +73,7 @@ TMDB_LANGUAGE_CODES = {
   'en': 'eng',
   'ru': 'rus',
   'fr': 'fra',
-  'bg': 'bul',  
+  'bg': 'bul',
   'it': 'ita',
   'po': 'pol',
   'lv': 'lav',
@@ -88,15 +100,16 @@ SIOCGIFCONF = 0x8912
 BYTES = 4096
 
 TMBDInfoBarKeys = [
-	["none",_("NONE"),["KEY_RESERVED"]],
-	["Red",_("RED"),["KEY_RED"]],
-	["Green",_("GREEN"),["KEY_GREEN"]],
-	["Yellow",_("YELLOW"),["KEY_YELLOW"]],
-	["Radio",_("RADIO"),["KEY_RADIO"]],
-	["Text",_("TEXT"),["KEY_TEXT"]],
-	["Tv",_("TV"),["KEY_TV"]],
-	["Help",_("HELP"),["KEY_HELP"]],
+	["none", _("NONE"), ["KEY_RESERVED"]],
+	["Red", _("RED"), ["KEY_RED"]],
+	["Green", _("GREEN"), ["KEY_GREEN"]],
+	["Yellow", _("YELLOW"), ["KEY_YELLOW"]],
+	["Radio", _("RADIO"), ["KEY_RADIO"]],
+	["Text", _("TEXT"), ["KEY_TEXT"]],
+	["Tv", _("TV"), ["KEY_TV"]],
+	["Help", _("HELP"), ["KEY_HELP"]],
 ]
+
 
 def cutName(eventName=""):
 	if eventName:
@@ -105,45 +118,47 @@ def cutName(eventName=""):
 		return eventName
 	return ""
 
+
 def GetLanguageCode():
 	lang = config.plugins.tmbd.locale.value
 	return TMDB_LANGUAGE_CODES.get(lang, 'rus')
 
+
 config.plugins.tmbd = ConfigSubsection()
-config.plugins.tmbd.locale = ConfigText(default = "ru" if "ru" in language.getActiveLanguage() else "en", fixed_size = False)
-config.plugins.tmbd.alrernative_locale = ConfigText(default="en", fixed_size = False)
-config.plugins.tmbd.available_languages = ConfigSelection(choices = [("1", _("Press OK"))], default = "1")
-config.plugins.tmbd.skins = ConfigSelection(default = "0", choices = [("0", _("Small poster")), ("1", _("Large poster"))])
+config.plugins.tmbd.locale = ConfigText(default="ru" if "ru" in language.getActiveLanguage() else "en", fixed_size=False)
+config.plugins.tmbd.alrernative_locale = ConfigText(default="en", fixed_size=False)
+config.plugins.tmbd.available_languages = ConfigSelection(choices=[("1", _("Press OK"))], default="1")
+config.plugins.tmbd.skins = ConfigSelection(default="0", choices=[("0", _("Small poster")), ("1", _("Large poster"))])
 config.plugins.tmbd.enabled = ConfigYesNo(default=True)
-config.plugins.tmbd.virtual_text = ConfigSelection(default = "0", choices = [("0", _("< empty >")), ("1", _("< text >"))])
+config.plugins.tmbd.virtual_text = ConfigSelection(default="0", choices=[("0", _("< empty >")), ("1", _("< text >"))])
 config.plugins.tmbd.menu = ConfigYesNo(default=True)
-config.plugins.tmbd.menu_profile = ConfigSelection(default = "0", choices = [("0", _("only current profile")), ("1", _("List: themoviedb.org / kinopoisk.ru")), ("2", _("List: kinopoisk.ru / themoviedb.org"))])
+config.plugins.tmbd.menu_profile = ConfigSelection(default="0", choices=[("0", _("only current profile")), ("1", _("List: themoviedb.org / kinopoisk.ru")), ("2", _("List: kinopoisk.ru / themoviedb.org"))])
 config.plugins.tmbd.add_tmbd_to_epg = ConfigYesNo(default=False)
 config.plugins.tmbd.add_tmbd_to_multi = ConfigYesNo(default=False)
 config.plugins.tmbd.add_tmbd_to_graph = ConfigYesNo(default=False)
 config.plugins.tmbd.add_ext_menu = ConfigYesNo(default=False)
-config.plugins.tmbd.ext_menu_event = ConfigSelection(default = "0", choices = [("0", _("only current event")), ("1", _("choice now/next event"))])
+config.plugins.tmbd.ext_menu_event = ConfigSelection(default="0", choices=[("0", _("only current event")), ("1", _("choice now/next event"))])
 config.plugins.tmbd.no_event = ConfigYesNo(default=False)
 config.plugins.tmbd.test_connect = ConfigYesNo(default=False)
-config.plugins.tmbd.exit_key = ConfigSelection(default = "0", choices = [("0", _("close")), ("1", _("ask user"))])
-config.plugins.tmbd.profile = ConfigSelection(default = "0", choices = [("0", _("themoviedb.org")), ("1", _("kinopoisk.ru (only russian language)"))])
+config.plugins.tmbd.exit_key = ConfigSelection(default="0", choices=[("0", _("close")), ("1", _("ask user"))])
+config.plugins.tmbd.profile = ConfigSelection(default="0", choices=[("0", _("themoviedb.org")), ("1", _("kinopoisk.ru (only russian language)"))])
 config.plugins.tmbd.position_x = ConfigInteger(default=100)
 config.plugins.tmbd.position_y = ConfigInteger(default=100)
 config.plugins.tmbd.new_movieselect = ConfigYesNo(default=True)
 config.plugins.tmbd.size = ConfigSelection(choices=["285x398", "185x278", "130x200", "104x150"], default="130x200")
-config.plugins.tmbd.hotkey = ConfigSelection([(x[0],x[1]) for x in TMBDInfoBarKeys], "none")
-config.plugins.tmbd.movielist_profile = ConfigSelection(default = "1", choices = [("0", _("only current profile")), ("1", _("List: themoviedb.org / kinopoisk.ru")), ("2", _("List: kinopoisk.ru / themoviedb.org"))])
-config.plugins.tmbd.kinopoisk_data = ConfigSelection(choices = [("1", _("Press OK"))], default = "1")
-config.plugins.tmbd.yt_setup = ConfigSelection(choices = [("1", _("Press OK"))], default = "1")
+config.plugins.tmbd.hotkey = ConfigSelection([(x[0], x[1]) for x in TMBDInfoBarKeys], "none")
+config.plugins.tmbd.movielist_profile = ConfigSelection(default="1", choices=[("0", _("only current profile")), ("1", _("List: themoviedb.org / kinopoisk.ru")), ("2", _("List: kinopoisk.ru / themoviedb.org"))])
+config.plugins.tmbd.kinopoisk_data = ConfigSelection(choices=[("1", _("Press OK"))], default="1")
+config.plugins.tmbd.yt_setup = ConfigSelection(choices=[("1", _("Press OK"))], default="1")
 config.plugins.tmbd.add_tmbd_to_nstreamvod = ConfigYesNo(default=False)
 config.plugins.tmbd.add_vcs_to_nstreamvod = ConfigYesNo(default=False)
 config.plugins.tmbd.show_in_furtheroptionsmenu = ConfigYesNo(default=True)
 if epg_furtherOptions:
-	config.plugins.tmbd.yt_event_menu = ConfigSelection(default="3", choices = [("0", _("disabled")),("1", _("EPGSelection (context menu)")), ("2", _("EventView (context menu)/EventInfo plugins")), ("3", _("EPGSelection/EventView/EventInfo plugins"))])
+	config.plugins.tmbd.yt_event_menu = ConfigSelection(default="3", choices=[("0", _("disabled")), ("1", _("EPGSelection (context menu)")), ("2", _("EventView (context menu)/EventInfo plugins")), ("3", _("EPGSelection/EventView/EventInfo plugins"))])
 else:
-	config.plugins.tmbd.yt_event_menu = ConfigSelection(default="2", choices = [("0", _("disabled")), ("2", _("EventView (context menu)/EventInfo plugins"))])
-config.plugins.tmbd.yt_start = ConfigSelection(default = "0", choices = [("0", _("show list")), ("1", _("run first"))])
-config.plugins.tmbd.cover_dir = ConfigText(default="/media/hdd/", fixed_size = False)
+	config.plugins.tmbd.yt_event_menu = ConfigSelection(default="2", choices=[("0", _("disabled")), ("2", _("EventView (context menu)/EventInfo plugins"))])
+config.plugins.tmbd.yt_start = ConfigSelection(default="0", choices=[("0", _("show list")), ("1", _("run first"))])
+config.plugins.tmbd.cover_dir = ConfigText(default="/media/hdd/", fixed_size=False)
 
 try:
 	screenWidth = getDesktop(0).size().width()
@@ -154,17 +169,21 @@ _session = None
 eventname = ""
 
 def_SelectionEventInfo_updateEventInfo = None
+
+
 def new_SelectionEventInfo_updateEventInfo(self):
 	serviceref = self.getCurrent()
 	if config.plugins.tmbd.new_movieselect.value:
-		if serviceref and serviceref.type == eServiceReference.idUser+1:
+		if serviceref and serviceref.type == eServiceReference.idUser + 1:
 			pathname = serviceref.getPath()
-			if len(pathname) > 2 and os.path.exists(pathname[:-2]+'eit'):
+			if len(pathname) > 2 and os.path.exists(pathname[:-2] + 'eit'):
 				serviceref = eServiceReference(serviceref.toString())
 				serviceref.type = eServiceReference.idDVB
 	self["Service"].newService(serviceref)
 
+
 def_MovieSelection_showEventInformation = None
+
 
 def new_MovieSelection_showEventInformation(self):
 	evt = self["list"].getCurrentEvent()
@@ -173,7 +192,7 @@ def new_MovieSelection_showEventInformation(self):
 		if l is not None:
 			serviceref = l[0]
 			pathname = serviceref and serviceref.getPath() or ''
-			if len(pathname) > 2 and os.path.exists(pathname[:-2]+'eit'):
+			if len(pathname) > 2 and os.path.exists(pathname[:-2] + 'eit'):
 				serviceref = eServiceReference(serviceref.toString())
 				serviceref.type = eServiceReference.idDVB
 				info = eServiceCenter.getInstance().info(serviceref)
@@ -181,7 +200,10 @@ def new_MovieSelection_showEventInformation(self):
 	if evt:
 		self.session.open(EventViewSimple, evt, ServiceReference(self.getCurrent()))
 
+
 baseChannelContextMenu__init__ = None
+
+
 def TMBDChannelContextMenuInit():
 	global baseChannelContextMenu__init__
 	if baseChannelContextMenu__init__ is None:
@@ -190,6 +212,7 @@ def TMBDChannelContextMenuInit():
 	ChannelContextMenu.showServiceInformations2 = showServiceInformations2
 	ChannelContextMenu.profileContextMenuCallback = profileContextMenuCallback
 	ChannelContextMenu.profileMenuCallback = profileMenuCallback
+
 
 def TMBDChannelContextMenu__init__(self, session, csel):
 	baseChannelContextMenu__init__(self, session, csel)
@@ -200,19 +223,20 @@ def TMBDChannelContextMenu__init__(self, session, csel):
 		current_sel_flags = current.flags
 		inBouquetRootList = current_root and current_root.getPath().find('FROM BOUQUET "bouquets.') != -1
 		inBouquet = csel.getMutableList() is not None
-		isPlayable = not (current_sel_flags & (eServiceReference.isMarker|eServiceReference.isDirectory))
+		isPlayable = not (current_sel_flags & (eServiceReference.isMarker | eServiceReference.isDirectory))
 		if isPlayable and current and current.valid():
 			if config.plugins.tmbd.menu.value:
 				if config.plugins.tmbd.menu_profile.value == "0":
-					callFunction = self.showServiceInformations2 
-					self["menu"].list.insert(1, ChoiceEntryComponent(text = (_("TMBD Details"), boundFunction(callFunction,1)), key = "bullet"))
+					callFunction = self.showServiceInformations2
+					self["menu"].list.insert(1, ChoiceEntryComponent(text=(_("TMBD Details"), boundFunction(callFunction, 1)), key="bullet"))
 				else:
-					callFunction = self.profileContextMenuCallback 
-					self["menu"].list.insert(1, ChoiceEntryComponent(text = (_("TMBD Details"), boundFunction(callFunction,1)), key = "bullet"))
+					callFunction = self.profileContextMenuCallback
+					self["menu"].list.insert(1, ChoiceEntryComponent(text=(_("TMBD Details"), boundFunction(callFunction, 1)), key="bullet"))
+
 
 def showServiceInformations2(self, profile=False):
 		global eventname
-		service = self.csel.servicelist.getCurrent()  
+		service = self.csel.servicelist.getCurrent()
 		info = service and eServiceCenter.getInstance().info(service)
 		event = info and info.getEvent(service)
 		epg_name = ""
@@ -239,6 +263,7 @@ def showServiceInformations2(self, profile=False):
 			pass
 		self.close()
 
+
 def profileContextMenuCallback(self, add):
 	if config.plugins.tmbd.menu_profile.value == "1":
 		options = [
@@ -250,16 +275,18 @@ def profileContextMenuCallback(self, add):
 				(_("kinopoisk.ru"), boundFunction(self.showServiceInformations2, profile=True)),
 				(_("themoviedb.org"), boundFunction(self.showServiceInformations2, profile=False)),
 			]
-	self.session.openWithCallback(self.profileMenuCallback, ChoiceBox, title= _("Choice profile in search:"), list = options)
+	self.session.openWithCallback(self.profileMenuCallback, ChoiceBox, title=_("Choice profile in search:"), list=options)
+
 
 def profileMenuCallback(self, ret):
 	ret and ret[1]()
+
 
 class TMBDChannelSelection(SimpleChannelSelection):
 	def __init__(self, session):
 		SimpleChannelSelection.__init__(self, session, _("Channel Selection"))
 		self.skinName = "SimpleChannelSelection"
-		self["ChannelSelectEPGActions"] = ActionMap(["ChannelSelectEPGActions"],{"showEPGList": self.channelSelected})
+		self["ChannelSelectEPGActions"] = ActionMap(["ChannelSelectEPGActions"], {"showEPGList": self.channelSelected})
 
 	def channelSelected(self):
 		ref = self.getCurrentSelection()
@@ -271,6 +298,7 @@ class TMBDChannelSelection(SimpleChannelSelection):
 	def epgClosed(self, ret=None):
 		if ret:
 			self.close(ret)
+
 
 class TMBDEPGSelection(EPGSelection):
 	def __init__(self, session, ref, openPlugin=True):
@@ -296,8 +324,10 @@ class TMBDEPGSelection(EPGSelection):
 		else:
 			self.close(eventname)
 
+
 testOK = None
 movie2 = ""
+
 
 class TMBD(Screen):
 	skin_hd1 = """
@@ -310,7 +340,7 @@ class TMBD(Screen):
 		<widget font="Regular;20" name="voteslabel" halign="left" position="790,57" size="290,23" foregroundColor="#00f0b400" transparent="1" />
 		<widget alphatest="blend" name="poster" position="30,60" size="285,398" />
 		<widget name="menu" position="325,100" scrollbarMode="showOnDemand" size="750,130" zPosition="3"  selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/button1080x25.png" />
-		<widget name="detailslabel" position="325,59" size="570,35" font="Regular;19" transparent="1" />  
+		<widget name="detailslabel" position="325,59" size="570,35" font="Regular;19" transparent="1" />
 		<widget font="Regular;20" name="castlabel" position="320,245" size="760,240" transparent="1" />
 		<widget font="Regular;20" name="extralabel" position="320,77" size="760,180" transparent="1" />
 		<widget font="Regular;18" name="statusbar" position="10,490" size="1080,20" transparent="1" />
@@ -364,7 +394,7 @@ class TMBD(Screen):
 		<widget font="Regular;30" name="voteslabel" halign="left" position="1185,85" size="435,34" foregroundColor="#00f0b400" transparent="1" />
 		<widget alphatest="blend" name="poster" position="45,90" size="427,597" />
 		<widget name="menu" position="487,150" scrollbarMode="showOnDemand" size="1125,195" zPosition="3"  selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/button1080x25.png" />
-		<widget name="detailslabel" position="487,88" size="855,52" font="Regular;28" transparent="1" />  
+		<widget name="detailslabel" position="487,88" size="855,52" font="Regular;28" transparent="1" />
 		<widget font="Regular;30" name="castlabel" position="480,367" size="1140,360" transparent="1" />
 		<widget font="Regular;30" name="extralabel" position="480,115" size="1140,270" transparent="1" />
 		<widget font="Regular;27" name="statusbar" position="15,735" size="1620,30" transparent="1" />
@@ -498,18 +528,20 @@ class TMBD(Screen):
 		bytelen = struct.unpack('iL', fcntl.ioctl(sck.fileno(), SIOCGIFCONF, struct.pack('iL', BYTES, names.buffer_info()[0])))[0]
 		sck.close()
 		namestr = names.tostring()
-		return [namestr[i:i+32].split('\0', 1)[0] for i in range(0, bytelen, 32)]
+		return [namestr[i:i + 32].split('\0', 1)[0] for i in range(0, bytelen, 32)]
 
 	def test(self):
 		global testOK
 		link = "down"
 		for iface in self.get_iface_list():
-			if "lo" in iface: continue
-			if os.path.exists("/sys/class/net/%s/operstate"%(iface)):
-				fd = open("/sys/class/net/%s/operstate"%(iface), "r")
+			if "lo" in iface:
+				continue
+			if os.path.exists("/sys/class/net/%s/operstate" % (iface)):
+				fd = open("/sys/class/net/%s/operstate" % (iface), "r")
 				link = fd.read().strip()
 				fd.close()
-			if link != "down": break
+			if link != "down":
+				break
 		if link != "down":
 			s = socket(AF_INET, SOCK_STREAM)
 			s.settimeout(self.testTime)
@@ -702,7 +734,7 @@ class TMBD(Screen):
 				if rating != '' and rating != "0.0":
 					try:
 						Ratingtext = _("User Rating") + ": " + rating + " / 10"
-						self.ratingstars = int(10*round(float(rating.replace(',','.')),1))
+						self.ratingstars = int(10 * round(float(rating.replace(',', '.')), 1))
 						if self.ratingstars > 0:
 							self["stars"].setValue(self.ratingstars)
 							self["stars"].show()
@@ -738,9 +770,9 @@ class TMBD(Screen):
 					pass
 				Extratext = ""
 				try:
-					genres = [ x.name.encode('utf-8', 'ignore') for x in movie.genres ]
+					genres = [x.name.encode('utf-8', 'ignore') for x in movie.genres]
 				except:
-					genres =[]
+					genres = []
 				if len(genres) > 0:
 					try:
 						genre = ', '.join(genres)
@@ -748,9 +780,9 @@ class TMBD(Screen):
 					except:
 						pass
 				try:
-					crew = [ x.name.encode('utf-8', 'ignore') for x in movie.crew if x.job == 'Director' ]
+					crew = [x.name.encode('utf-8', 'ignore') for x in movie.crew if x.job == 'Director']
 				except:
-					crew =[]
+					crew = []
 				if len(crew) > 0:
 					try:
 						directors = ', '.join(crew)
@@ -758,9 +790,9 @@ class TMBD(Screen):
 					except:
 						pass
 				try:
-					crew1 = [ x.name.encode('utf-8', 'ignore') for x in movie.crew if x.job == 'Producer' ]
+					crew1 = [x.name.encode('utf-8', 'ignore') for x in movie.crew if x.job == 'Producer']
 				except:
-					crew1 =[]
+					crew1 = []
 				if len(crew1) > 0:
 					try:
 						producers = ', '.join(crew1)
@@ -768,9 +800,9 @@ class TMBD(Screen):
 					except:
 						pass
 				try:
-					cast = [ x.name.encode('utf-8', 'ignore') for x in movie.cast ]
+					cast = [x.name.encode('utf-8', 'ignore') for x in movie.cast]
 				except:
-					cast =[]
+					cast = []
 				if len(cast) > 0:
 					try:
 						actors = ', '.join(cast)
@@ -779,9 +811,9 @@ class TMBD(Screen):
 						pass
 				Extratext2 = ""
 				try:
-					studios = [ x.name.encode('utf-8', 'ignore') for x in movie.studios ]
+					studios = [x.name.encode('utf-8', 'ignore') for x in movie.studios]
 				except:
-					studios =[]
+					studios = []
 				if len(studios) > 0:
 					try:
 						studio = ', '.join(studios)
@@ -802,14 +834,14 @@ class TMBD(Screen):
 					except:
 						pass
 				try:
-					countries = [ x.name for x in movie.countries ]
+					countries = [x.name for x in movie.countries]
 				except:
 					countries = []
 				if len(countries) > 0:
 					try:
 						country = ''
 						for name in countries:
-							country += '%s, '% str(name)
+							country += '%s, ' % str(name)
 						if country != '':
 							country = country[:-2]
 							Extratext2 += "%s: %s\n" % (_("Country"), country)
@@ -845,8 +877,8 @@ class TMBD(Screen):
 		self.session.openWithCallback(
 			self.menuCallback,
 			ChoiceBox,
-			list = list,
-			title= _("What exactly do you want to delete?"),
+			list=list,
+			title=_("What exactly do you want to delete?"),
 		)
 
 	def contextMenuPressed(self):
@@ -868,7 +900,7 @@ class TMBD(Screen):
 		if SubsSupport and self.curResult:
 			list.append((_("SubsSupport downloader"), self.searchSubs))
 		list.append((_("Settings"), self.Menu2))
-		self.session.openWithCallback(self.menuCallback, ChoiceBox, list = list, title= _("Select action:"))
+		self.session.openWithCallback(self.menuCallback, ChoiceBox, list=list, title=_("Select action:"))
 
 	def searchSubs(self):
 		if self.curResult:
@@ -887,7 +919,8 @@ class TMBD(Screen):
 
 	def TVseriesSearch(self):
 		if config.plugins.tmbd.alrernative_locale.value and config.plugins.tmbd.alrernative_locale.value != config.plugins.tmbd.locale.value:
-			menu = [(_("Main language"), "main"),(_("Alternative language"), "alter")]
+			menu = [(_("Main language"), "main"), (_("Alternative language"), "alter")]
+
 			def SearchAction(choice):
 				if choice is not None:
 					if choice[1] == "main":
@@ -911,7 +944,7 @@ class TMBD(Screen):
 			(_("Yes,but write new meta-file"), self.writeMeta),
 			(_("No"), self.exitChoice),
 		]
-		self.session.openWithCallback(self.menuCallback, ChoiceBox, title= _("Save poster and info for:\n %s ?") % (name), list = list)
+		self.session.openWithCallback(self.menuCallback, ChoiceBox, title=_("Save poster and info for:\n %s ?") % (name), list=list)
 
 	def exitChoice(self):
 		self.close()
@@ -951,46 +984,46 @@ class TMBD(Screen):
 					return
 				if not movie2.endswith(".ts"):
 					if namedetals2 != "":
-						Extratext2 = "%s /" % ( namedetals2)
+						Extratext2 = "%s /" % (namedetals2)
 				try:
-					genres = [ x.name.encode('utf-8', 'ignore') for x in movie.genres ]
+					genres = [x.name.encode('utf-8', 'ignore') for x in movie.genres]
 				except:
-					genres =[]
+					genres = []
 				if len(genres) > 0:
 					try:
 						genre = ', '.join(genres)
-						Extratext2 += " %s /" % ( genre)
+						Extratext2 += " %s /" % (genre)
 					except:
 						pass
 				try:
-					countries = [ x.name for x in movie.countries ]
+					countries = [x.name for x in movie.countries]
 				except:
 					countries = []
 				if len(countries) > 0:
 					try:
 						country = ''
 						for name in countries:
-							country += '%s, '% str(name)
+							country += '%s, ' % str(name)
 						if country != '':
 							country = country[:-2]
 							Extratext2 += " %s /" % (country)
 					except:
 						pass
 				try:
-					cast = [ x.name.encode('utf-8', 'ignore') for x in movie.cast ]
+					cast = [x.name.encode('utf-8', 'ignore') for x in movie.cast]
 				except:
-					cast =[]
+					cast = []
 				if len(cast) > 0:
 					try:
 						actors = ', '.join(cast)
 						Extratext2 += " %s" % (actors)
 					except:
 						pass
-				metaParser = MetaParser();
+				metaParser = MetaParser()
 				metaParser.name = namedetals2
-				metaParser.description = Extratext2;
+				metaParser.description = Extratext2
 				if os.path.exists(TSFILE + '.meta') and movie2.endswith(".ts"):
-					readmetafile = open("%s.meta"%(movie2), "r")
+					readmetafile = open("%s.meta" % (movie2), "r")
 					linecnt = 0
 					line = readmetafile.readline()
 					if line:
@@ -1002,13 +1035,13 @@ class TMBD(Screen):
 					readmetafile.close()
 				else:
 					metaParser.ref = eServiceReference('1:0:0:0:0:0:0:0:0:0:')
-				metaParser.time_create = getctime(TSFILE);
-				metaParser.tags = '';
-				metaParser.length = 0;
-				metaParser.filesize = fileSize(TSFILE);
-				metaParser.service_data = '';
-				metaParser.data_ok = 1;
-				metaParser.updateMeta(TSFILE);
+				metaParser.time_create = getctime(TSFILE)
+				metaParser.tags = ''
+				metaParser.length = 0
+				metaParser.filesize = fileSize(TSFILE)
+				metaParser.service_data = ''
+				metaParser.data_ok = 1
+				metaParser.updateMeta(TSFILE)
 				self.session.open(MessageBox, _("Write to new meta-file for:\n") + "%s" % (TSFILE), MessageBox.TYPE_INFO, timeout=3)
 				self.timer = eTimer()
 				self.timer.callback.append(self.savePosterInfo)
@@ -1024,7 +1057,7 @@ class TMBD(Screen):
 			return ''
 
 	def savedescrip(self):
-		global  movie2
+		global movie2
 		descrip = ""
 		Extratext = ""
 		namedetals = ""
@@ -1040,23 +1073,23 @@ class TMBD(Screen):
 			except:
 				return
 			try:
-				countries = [ x.name for x in movie.countries ]
+				countries = [x.name for x in movie.countries]
 			except:
 				countries = []
 			if len(countries) > 0:
 				try:
 					country = ''
 					for name in countries:
-						country += '%s, '% str(name)
+						country += '%s, ' % str(name)
 					if country != '':
 						country = country[:-2]
 						Extratext = "%s %s\n" % (_("Country:"), country)
 				except:
 					pass
 			try:
-				genres = [ x.name.encode('utf-8', 'ignore') for x in movie.genres ]
+				genres = [x.name.encode('utf-8', 'ignore') for x in movie.genres]
 			except:
-				genres =[]
+				genres = []
 			if len(genres) > 0:
 				try:
 					genre = ', '.join(genres)
@@ -1096,30 +1129,30 @@ class TMBD(Screen):
 				except:
 					pass
 			try:
-				cast = [ x.name.encode('utf-8', 'ignore') for x in movie.cast ]
+				cast = [x.name.encode('utf-8', 'ignore') for x in movie.cast]
 			except:
-				cast =[]
+				cast = []
 			if len(cast) > 0:
 				try:
 					actors = ', '.join(cast)
 					descrip += " %s %s\n" % (_("Actors:"), actors)
 				except:
 					pass
-			Extratext = Extratext.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-');
+			Extratext = Extratext.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-')
 			Extratext = self.Cutext(Extratext)
-			descrip = descrip.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-');
-			namedetals = namedetals.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-');
-			sed = ShortEventDescriptor([]);
-			sed.setIso639LanguageCode(GetLanguageCode());
-			sed.setEventName(namedetals);
-			sed.setText(Extratext);
-			eed = ExtendedEventDescriptor([]);
-			eed.setIso639LanguageCode(GetLanguageCode());
-			eed.setText(descrip);
-			newEvent = Event();
-			newEvent.setShortEventDescriptor(sed);
-			newEvent.setExtendedEventDescriptor(eed);
-			ret = newEvent.saveToFile(EITFILE);
+			descrip = descrip.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-')
+			namedetals = namedetals.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-')
+			sed = ShortEventDescriptor([])
+			sed.setIso639LanguageCode(GetLanguageCode())
+			sed.setEventName(namedetals)
+			sed.setText(Extratext)
+			eed = ExtendedEventDescriptor([])
+			eed.setIso639LanguageCode(GetLanguageCode())
+			eed.setText(descrip)
+			newEvent = Event()
+			newEvent.setShortEventDescriptor(sed)
+			newEvent.setExtendedEventDescriptor(eed)
+			ret = newEvent.saveToFile(EITFILE)
 			self.session.open(MessageBox, _("Write event to new eit-file:\n") + "%s\n" % (EITFILE) + _("%d bytes") % (ret), MessageBox.TYPE_INFO, timeout=3)
 
 	def Cutext(self, text):
@@ -1139,7 +1172,7 @@ class TMBD(Screen):
 			if movie2.endswith(".ts"):
 				if os.path.exists(movie2 + '.meta'):
 					try:
-						readmetafile = open("%s.meta"%(movie2), "r")
+						readmetafile = open("%s.meta" % (movie2), "r")
 						name_cur = readmetafile.readline()[0:-1]
 						name_cover = name_cur + '.jpg'
 					except:
@@ -1192,7 +1225,7 @@ class TMBD(Screen):
 				if movie2.endswith(".ts"):
 					if os.path.exists(movie2 + '.meta'):
 						try:
-							readmetafile = open("%s.meta"%(movie2), "r")
+							readmetafile = open("%s.meta" % (movie2), "r")
 							name_cur = readmetafile.readline()[0:-1]
 							name_cover = name_cur + '.jpg'
 						except:
@@ -1232,7 +1265,7 @@ class TMBD(Screen):
 				except OSError:
 					pass
 
-	def menuCallback(self, ret = None):
+	def menuCallback(self, ret=None):
 		ret and ret[1]()
 
 	def searchYttrailer3(self):
@@ -1263,13 +1296,13 @@ class TMBD(Screen):
 		self.gotSearchString(ret=self.eventName)
 
 	def openKeyBoard(self):
-		self.session.openWithCallback(self.gotSearchString, InputBox, title = _("Edit text to search for"), text=eventname, visible_width = 40, maxSize=False, type=Input.TEXT)
+		self.session.openWithCallback(self.gotSearchString, InputBox, title=_("Edit text to search for"), text=eventname, visible_width=40, maxSize=False, type=Input.TEXT)
 
 	def openVirtualKeyBoard(self):
 		if config.plugins.tmbd.virtual_text.value == "0":
-			self.session.openWithCallback(self.gotSearchString, VirtualKeyBoard, title = _("Enter text to search for"))
+			self.session.openWithCallback(self.gotSearchString, VirtualKeyBoard, title=_("Enter text to search for"))
 		else:
-			self.session.openWithCallback(self.gotSearchString, VirtualKeyBoard, title = _("Edit text to search for"), text=eventname)
+			self.session.openWithCallback(self.gotSearchString, VirtualKeyBoard, title=_("Edit text to search for"), text=eventname)
 
 	def openChannelSelection(self):
 		self.session.openWithCallback(self.gotSearchString, TMBDChannelSelection)
@@ -1384,6 +1417,7 @@ class TMBD(Screen):
 	def createSummary(self):
 		pass
 
+
 class KinopoiskConfiguration(Screen):
 	if screenWidth >= 1920:
 		skin = """
@@ -1412,10 +1446,10 @@ class KinopoiskConfiguration(Screen):
 		if returnValue is not None:
 			if returnValue is "all":
 				cmd = "cp /usr/lib/enigma2/python/Plugins/Extensions/TMBD/profile/kinopoiskall.py /usr/lib/enigma2/python/Plugins/Extensions/TMBD/kinopoisk.py && echo 'Done...\nTo apply the changes required restart GUI!' "
-				self.session.openWithCallback(self.restartGui, Console,_("Option for all images"),[cmd])
-			elif returnValue is "new": 
+				self.session.openWithCallback(self.restartGui, Console, _("Option for all images"), [cmd])
+			elif returnValue is "new":
 				cmd = "cp /usr/lib/enigma2/python/Plugins/Extensions/TMBD/profile/kinopoisklmxl.py /usr/lib/enigma2/python/Plugins/Extensions/TMBD/kinopoisk.py && echo 'Done...\nTo apply the changes required restart GUI!' "
-				self.session.openWithCallback(self.restartGui, Console,_("Option only python 2.7 images"),[cmd])
+				self.session.openWithCallback(self.restartGui, Console, _("Option only python 2.7 images"), [cmd])
 
 	def restartGui(self):
 		self.session.openWithCallback(self.restartGuiAnswer, MessageBox, _("Restart the GUI now?"), MessageBox.TYPE_YESNO)
@@ -1423,6 +1457,7 @@ class KinopoiskConfiguration(Screen):
 	def restartGuiAnswer(self, answer):
 		if answer:
 			self.session.open(TryQuitMainloop, 3)
+
 
 class TMBDSettings(Screen, ConfigListScreen):
 	if screenWidth >= 1920:
@@ -1444,7 +1479,7 @@ class TMBDSettings(Screen, ConfigListScreen):
 				<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/green25.png" position="485,450" size="235,44" zPosition="1" alphatest="on" />
 			</screen>"""
 
-	def __init__(self, session, args = None):
+	def __init__(self, session, args=None):
 		Screen.__init__(self, session)
 		self.setTitle(_("Settings TMBD Details Plugin...") + " " + plugin_version)
 		self['key_red'] = Button(_('Cancel'))
@@ -1457,8 +1492,8 @@ class TMBDSettings(Screen, ConfigListScreen):
 
 	def initConfig(self):
 		def getPrevValues(section):
-			res = { }
-			for (key,val) in section.content.items.items():
+			res = {}
+			for (key, val) in section.content.items.items():
 				if isinstance(val, ConfigSubsection):
 					res[key] = getPrevValues(val)
 				else:
@@ -1518,7 +1553,8 @@ class TMBDSettings(Screen, ConfigListScreen):
 	def keyOK(self):
 		ConfigListScreen.keyOK(self)
 		sel = self["config"].getCurrent() and self["config"].getCurrent()[1]
-		if not sel: return
+		if not sel:
+			return
 		if sel == config.plugins.tmbd.kinopoisk_data:
 			self.session.open(KinopoiskConfiguration)
 		elif sel == config.plugins.tmbd.yt_setup:
@@ -1528,7 +1564,7 @@ class TMBDSettings(Screen, ConfigListScreen):
 			#self.session.open(MessageBox, "en/eng', ru/rus, fr/fra, bg/bul, it/ita, po/pol, lv/lav, de/ger, da/dan, nl/dut, fi/fin, el/gre, he/heb, hu/hun, no/nor, pt/por, ro/ron, sk/slo, sl/slv, es/est, sv/swe, tr/tur, uk/ukr, cz/cze", MessageBox.TYPE_INFO)
 		elif sel == config.plugins.tmbd.cover_dir or sel == config.plugins.tmbd.locale or sel == config.plugins.tmbd.alrernative_locale:
 			text = str(self["config"].getCurrent()[1].getText())
-			self.session.openWithCallback(self.textCallback, VirtualKeyBoard, text = text)
+			self.session.openWithCallback(self.textCallback, VirtualKeyBoard, text=text)
 
 	def availableLanguagesPressed(self):
 		list = [
@@ -1581,7 +1617,7 @@ class TMBDSettings(Screen, ConfigListScreen):
 			("uk" + _(" as alternative language"), "uk"),
 			("cz" + _(" as alternative language"), "cz")
 		]
-		self.session.openWithCallback(self.menuCallback, ChoiceBox, list = list, title= _("Select action:"))
+		self.session.openWithCallback(self.menuCallback, ChoiceBox, list=list, title=_("Select action:"))
 
 	def menuCallback(self, ret=None):
 		if ret:
@@ -1615,7 +1651,7 @@ class TMBDSettings(Screen, ConfigListScreen):
 
 	def exit(self):
 		def setPrevValues(section, values):
-			for (key,val) in section.content.items.items():
+			for (key, val) in section.content.items.items():
 				value = values.get(key, None)
 				if value is not None:
 					if isinstance(val, ConfigSubsection):
@@ -1624,6 +1660,7 @@ class TMBDSettings(Screen, ConfigListScreen):
 						val.value = value
 		setPrevValues(self.TM_BD, self.prev_values)
 		self.save()
+
 
 class KinoRu(Screen):
 	skin_hd1 = """
@@ -1636,7 +1673,7 @@ class KinoRu(Screen):
 		<widget font="Regular;20" name="voteslabel" halign="left" position="770,57" size="330,23" foregroundColor="#00f0b400" transparent="1" />
 		<widget alphatest="blend" name="poster" position="30,60" size="285,398" />
 		<widget name="menu" position="20,270" foregroundColor="#00f0b400" scrollbarMode="showOnDemand" size="1100,200" zPosition="1"  selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/button1080x25.png" />
-		<widget name="detailslabel" position="325,230" size="570,23" font="Regular;20" transparent="1" />  
+		<widget name="detailslabel" position="325,230" size="570,23" font="Regular;20" transparent="1" />
 		<widget font="Regular;20" name="castlabel" position="320,350" size="760,160" transparent="1" />
 		<widget font="Regular;20" name="extralabel" position="320,80" size="760,285" transparent="1" />
 		<widget font="Regular;22" name="titlelabel" position="380,85" foregroundColor="#00f0b400" size="700,340" transparent="1" />
@@ -1665,7 +1702,7 @@ class KinoRu(Screen):
 		<widget font="Regular;20" name="voteslabel" halign="left" position="770,57" size="330,23" foregroundColor="#00f0b400" transparent="1" />
 		<widget alphatest="blend" name="poster" position="30,80" size="110,170" />
 		<widget name="menu" position="20,270" foregroundColor="#00f0b400" scrollbarMode="showOnDemand" size="1100,200" zPosition="1"  selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/button1080x25.png" />
-		<widget name="detailslabel" position="325,230" size="570,23" font="Regular;20" transparent="1" />  
+		<widget name="detailslabel" position="325,230" size="570,23" font="Regular;20" transparent="1" />
 		<widget font="Regular;20" name="castlabel" position="20,295" size="1064,195" transparent="1" />
 		<widget font="Regular;20" name="extralabel" position="164,77" size="920,220" transparent="1" />
 		<widget font="Regular;22" name="titlelabel" position="380,85" foregroundColor="#00f0b400" size="700,340" transparent="1" />
@@ -1694,7 +1731,7 @@ class KinoRu(Screen):
 		<widget font="Regular;30" name="voteslabel" halign="left" position="1155,85" size="495,34" foregroundColor="#00f0b400" transparent="1" />
 		<widget alphatest="blend" name="poster" position="45,90" size="427,597" />
 		<widget name="menu" position="30,405" foregroundColor="#00f0b400" scrollbarMode="showOnDemand" size="1650,300" zPosition="1"  selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/ig/button1080x25.png" />
-		<widget name="detailslabel" position="487,345" size="855,34" font="Regular;30" transparent="1" />  
+		<widget name="detailslabel" position="487,345" size="855,34" font="Regular;30" transparent="1" />
 		<widget font="Regular;30" name="castlabel" position="480,525" size="1140,240" transparent="1" />
 		<widget font="Regular;30" name="extralabel" position="480,120" size="1140,427" transparent="1" />
 		<widget font="Regular;33" name="titlelabel" foregroundColor="#00f0b400" position="570,127" size="1050,510" transparent="1" />
@@ -1737,7 +1774,7 @@ class KinoRu(Screen):
 		<widget name="menu"  position="10,235" size="580,155" zPosition="2" scrollbarMode="showOnDemand" />
 		<widget name="starsbg" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/starsbar_empty.png" position="340,40" zPosition="0" size="210,21" transparent="1" alphatest="on" />
 	<widget name="stars" position="340,40" size="210,21" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/starsbar_filled.png" transparent="1" />
-	</screen>"""  
+	</screen>"""
 
 	def __init__(self, session, eventName, callbackNeeded=False, movielist=False):
 		self.skin = self.chooseSkin()
@@ -1845,18 +1882,20 @@ class KinoRu(Screen):
 		bytelen = struct.unpack('iL', fcntl.ioctl(sck.fileno(), SIOCGIFCONF, struct.pack('iL', BYTES, names.buffer_info()[0])))[0]
 		sck.close()
 		namestr = names.tostring()
-		return [namestr[i:i+32].split('\0', 1)[0] for i in range(0, bytelen, 32)]
+		return [namestr[i:i + 32].split('\0', 1)[0] for i in range(0, bytelen, 32)]
 
 	def test(self):
 		global testOK
 		link = "down"
 		for iface in self.get_iface_list():
-			if "lo" in iface: continue
-			if os.path.exists("/sys/class/net/%s/operstate"%(iface)):
-				fd = open("/sys/class/net/%s/operstate"%(iface), "r")
+			if "lo" in iface:
+				continue
+			if os.path.exists("/sys/class/net/%s/operstate" % (iface)):
+				fd = open("/sys/class/net/%s/operstate" % (iface), "r")
 				link = fd.read().strip()
 				fd.close()
-			if link != "down": break
+			if link != "down":
+				break
 		if link != "down":
 			s = socket(AF_INET, SOCK_STREAM)
 			s.settimeout(self.testTime)
@@ -2054,7 +2093,7 @@ class KinoRu(Screen):
 						Ratingtext = ''
 						if rating != '':
 							Ratingtext = _("User Rating") + ": " + rating + " / 10"
-							self.ratingstars = int(10*round(float(rating.replace(',','.')),1))
+							self.ratingstars = int(10 * round(float(rating.replace(',', '.')), 1))
 							self["stars"].show()
 							self["stars"].setValue(self.ratingstars)
 							self["starsbg"].show()
@@ -2149,7 +2188,7 @@ class KinoRu(Screen):
 				id = id[:-3]
 			url = 'http://st.kinopoisk.ru/images/film/%s.jpg' % (id)
 			user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.53.11 (KHTML, like Gecko) Version/5.1.3 Safari/534.53.10'
-			req = urllib2.Request(url, headers = {'User-agent': user_agent, 'Accept': 'text/html'})
+			req = urllib2.Request(url, headers={'User-agent': user_agent, 'Accept': 'text/html'})
 			try:
 				res = urllib2.urlopen(req)
 			except:
@@ -2157,7 +2196,7 @@ class KinoRu(Screen):
 				res = None
 			if res != None:
 				page = res.read()
-				file = open('/tmp/preview.jpg','w')
+				file = open('/tmp/preview.jpg', 'w')
 				file.write(page)
 				file.close()
 				self["kino"].hide()
@@ -2174,8 +2213,8 @@ class KinoRu(Screen):
 		self.session.openWithCallback(
 			self.menuCallback,
 			ChoiceBox,
-			list = list,
-			title= _("What exactly do you want to delete?"),
+			list=list,
+			title=_("What exactly do you want to delete?"),
 		)
 
 	def contextMenuPressed(self):
@@ -2196,8 +2235,8 @@ class KinoRu(Screen):
 		self.session.openWithCallback(
 			self.menuCallback,
 			ChoiceBox,
-			list = list,
-			title= _("Select action:"),
+			list=list,
+			title=_("Select action:"),
 		)
 
 	def Menu2(self):
@@ -2214,8 +2253,8 @@ class KinoRu(Screen):
 		self.session.openWithCallback(
 			self.menuCallback,
 			ChoiceBox,
-			title= _("Save poster and info for:\n %s ?") % (name),
-			list = list,
+			title=_("Save poster and info for:\n %s ?") % (name),
+			list=list,
 		)
 
 	def exitChoice(self):
@@ -2272,11 +2311,11 @@ class KinoRu(Screen):
 				except:
 					namedetals2 = current[0]
 				namedetals2 = namedetals2[:-6]
-				namedetals2 = namedetals2.replace('\n','')
+				namedetals2 = namedetals2.replace('\n', '')
 				if movie2.endswith(".ts"):
 					name = namedetals2
 				else:
-					Extratext2 = "%s" % ( namedetals2)
+					Extratext2 = "%s" % (namedetals2)
 				if self.genres:
 					genre = self.genres
 					genre = genre.replace('...', '')
@@ -2285,11 +2324,11 @@ class KinoRu(Screen):
 					Extratext2 += " %s /" % (self.countrie)
 				if self.cast:
 					Extratext2 += " %s" % (self.cast)
-				metaParser = MetaParser();
+				metaParser = MetaParser()
 				metaParser.name = namedetals2
-				metaParser.description = Extratext2;
+				metaParser.description = Extratext2
 				if os.path.exists(TSFILE + '.meta') and movie2.endswith(".ts"):
-					readmetafile = open("%s.meta"%(movie2), "r")
+					readmetafile = open("%s.meta" % (movie2), "r")
 					linecnt = 0
 					line = readmetafile.readline()
 					if line:
@@ -2301,13 +2340,13 @@ class KinoRu(Screen):
 					readmetafile.close()
 				else:
 					metaParser.ref = eServiceReference('1:0:0:0:0:0:0:0:0:0:')
-				metaParser.time_create = getctime(TSFILE);
-				metaParser.tags = '';
-				metaParser.length = 0;
-				metaParser.filesize = fileSize(TSFILE);
-				metaParser.service_data = '';
-				metaParser.data_ok = 1;
-				metaParser.updateMeta(TSFILE);
+				metaParser.time_create = getctime(TSFILE)
+				metaParser.tags = ''
+				metaParser.length = 0
+				metaParser.filesize = fileSize(TSFILE)
+				metaParser.service_data = ''
+				metaParser.data_ok = 1
+				metaParser.updateMeta(TSFILE)
 				self.session.open(MessageBox, _("Write to new meta-file for:\n") + "%s" % (TSFILE), MessageBox.TYPE_INFO, timeout=3)
 				self.timer = eTimer()
 				self.timer.callback.append(self.savePosterInfo)
@@ -2346,21 +2385,21 @@ class KinoRu(Screen):
 				descrip += " %s %s\n" % (_("Actors:"), self.cast)
 			if self.duplicated:
 				descrip += " %s %s\n" % (_("Roles duplicated:"), self.duplicated)
-			Extratext = Extratext.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-');
+			Extratext = Extratext.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-')
 			Extratext = self.Cutext(Extratext)
-			descrip = descrip.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-');
-			namedetals = namedetals.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-');
-			sed = ShortEventDescriptor([]);
-			sed.setIso639LanguageCode('rus');
-			sed.setEventName(namedetals);
-			sed.setText(Extratext);
-			eed = ExtendedEventDescriptor([]);
-			eed.setIso639LanguageCode('rus');
-			eed.setText(descrip);
-			newEvent = Event();
-			newEvent.setShortEventDescriptor(sed);
-			newEvent.setExtendedEventDescriptor(eed);
-			ret = newEvent.saveToFile(EITFILE);
+			descrip = descrip.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-')
+			namedetals = namedetals.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-')
+			sed = ShortEventDescriptor([])
+			sed.setIso639LanguageCode('rus')
+			sed.setEventName(namedetals)
+			sed.setText(Extratext)
+			eed = ExtendedEventDescriptor([])
+			eed.setIso639LanguageCode('rus')
+			eed.setText(descrip)
+			newEvent = Event()
+			newEvent.setShortEventDescriptor(sed)
+			newEvent.setExtendedEventDescriptor(eed)
+			ret = newEvent.saveToFile(EITFILE)
 			self.session.open(MessageBox, _("Write event to new eit-file:\n") + "%s\n" % (EITFILE) + _("%d bytes") % (ret), MessageBox.TYPE_INFO, timeout=3)
 
 	def Cutext(self, text):
@@ -2380,7 +2419,7 @@ class KinoRu(Screen):
 			if movie2.endswith(".ts"):
 				if os.path.exists(movie2 + '.meta'):
 					try:
-						readmetafile = open("%s.meta"%(movie2), "r")
+						readmetafile = open("%s.meta" % (movie2), "r")
 						name_cur = readmetafile.readline()[0:-1]
 						name_cover = name_cur + '.jpg'
 					except:
@@ -2433,7 +2472,7 @@ class KinoRu(Screen):
 				if movie2.endswith(".ts"):
 					if os.path.exists(movie2 + '.meta'):
 						try:
-							readmetafile = open("%s.meta"%(movie2), "r")
+							readmetafile = open("%s.meta" % (movie2), "r")
 							name_cur = readmetafile.readline()[0:-1]
 							name_cover = name_cur + '.jpg'
 						except:
@@ -2501,18 +2540,18 @@ class KinoRu(Screen):
 		self.working = False
 
 	def openKeyBoard(self):
-		self.session.openWithCallback(self.gotSearchString, InputBox, title = _("Edit text to search for"), text=eventname, visible_width = 40, maxSize=False, type=Input.TEXT)
+		self.session.openWithCallback(self.gotSearchString, InputBox, title=_("Edit text to search for"), text=eventname, visible_width=40, maxSize=False, type=Input.TEXT)
 
 	def openVirtualKeyBoard(self):
 		if config.plugins.tmbd.virtual_text.value == "0":
-			self.session.openWithCallback(self.gotSearchString, VirtualKeyBoard, title = _("Enter text to search for"))
+			self.session.openWithCallback(self.gotSearchString, VirtualKeyBoard, title=_("Enter text to search for"))
 		else:
-			self.session.openWithCallback(self.gotSearchString, VirtualKeyBoard, title = _("Edit text to search for"), text=eventname)
+			self.session.openWithCallback(self.gotSearchString, VirtualKeyBoard, title=_("Edit text to search for"), text=eventname)
 
 	def openChannelSelection(self):
 		self.session.openWithCallback(self.gotSearchString, TMBDChannelSelection)
 
-	def gotSearchString(self, ret = None):
+	def gotSearchString(self, ret=None):
 		if ret:
 			global total
 			self.eventName = ret
@@ -2658,6 +2697,7 @@ class KinoRu(Screen):
 	def createSummary(self):
 		pass
 
+
 class MovielistPreviewScreen(Screen):
 	if screenWidth >= 1920:
 		skin = """
@@ -2671,6 +2711,7 @@ class MovielistPreviewScreen(Screen):
 				<widget name="background" position="0,0" size="130,200" zPosition="1" backgroundColor="#00000000" />
 				<widget name="preview" position="0,0" size="130,200" zPosition="2" alphatest="blend"/>
 			</screen>"""
+
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self["background"] = Label("")
@@ -2684,6 +2725,7 @@ class MovielistPreviewScreen(Screen):
 			self.instance.resize(eSize(int(size[0]), int(size[1])))
 			self["background"].instance.resize(eSize(int(size[0]), int(size[1])))
 			self["preview"].instance.resize(eSize(int(size[0]), int(size[1])))
+
 
 class MovielistPreview():
 	def __init__(self):
@@ -2716,8 +2758,8 @@ class MovielistPreview():
 			if movie and self.mayShow and config.plugins.tmbd.enabled.value:
 				png2 = os.path.split(movie)[1]
 				if movie.endswith(".ts"):
-					if fileExists("%s.meta"%(movie)):
-						readmetafile = open("%s.meta"%(movie), "r")
+					if fileExists("%s.meta" % (movie)):
+						readmetafile = open("%s.meta" % (movie), "r")
 						servicerefname = readmetafile.readline()[0:-1]
 						eventname = readmetafile.readline()[0:-1]
 						readmetafile.close()
@@ -2759,7 +2801,9 @@ class MovielistPreview():
 		self.mayShow = True
 		self.dialog.show()
 
+
 movielistpreview = MovielistPreview()
+
 
 class MovielistPreviewPositionerCoordinateEdit(ConfigListScreen, Screen):
 	if screenWidth >= 1920:
@@ -2799,6 +2843,7 @@ class MovielistPreviewPositionerCoordinateEdit(ConfigListScreen, Screen):
 
 	def ok(self):
 		self.close([self.xEntry.value, self.yEntry.value])
+
 
 class MovielistPreviewPositioner(Screen):
 	if screenWidth >= 1920:
@@ -2915,6 +2960,7 @@ class MovielistPreviewPositioner(Screen):
 		config.plugins.tmbd.size.save()
 		self.__onShow()
 
+
 class MovielistPreviewMenu(Screen):
 	if screenWidth >= 1920:
 		skin = """
@@ -2926,6 +2972,7 @@ class MovielistPreviewMenu(Screen):
 			<screen position="center,center" size="420,105" title="%s">
 				<widget name="list" position="5,5" size="410,100" />
 			</screen>""" % _("Poster Preview")
+
 	def __init__(self, session, service):
 		Screen.__init__(self, session)
 		self.session = session
@@ -2954,7 +3001,9 @@ class MovielistPreviewMenu(Screen):
 			movielistpreview.dialog.hide()
 			self.session.open(MovielistPreviewPositioner)
 
+
 SelectionChanged = MovieList.selectionChanged
+
 
 def selectionChanged(instance):
 	global movie2
@@ -2966,19 +3015,30 @@ def selectionChanged(instance):
 		movie2 = curr.getPath()
 	else:
 		movielistpreview.hideDialog()
+
+
 MovieList.selectionChanged = selectionChanged
 
 Hide = MovieSelection.hide
+
+
 def hideMovieSelection(instance):
 	Hide(instance)
 	movielistpreview.hideDialog()
+
+
 MovieSelection.hide = hideMovieSelection
 
 Show = MovieSelection.show
+
+
 def showMovieSelection(instance):
 	Show(instance)
 	movielistpreview.showDialog()
+
+
 MovieSelection.show = showMovieSelection
+
 
 class EventChoiseList:
 	def __init__(self, session):
@@ -3004,7 +3064,7 @@ class EventChoiseList:
 			eventName = event_next.getEventName().split("(")[0].strip()
 			eventname_next = cutName(eventName)
 		if event_now and event_next:
-			keyslist = [ ]
+			keyslist = []
 			eventlist = [
 			(_("Now: %s") % (eventname_now), self.Nowevent),
 			(_("Next: %s") % (eventname_next), self.Nextevent),
@@ -3013,10 +3073,10 @@ class EventChoiseList:
 				profile = "themoviedb.org"
 			else:
 				profile = "kinopoisk.ru"
-			keyslist.extend( [ "1", "2" ] )
+			keyslist.extend(["1", "2"])
 			eventlist.append((_('Change profile'), self.ChangeProfile))
 			keyslist.append('blue')
-			dlg = self.session.openWithCallback(self.menuCallback,ChoiceBox,list = eventlist,keys = keyslist,title= _("%s\nProfile: %s\nSelect event for search:") % (cur_name, profile))
+			dlg = self.session.openWithCallback(self.menuCallback, ChoiceBox, list=eventlist, keys=keyslist, title=_("%s\nProfile: %s\nSelect event for search:") % (cur_name, profile))
 			dlg.setTitle(_("TMBD Details"))
 		elif event_now and not event_next:
 			self.Nowevent()
@@ -3050,8 +3110,9 @@ class EventChoiseList:
 		else:
 			self.session.open(KinoRu, eventname, False)
 
-	def menuCallback(self, ret = None):
+	def menuCallback(self, ret=None):
 		ret and ret[1]()
+
 
 class MovielistProfileList(Screen):
 	if screenWidth >= 1920:
@@ -3086,9 +3147,10 @@ class MovielistProfileList(Screen):
 	def okClicked(self):
 		sel = self["list"].getCurrent()
 		if sel == _("kinopoisk.ru"):
-			self.session.open(KinoRu, self.eventname, movielist = True)
+			self.session.open(KinoRu, self.eventname, movielist=True)
 		if sel == _("themoviedb.org"):
-			self.session.open(TMBD, self.eventname, movielist = True)
+			self.session.open(TMBD, self.eventname, movielist=True)
+
 
 def eventinfo(session, eventName="", **kwargs):
 	if eventName != "":
@@ -3101,8 +3163,10 @@ def eventinfo(session, eventName="", **kwargs):
 		ref = session.nav.getCurrentlyPlayingServiceReference()
 		session.open(TMBDEPGSelection, ref)
 
+
 def main(session, **kwargs):
 	session.open(TMBDSettings)
+
 
 def main3(session, eventName="", **kwargs):
 	global eventname
@@ -3139,15 +3203,17 @@ def main3(session, eventName="", **kwargs):
 	else:
 		EventChoiseList(session)
 
+
 from keyids import KEYIDS
 from enigma import eActionMap
+
 
 class TMBDInfoBar:
 	def __init__(self, session, infobar):
 		self.session = session
 		self.infobar = infobar
 		self.lastKey = None
-		self.hotkeys = { }
+		self.hotkeys = {}
 		for x in TMBDInfoBarKeys:
 			self.hotkeys[x[0]] = [KEYIDS[key] for key in x[2]]
 		eActionMap.getInstance().bindAction('', -10, self.keyPressed)
@@ -3218,7 +3284,7 @@ class TMBDInfoBar:
 			eventName = event_next.getEventName().split("(")[0].strip()
 			eventname_next = cutName(eventName)
 		if event_now and event_next:
-			keyslist = [ ]
+			keyslist = []
 			eventlist = [
 			(_("Now: %s") % (eventname_now), self.Nowevent),
 			(_("Next: %s") % (eventname_next), self.Nextevent),
@@ -3227,10 +3293,10 @@ class TMBDInfoBar:
 				profile = "themoviedb.org"
 			else:
 				profile = "kinopoisk.ru"
-			keyslist.extend( [ "1", "2" ] )
+			keyslist.extend(["1", "2"])
 			eventlist.append((_('Change profile'), self.ChangeProfile))
 			keyslist.append('blue')
-			dlg = self.session.openWithCallback(self.menuCallback,ChoiceBox,list = eventlist,keys = keyslist,title= _("%s\nProfile: %s\nSelect event for search:") % (cur_name, profile))
+			dlg = self.session.openWithCallback(self.menuCallback, ChoiceBox, list=eventlist, keys=keyslist, title=_("%s\nProfile: %s\nSelect event for search:") % (cur_name, profile))
 			dlg.setTitle(_("TMBD Details"))
 		elif event_now and not event_next:
 			self.Nowevent()
@@ -3264,13 +3330,14 @@ class TMBDInfoBar:
 		else:
 			self.session.open(KinoRu, eventname, False)
 
-	def menuCallback(self, ret = None):
+	def menuCallback(self, ret=None):
 		ret and ret[1]()
+
 
 def movielist(session, service, **kwargs):
 	global name
 	global eventname
-	eventName=""
+	eventName = ""
 	serviceHandler = eServiceCenter.getInstance()
 	info = serviceHandler.info(service)
 	name = info and info.getName(service) or ''
@@ -3278,19 +3345,24 @@ def movielist(session, service, **kwargs):
 	eventname = eventName
 	if config.plugins.tmbd.movielist_profile.value == "0":
 		if config.plugins.tmbd.profile.value == "0":
-			session.open(TMBD, eventname, movielist = True)
+			session.open(TMBD, eventname, movielist=True)
 		else:
-			session.open(KinoRu, eventname, movielist = True)
+			session.open(KinoRu, eventname, movielist=True)
 	else:
 		session.open(MovielistProfileList, eventname)
+
 
 def autostart_ChannelContextMenu(session, **kwargs):
 	TMBDChannelContextMenuInit()
 
+
 baseInfoBar__init__ = None
+
+
 def tmbdInfoBar__init__(self, session):
 	baseInfoBar__init__(self, session)
 	self.tmbdinfobar = TMBDInfoBar(session, self)
+
 
 def sessionstart(reason, **kwargs):
 	if reason == 0:
@@ -3305,6 +3377,7 @@ def sessionstart(reason, **kwargs):
 			def_MovieSelection_showEventInformation = MovieSelection.showEventInformation
 			MovieSelection.showEventInformation = new_MovieSelection_showEventInformation
 
+
 def autostart(reason, **kwargs):
 	if reason == 0:
 		pass
@@ -3314,8 +3387,10 @@ def autostart(reason, **kwargs):
 		#	baseInfoBar__init__ = InfoBar.__init__
 		#InfoBar.__init__ = tmbdInfoBar__init__
 
+
 def main2(session, service):
 	session.open(MovielistPreviewMenu, service)
+
 
 def epgfurther(session, selectedevent, **kwargs):
 	try:
@@ -3329,8 +3404,10 @@ def epgfurther(session, selectedevent, **kwargs):
 		else:
 			session.open(KinoRu, eventName)
 
+
 def yteventinfo(session, eventName="", **kwargs):
-	if session is None: return
+	if session is None:
+		return
 	if eventName != "":
 		eventName = cutName(eventName)
 		if config.plugins.tmbd.yt_start.value == "0":
@@ -3352,6 +3429,7 @@ def yteventinfo(session, eventName="", **kwargs):
 				ytTrailer = tmbdYTTrailer.tmbdYTTrailer(session)
 				ytTrailer.showTrailer(eventName)
 
+
 def ytfurther(session, selectedevent, **kwargs):
 	try:
 		eventName = selectedevent[0].getEventName()
@@ -3364,6 +3442,7 @@ def ytfurther(session, selectedevent, **kwargs):
 		else:
 			ytTrailer = tmbdYTTrailer.tmbdYTTrailer(session)
 			ytTrailer.showTrailer(eventName)
+
 
 def Plugins(**kwargs):
 	if config.plugins.tmbd.add_ext_menu.value:
@@ -3379,21 +3458,21 @@ def Plugins(**kwargs):
 				fnc=eventinfo,
 				),
 				PluginDescriptor(name=_("Search movie in TMBD"),
-				description = _("Search movie in TMBD"),
-				where = PluginDescriptor.WHERE_MOVIELIST,
-				fnc = movielist,
+				description=_("Search movie in TMBD"),
+				where=PluginDescriptor.WHERE_MOVIELIST,
+				fnc=movielist,
 				),
 				PluginDescriptor(
-				where = PluginDescriptor.WHERE_SESSIONSTART,
-				fnc = autostart_ChannelContextMenu,
+				where=PluginDescriptor.WHERE_SESSIONSTART,
+				fnc=autostart_ChannelContextMenu,
 				),
 				PluginDescriptor(
-				where = PluginDescriptor.WHERE_SESSIONSTART,
-				fnc = sessionstart,
+				where=PluginDescriptor.WHERE_SESSIONSTART,
+				fnc=sessionstart,
 				),
 				PluginDescriptor(
-				where = PluginDescriptor.WHERE_AUTOSTART,
-				fnc = autostart,
+				where=PluginDescriptor.WHERE_AUTOSTART,
+				fnc=autostart,
 				),
 				PluginDescriptor(name=_("Poster Preview (TMBD)"),
 				description=_("Poster Preview (TMBD)"),
@@ -3419,21 +3498,21 @@ def Plugins(**kwargs):
 				fnc=eventinfo,
 				),
 				PluginDescriptor(name=_("Search movie in TMBD"),
-				description = _("Search for movie in TMBD"),
-				where = PluginDescriptor.WHERE_MOVIELIST,
-				fnc = movielist,
+				description=_("Search for movie in TMBD"),
+				where=PluginDescriptor.WHERE_MOVIELIST,
+				fnc=movielist,
 				),
 				PluginDescriptor(
-				where = PluginDescriptor.WHERE_SESSIONSTART,
-				fnc = autostart_ChannelContextMenu,
+				where=PluginDescriptor.WHERE_SESSIONSTART,
+				fnc=autostart_ChannelContextMenu,
 				),
 				PluginDescriptor(
-				where = PluginDescriptor.WHERE_SESSIONSTART,
-				fnc = sessionstart,
+				where=PluginDescriptor.WHERE_SESSIONSTART,
+				fnc=sessionstart,
 				),
 				PluginDescriptor(
-				where = PluginDescriptor.WHERE_AUTOSTART,
-				fnc = autostart,
+				where=PluginDescriptor.WHERE_AUTOSTART,
+				fnc=autostart,
 				),
 				PluginDescriptor(name=_("Poster Preview (TMBD)"),
 				description=_("Poster Preview (TMBD)"),
@@ -3442,15 +3521,15 @@ def Plugins(**kwargs):
 				),
 			]
 	if epg_furtherOptions and config.plugins.tmbd.show_in_furtheroptionsmenu.value:
-		path.append(PluginDescriptor(name = _("Search event in TMBD"), where = PluginDescriptor.WHERE_EVENTINFO, fnc = epgfurther))
+		path.append(PluginDescriptor(name=_("Search event in TMBD"), where=PluginDescriptor.WHERE_EVENTINFO, fnc=epgfurther))
 	yt_event_menu = config.plugins.tmbd.yt_event_menu.value
 	if yt_event_menu != "0":
 		if yt_event_menu == "1":
-			path.append(PluginDescriptor(name = _("Search yt-trailer for event"), where = PluginDescriptor.WHERE_EVENTINFO, fnc = ytfurther))
+			path.append(PluginDescriptor(name=_("Search yt-trailer for event"), where=PluginDescriptor.WHERE_EVENTINFO, fnc=ytfurther))
 		elif yt_event_menu == "2":
-			path.append(PluginDescriptor(name = _("Search yt-trailer for event"), where = PluginDescriptor.WHERE_EVENTINFO, fnc = yteventinfo))
+			path.append(PluginDescriptor(name=_("Search yt-trailer for event"), where=PluginDescriptor.WHERE_EVENTINFO, fnc=yteventinfo))
 		else:
 			if epg_furtherOptions:
-				path.append(PluginDescriptor(name = _("Search yt-trailer for event"), where = PluginDescriptor.WHERE_EVENTINFO, fnc = ytfurther))
-			path.append(PluginDescriptor(name = _("Search yt-trailer for event"), where = PluginDescriptor.WHERE_EVENTINFO, fnc = yteventinfo))
+				path.append(PluginDescriptor(name=_("Search yt-trailer for event"), where=PluginDescriptor.WHERE_EVENTINFO, fnc=ytfurther))
+			path.append(PluginDescriptor(name=_("Search yt-trailer for event"), where=PluginDescriptor.WHERE_EVENTINFO, fnc=yteventinfo))
 	return path

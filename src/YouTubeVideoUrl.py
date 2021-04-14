@@ -26,18 +26,19 @@ PRIORITY_VIDEO_FORMAT = []
 def createPriorityFormats():
 	global PRIORITY_VIDEO_FORMAT
 	video_format = {
-			'38':['38', '266', '264', '138', '313', '315', '272', '308'],  # 4096x3072
-			'37':['37', '96', '301', '137', '299', '248', '303', '271'],  # 1920x1080
-			'22':['22', '95', '300', '136', '298'],  # 1280x720
-			'35':['35', '59', '78', '94', '135', '212'],  # 854x480
-			'18':['18', '93', '34', '6', '134'],  # 640x360
-			'5':['5', '36', '92', '132', '133'],  # 400x240
-			'17':['17', '91', '13', '151', '160']  # 176x144
+			'38': ['38', '266', '264', '138', '313', '315', '272', '308'],  # 4096x3072
+			'37': ['37', '96', '301', '137', '299', '248', '303', '271'],  # 1920x1080
+			'22': ['22', '95', '300', '136', '298'],  # 1280x720
+			'35': ['35', '59', '78', '94', '135', '212'],  # 854x480
+			'18': ['18', '93', '34', '6', '134'],  # 640x360
+			'5': ['5', '36', '92', '132', '133'],  # 400x240
+			'17': ['17', '91', '13', '151', '160']  # 176x144
 		}
 	for itag in ['17', '5', '18', '35', '22', '37', '38']:
 		PRIORITY_VIDEO_FORMAT = video_format[itag] + PRIORITY_VIDEO_FORMAT
 		if itag == config.plugins.tmbd_yttrailer.best_resolution.value:
 			break
+
 
 createPriorityFormats()
 
@@ -365,7 +366,7 @@ class YouTubeVideoUrl():
 		if 'conn' in video_info and video_info['conn'][0][:4] == 'rtmp':
 			print('[YouTubeVideoUrl] Try rtmp url')
 			url = video_info['conn'][0]
-		elif not is_live and (streaming_formats or len(video_info.get('url_encoded_fmt_stream_map', [''])[0]) >= 1 or \
+		elif not is_live and (streaming_formats or len(video_info.get('url_encoded_fmt_stream_map', [''])[0]) >= 1 or
 			len(video_info.get('adaptive_fmts', [''])[0]) >= 1):
 			print('[YouTubeVideoUrl] Try fmt url')
 			encoded_url_map = video_info.get('url_encoded_fmt_stream_map', [''])[0] + \

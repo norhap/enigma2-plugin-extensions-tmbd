@@ -4,13 +4,15 @@
 # Name: tmdb_auth.py
 # Python Library
 # Author: Raymond Wagner
-# Purpose: Provide authentication and session services for 
+# Purpose: Provide authentication and session services for
 #          calls against the TMDB v3 API
 #-----------------------
 
 from datetime import datetime as _pydatetime, \
                      tzinfo as _pytzinfo
 import re
+
+
 class datetime(_pydatetime):
     """Customized datetime class with ISO format parsing."""
     _reiso = re.compile('(?P<year>[0-9]{4})'
@@ -30,7 +32,7 @@ class datetime(_pydatetime):
     class _tzinfo(_pytzinfo):
         def __init__(self, direc='+', hr=0, min=0):
             if direc == '-':
-                hr = -1*int(hr)
+                hr = -1 * int(hr)
             self._offset = timedelta(hours=int(hr), minutes=int(min))
 
         def utcoffset(self, dt):
@@ -64,6 +66,7 @@ class datetime(_pydatetime):
             dt.append(0)
             dt.append(tz)
         return cls(*dt)
+
 
 from request import Request
 from tmdb_exceptions import *
@@ -135,4 +138,4 @@ class Session(object):
 
     @property
     def callbackurl(self):
-        return "http://www.themoviedb.org/authenticate/"+self._authtoken
+        return "http://www.themoviedb.org/authenticate/" + self._authtoken

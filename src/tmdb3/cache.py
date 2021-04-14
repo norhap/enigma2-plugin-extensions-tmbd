@@ -31,6 +31,7 @@ class Cache(object):
     wrapped function, pulling the output from local storage for
     subsequent calls with those inputs.
     """
+
     def __init__(self, engine=None, *args, **kwargs):
         self._engine = None
         self._data = {}
@@ -58,11 +59,11 @@ class Cache(object):
         if engine is None:
             engine = 'file'
         elif engine not in Engines:
-            raise TMDBCacheError("Invalid cache engine specified: "+engine)
+            raise TMDBCacheError("Invalid cache engine specified: " + engine)
         self._engine = Engines[engine](self)
         self._engine.configure(*args, **kwargs)
 
-    def put(self, key, data, lifetime=60*60*12):
+    def put(self, key, data, lifetime=60 * 60 * 12):
         # pull existing data, so cache will be fresh when written back out
         if self._engine is None:
             raise TMDBCacheError("No cache engine configured")

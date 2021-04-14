@@ -13,6 +13,7 @@ from tmdb_auth import get_session
 
 class NameRepr(object):
     """Mixin for __repr__ methods using 'name' attribute."""
+
     def __repr__(self):
         return u"<{0.__class__.__name__} '{0.name}'>"\
                     .format(self).encode('utf-8')
@@ -23,6 +24,7 @@ class SearchRepr(object):
     Mixin for __repr__ methods for classes with '_name' and
     '_request' attributes.
     """
+
     def __repr__(self):
         name = self._name if self._name else self._request._kwargs['query']
         return u"<Search Results: {0}>".format(name).encode('utf-8')
@@ -33,6 +35,7 @@ class Poller(object):
     Wrapper for an optional callable to populate an Element derived
     class with raw data, or data from a Request.
     """
+
     def __init__(self, func, lookup, inst=None):
         self.func = func
         self.lookup = lookup
@@ -74,7 +77,7 @@ class Poller(object):
             self.apply(req.new(language=None, country=None).readJSON())
             # re-apply the filtered first pass data over top the second
             # unfiltered set. this is to work around the issue that the
-            # properties have no way of knowing when they should or 
+            # properties have no way of knowing when they should or
             # should not overwrite existing data. the cache engine will
             # take care of the duplicate query
         self.apply(req.readJSON())
@@ -108,6 +111,7 @@ class Data(object):
     Basic response definition class
     This maps to a single key in a JSON dictionary received from the API
     """
+
     def __init__(self, field, initarg=None, handler=None, poller=None,
                  raw=True, default=u'', lang=None, passthrough={}):
         """
@@ -184,6 +188,7 @@ class Datalist(Data):
     Response definition class for list data
     This maps to a key in a JSON dictionary storing a list of data
     """
+
     def __init__(self, field, handler=None, poller=None, sort=None, raw=True, passthrough={}):
         """
         This defines how the dictionary value is to be processed by the
@@ -238,6 +243,7 @@ class Datadict(Data):
     Response definition class for dictionary data
     This maps to a key in a JSON dictionary storing a dictionary of data
     """
+
     def __init__(self, field, handler=None, poller=None, raw=True,
                        key=None, attr=None, passthrough={}):
         """
@@ -389,8 +395,8 @@ class ElementType(type):
             # defined by the Data definitions
             if len(args) != len(cls._InitArgs):
                 raise TypeError(
-                        '__init__() takes exactly {0} arguments ({1} given)'\
-                            .format(len(cls._InitArgs)+1, len(args)+1))
+                        '__init__() takes exactly {0} arguments ({1} given)'
+                            .format(len(cls._InitArgs) + 1, len(args) + 1))
             for a, v in zip(cls._InitArgs, args):
                 setattr(obj, a, v)
 
