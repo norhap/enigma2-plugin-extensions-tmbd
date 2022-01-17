@@ -290,7 +290,7 @@ class Event:
 		except:
 			import traceback
 			fd = open('/tmp/event.log', 'a+')
-			print>>fd, 'readFromFile(): error:\n', traceback.format_exc()
+			print(>>fd, 'readFromFile(): error:\n', traceback.format_exc())
 
 		return buffer is None and -1 or buffer.buffer_info()[1]
 
@@ -308,7 +308,7 @@ class Event:
 		except:
 			import traceback
 			fd = open('/tmp/event.log', 'a+')
-			print>>fd, 'saveToFile(): error:\n', traceback.format_exc()
+			print(>>fd, 'saveToFile(): error:\n', traceback.format_exc())
 			res = -1
 
 		return res

@@ -758,23 +758,23 @@ class Movie(Element):
     def similar(self):
         res = MovieSearchResult(Request(
             'movie/{0}/similar'.format(self.id)), locale=self._locale)
-        res._name = 'Similar to {0}'.format(self._printable_name())
+        res._name = 'Similar to {0}'.format( self._printable_name())
         return res
 
     @property
     def recommendations(self):
         res = MovieSearchResult(Request(
             'movie/{0}/recommendations'.format(self.id)), locale=self._locale)
-        res._name = 'Recommendations for {0}'.format(self._printable_name())
+        res._name = 'Recommendations for {0}'.format( self._printable_name())
         return res
 
     @property
     def lists(self):
         res = ListSearchResult(Request('movie/{0}/lists'.format(self.id)))
-        res._name = "Lists containing {0}".format(self._printable_name())
+        res._name = "Lists containing {0}".format( self._printable_name())
         return res
 
-    def _printable_name(self):
+    def _print(able_name(self):
         if self.title is not None:
             s = u"'{0}'".format(self.title)
         elif self.originaltitle is not None:

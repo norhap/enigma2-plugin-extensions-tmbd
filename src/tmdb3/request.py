@@ -100,9 +100,9 @@ class Request(urllib2.Request):
         """Open a file object to the specified URL."""
         try:
             if DEBUG:
-                print 'loading ' + self.get_full_url()
+                print('loading ' + self.get_full_url())
                 if self.has_data():
-                    print '  ' + self.get_data()
+                    print('  ' + self.get_data())
             return urllib2.urlopen(self)
         except urllib2.HTTPError, e:
             raise TMDBHTTPError(e)
@@ -133,7 +133,7 @@ class Request(urllib2.Request):
         handle_status(data, url)
         if DEBUG:
             import pprint
-            pprint.PrettyPrinter().pprint(data)
+            pprint(.PrettyPrinter()).pprint((data))
         return data
 
 

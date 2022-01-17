@@ -225,14 +225,14 @@ class TmbdYTTrailerList(Screen, tmbdYTTrailer):
 		self.decodeThumbnail(entryId, image)
 
 	def downloadFailed(self, entryId, result):
-		print "[TMBD] Thumbnail download failed!"
+		print("[TMBD] Thumbnail download failed!")
 		self.decodeThumbnail(entryId)
 
 	def decodeThumbnail(self, entryId, image=None):
 		if not image or not os.path.exists(image):
-			print "[TMBD] Thumbnail not exists, use default for", entryId
+			print("[TMBD] Thumbnail not exists, use default for", entryId
 			image = resolveFilename(SCOPE_PLUGINS,
-				'Extensions/TMBD/yt_default.png')
+				'Extensions/TMBD/yt_default.png'))
 		self.picloads[entryId] = ePicLoad()
 		self.picloads[entryId].PictureData.get()\
 			.append(boundFunction(self.FinishDecode, entryId, image))

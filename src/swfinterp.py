@@ -10,7 +10,7 @@ import zlib
 
 def _extract_tags(file_contents):
     if file_contents[1:3] != b'WS':
-        print '[SWFInterpreter] Not an SWF file; header is %r' % file_contents[:3]
+        print('[SWFInterpreter] Not an SWF file; header is %r' % file_contents[:3])
     if file_contents[:1] == b'C':
         content = zlib.decompress(file_contents[8:])
     else:
@@ -328,7 +328,7 @@ class SWFInterpreter(object):
                 function_idx = u30()
                 methods[function_idx] = self.multinames[trait_name_idx]
             else:
-                print '[SWFInterpreter] Unsupported trait kind %d' % kind
+                print('[SWFInterpreter] Unsupported trait kind %d' % kind)
                 return None
 
             if attrs & 0x4 != 0:  # Metadata present
@@ -420,7 +420,7 @@ class SWFInterpreter(object):
         try:
             res = self._classes_by_name[class_name]
         except KeyError:
-            print '[SWFInterpreter] Class %r not found' % class_name
+            print('[SWFInterpreter] Class %r not found' % class_name)
             return None
 
         if call_cinit and hasattr(res, 'cinit_idx'):
@@ -440,8 +440,7 @@ class SWFInterpreter(object):
         if func_name in self._classes_by_name:
             return self._classes_by_name[func_name].make_object()
         if func_name not in avm_class.methods:
-            print '[SWFInterpreter] Cannot find function %s.%s' % (
-                avm_class.name, func_name)
+            print('[SWFInterpreter] Cannot find function %s.%s' % (avm_class.name, func_name))
             return None
         m = avm_class.methods[func_name]
 

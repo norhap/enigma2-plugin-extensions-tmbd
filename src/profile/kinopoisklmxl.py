@@ -67,7 +67,7 @@ def comment_out(str):
 	except:
 		pass
 
-	print("# %s" % (s,))
+	print("# %s" % (s))
 
 
 def debug_out(str):
@@ -85,7 +85,7 @@ def response_out(str):
 		print(s)
 
 
-def print_exception(str):
+def print(_exception(str)):
 	for line in str.splitlines():
 		comment_out(line)
 
@@ -109,7 +109,7 @@ def getText(title):
 				outstr += U8Translit[i]
 			else:
 				outstr += c.encode("utf-8")
-	print '%s' % (outstr)
+	print( '%s' % (outstr))
 	return outstr
 
 #Замена различных спецсимволов и тегов HTML на обычные символы,
@@ -152,7 +152,7 @@ def normilize_string(processingstring):
 
 def outXML(rootElm):
     outfile = sys.stdout
-    handle = unicode(etree.tostring(rootElm, pretty_print=True, encoding='utf-8', xml_declaration=True), 'utf-8')
+    handle = unicode(etree.tostring(rootElm, pretty_print(=True, encoding='utf-8', xml_declaration=True), 'utf-8')
     outfile.writelines(handle)
     outfile.close()
 
@@ -182,7 +182,7 @@ def get_page(address, data=0, title=''):
         return f.read().decode('utf8')
 
     except:
-        print_exception(traceback.format_exc())
+        print(_exception(traceback.format_exc())
 
 #Ищем обои
 
@@ -202,7 +202,7 @@ def search_fanart(uid):
         return result
 
     except:
-        print_exception(traceback.format_exc())
+        print(_exception(traceback.format_exc())
 
 #Ищем обложки
 
@@ -224,7 +224,7 @@ def search_poster(uid):
         return result
 
     except:
-        print_exception(traceback.format_exc())
+        print(_exception(traceback.format_exc())
 
 #Получаем названия фильмов похожие на наш фильм
 
@@ -251,7 +251,7 @@ def search_title(title):
     #        idstr = '\nid:n/a'
     #    cur_movie = (title.encode("utf-8"), idstr.encode("utf-8"))
     #    search_results.append(cur_movie)
-        #print '%s' % (search_results)
+        #print( '%s' % (search_results)
     #    return search_results
     if result:
         titleNodes = doc.xpath("//div[@class='search_results' or @class='search_results search_results_simple']/div[@class='element most_wanted' or @class='element']/div[@class='info']")
@@ -282,7 +282,7 @@ def search_title(title):
                 genre = ''
             search = (title.encode("utf-8"), id.encode("utf-8"), genre.encode("utf-8"))
             search_results.append(search)
-            #print '%s %s %s\n' % (title, id, genre)
+            #print( '%s %s %s\n' % (title, id, genre)
     return search_results
 
 #Ищем и отдаем метаданные фильма
@@ -409,7 +409,7 @@ def search_data(uid):
 
         #filmdata['url'] = "http://www.kinopoisk.ru/level/1/film/"+uid
 
-#        print("""\
+#        print(("""\
 #            Title:%(title)s
 #            Year:%(year)s
 #            Director:%(directors)s
@@ -430,7 +430,7 @@ def search_data(uid):
         return filmdata
 
     except:
-        print_exception(traceback.format_exc())
+        print(_exception(traceback.format_exc())
 
 
 def main():
@@ -490,7 +490,7 @@ def main():
 #        search_fanart(unicode(options.fanart_search, "utf8"))
         #search_fanart(options.fanart_search)
 #    else:
-#        parser.print_usage()
+#        parser.print(_usage()
 #        sys.exit(1)
 
 
@@ -503,4 +503,4 @@ if __name__ == '__main__':
 	except SystemExit:
 		pass
 	except:
-		print_exception(traceback.format_exc())
+		print(_exception(traceback.format_exc())
