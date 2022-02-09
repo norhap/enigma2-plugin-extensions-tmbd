@@ -117,7 +117,7 @@ class tmbdYTTrailer:
 		url = 'https://www.googleapis.com/youtube/v3/search?part=id%2Csnippet&maxResults=' + \
 			str(max_results) + '&q=' + urllib.parse.quote(query) + '&type=video&key=' + API_KEY
 		response = urllib.request.urlopen(url)
-		response = load(response)
+		response = load(response).decode()
 		for result in response.get('items', []):
 			videos.append((result['id']['videoId'],
 				str(result['snippet']['title']),
