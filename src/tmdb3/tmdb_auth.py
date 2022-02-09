@@ -68,8 +68,8 @@ class datetime(_pydatetime):
         return cls(*dt)
 
 
-from request import Request
-from tmdb_exceptions import *
+from Plugins.Extensions.TMBD.tmdb3.request import Request
+from Plugins.Extensions.TMBD.tmdb3.tmdb_exceptions import *
 
 syssession = None
 

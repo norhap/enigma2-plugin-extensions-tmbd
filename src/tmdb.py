@@ -43,7 +43,7 @@ def prevImageIndex(movie):
 
 
 def init_tmdb3(alternative_lang=None):
-    import tmdb3
+    from Plugins.Extensions.TMBD import tmdb3
     tmdb3.set_key('1f834eb425728133b9a2c1c0c82980eb')
     tmdb3.set_cache('null')
     lng = alternative_lang or config.plugins.tmbd.locale.value
@@ -71,16 +71,16 @@ def main():
     setLocale('de')
     tmdb3 = init_tmdb3()
     res = tmdb3.searchMovie('F\xc3\xbcr immer Liebe')
-    print(res
-    movie = res[0])
+    print(res)
+    movie = res[0]
     print(movie.title)
     print(movie.releasedate.year)
     print(movie.overview)
     for p in movie.posters:
-        print(p
+        print(p)
 
     for p in movie.backdrops:
-        print(p
+        print(p)
 
     p = movie.poster
     print(p)
@@ -105,7 +105,7 @@ def main():
     crew = [x.name for x in movie.crew if x.job == 'Production Design']
     print(crew)
     cast = [x.name for x in movie.cast]
-    print(cast
+    print(cast)
     genres = [x.name for x in movie.genres]
     print(genres)
     studios = [x.name for x in movie.studios]

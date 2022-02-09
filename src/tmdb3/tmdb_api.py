@@ -78,16 +78,14 @@ __version__ = "v0.7.3"
 #        PEP8 fixes and some typos
 #        Updated readme
 
-from request import set_key, Request
-from util import Datapoint, Datalist, Datadict, Element, NameRepr, SearchRepr
-from pager import PagedRequest
-from locales import get_locale, set_locale
-from tmdb_auth import get_session, set_session
-from tmdb_exceptions import *
+from Plugins.Extensions.TMBD.tmdb3.request import set_key, Request
+from Plugins.Extensions.TMBD.tmdb3.util import Datapoint, Datalist, Datadict, Element, NameRepr, SearchRepr
+from Plugins.Extensions.TMBD.tmdb3.pager import PagedRequest
+from Plugins.Extensions.TMBD.tmdb3.locales import get_locale, set_locale
+from Plugins.Extensions.TMBD.tmdb3.tmdb_auth import get_session, set_session
+from Plugins.Extensions.TMBD.tmdb3.tmdb_exceptions import *
 
 import json
-import urllib
-import urllib2
 import datetime
 
 DEBUG = False
@@ -758,23 +756,23 @@ class Movie(Element):
     def similar(self):
         res = MovieSearchResult(Request(
             'movie/{0}/similar'.format(self.id)), locale=self._locale)
-        res._name = 'Similar to {0}'.format( self._printable_name())
+        res._name = 'Similar to {0}'.format(self._printable_name())
         return res
 
     @property
     def recommendations(self):
         res = MovieSearchResult(Request(
             'movie/{0}/recommendations'.format(self.id)), locale=self._locale)
-        res._name = 'Recommendations for {0}'.format( self._printable_name())
+        res._name = 'Recommendations for {0}'.format(self._printable_name())
         return res
 
     @property
     def lists(self):
         res = ListSearchResult(Request('movie/{0}/lists'.format(self.id)))
-        res._name = "Lists containing {0}".format( self._printable_name())
+        res._name = "Lists containing {0}".format(self._printable_name())
         return res
 
-    def _print(able_name(self):
+    def _printable_name(self):
         if self.title is not None:
             s = u"'{0}'".format(self.title)
         elif self.originaltitle is not None:

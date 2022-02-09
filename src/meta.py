@@ -122,7 +122,7 @@ class MetaParser:
 		try:
 			f = open(recordings, "r")
 		except:
-			#print( "no recordings.epl found: %s" % (recordings);
+			#print("no recordings.epl found: %s" % (recordings));
 			return -1
 
 		description = ''
@@ -143,7 +143,7 @@ class MetaParser:
 			elif line.find("#DESCRIPTION: ") == 0:
 				description = line[14:]
 			elif line[0] == '/' and ref and ref.getPath().split('/')[-1] == filename.split('/')[-1]:
-				#print( "hit! ref %s descr %s" % (self.ref.toString(), self.name);
+				#print("hit! ref %s descr %s" % (self.ref.toString(), self.name));
 				self.ref = ref
 				self.name = description
 				self.description = ""

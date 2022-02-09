@@ -10,11 +10,11 @@
 import time
 import os
 
-from tmdb_exceptions import *
-from cache_engine import Engines
+from Plugins.Extensions.TMBD.tmdb3.tmdb_exceptions import *
+from Plugins.Extensions.TMBD.tmdb3.cache_engine import Engines
 
-import cache_null
-import cache_file
+from Plugins.Extensions.TMBD.tmdb3 import cache_null
+from Plugins.Extensions.TMBD.tmdb3 import cache_file
 
 DEBUG = False
 
@@ -85,7 +85,7 @@ class Cache(object):
                 w = 10 - (time.time() - self._rate_limiter.pop(0))
                 if w > 0:
                     if DEBUG:
-                        print( "rate limiting - waiting {0} seconds".format(w))
+                        print("rate limiting - waiting {0} seconds".format(w))
                     time.sleep(w)
             return None
 

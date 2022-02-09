@@ -1,8 +1,7 @@
 import os
 
 from json import load
-from urllib import quote
-from urllib2 import urlopen
+import urllib
 from twisted.web.client import downloadPage
 
 from enigma import ePicLoad, eTimer, eServiceReference
@@ -35,7 +34,7 @@ config.plugins.tmbd_yttrailer.close_player_with_exit = ConfigYesNo(False)
 config.plugins.tmbd_yttrailer.search = ConfigSelection(choices=[("1", _("Press OK"))], default="1")
 
 
-from YouTubeVideoUrl import YouTubeVideoUrl
+from Plugins.Extensions.TMBD.YouTubeVideoUrl import YouTubeVideoUrl
 
 
 def GetKey(x):
@@ -116,8 +115,8 @@ class tmbdYTTrailer:
 	def get_response(self, query, max_results):
 		videos = []
 		url = 'https://www.googleapis.com/youtube/v3/search?part=id%2Csnippet&maxResults=' + \
-			str(max_results) + '&q=' + quote(query) + '&type=video&key=' + API_KEY
-		response = urlopen(url)
+			str(max_results) + '&q=' + urllib.parse.quote(query) + '&type=video&key=' + API_KEY
+		response = urllib.request.urlopen(url)
 		response = load(response)
 		for result in response.get('items', []):
 			videos.append((result['id']['videoId'],
@@ -216,7 +215,7 @@ class TmbdYTTrailerList(Screen, tmbdYTTrailer):
 			if not entry[2]:
 				self.decodeThumbnail(entry[0])
 			else:
-				downloadPage(entry[2], os.path.join('/tmp/', str(entry[0]) + '.jpg'))\
+				downloadPage(entry[2], os.path.join('/tmp/', (entry[0]) + '.jpg'))\
 					.addCallback(boundFunction(self.downloadFinished, entry[0]))\
 					.addErrback(boundFunction(self.downloadFailed, entry[0]))
 
@@ -230,9 +229,9 @@ class TmbdYTTrailerList(Screen, tmbdYTTrailer):
 
 	def decodeThumbnail(self, entryId, image=None):
 		if not image or not os.path.exists(image):
-			print("[TMBD] Thumbnail not exists, use default for", entryId
+			print("[TMBD] Thumbnail not exists, use default for", entryId)
 			image = resolveFilename(SCOPE_PLUGINS,
-				'Extensions/TMBD/yt_default.png'))
+				'Extensions/TMBD/yt_default.png')
 		self.picloads[entryId] = ePicLoad()
 		self.picloads[entryId].PictureData.get()\
 			.append(boundFunction(self.FinishDecode, entryId, image))

@@ -6,7 +6,7 @@
 # Author: Raymond Wagner
 #-----------------------
 
-from tmdb_exceptions import *
+from  Plugins.Extensions.TMBD.tmdb3.tmdb_exceptions import *
 import locale
 
 syslocale = None

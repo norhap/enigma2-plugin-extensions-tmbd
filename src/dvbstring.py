@@ -230,10 +230,10 @@ def convertDVBUTF8(data, length, table=None):
 		if (table != 11):
 			table = data[i] + 4
 		i += 1
-		#print("convertDVBUTF8(): (1..11)text encoded in ISO-8859-%d" % (table);
+		#print("convertDVBUTF8(): (1..11)text encoded in ISO-8859-%d" % (table);)
 	elif data[0] == 0x10:
 		n = (data[i + 1] << 8) | data[i + 2]
-		#print("convertDVBUTF8(): (0x10)text encoded in ISO-8859-%d" % (n);
+		#print("convertDVBUTF8(): (0x10)text encoded in ISO-8859-%d" % (n);)
 		i += 3
 		if n == 12:
 			print("convertDVBUTF8(): unsup. ISO8859-12 enc.")
@@ -335,9 +335,9 @@ def convertUTF8DVB(string, table):
 							break
 		try:
 			res += chr(c)
-		except Exception, e:
+		except Exception as e:
 			#fd = open('/tmp/dvbstring.log', 'a+');
-			#print(>>fd, 'convertUTF8DVB(): error: %s (c [c1,c2]= 0x%x [0x%02x, 0x%02x]; index/length = %d/%d)' % (e, c, c1, c2, i, length-1);
+			#print>>fd, 'convertUTF8DVB(): error: %s (c [c1,c2]= 0x%x [0x%02x, 0x%02x]; index/length = %d/%d)' % (e, c, c1, c2, i, length-1);
 			print('error')
 		i += 1
 	if res:

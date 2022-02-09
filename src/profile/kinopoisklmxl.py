@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import httplib
+import httt.client
 import urllib
 import re
-import urllib2
 try:
 	from lxml import html
 	from lxml import etree
@@ -67,7 +66,7 @@ def comment_out(str):
 	except:
 		pass
 
-	print("# %s" % (s))
+	print("# %s" % (s,))
 
 
 def debug_out(str):
@@ -85,7 +84,7 @@ def response_out(str):
 		print(s)
 
 
-def print(_exception(str)):
+def print_exception(str):
 	for line in str.splitlines():
 		comment_out(line)
 
@@ -109,7 +108,7 @@ def getText(title):
 				outstr += U8Translit[i]
 			else:
 				outstr += c.encode("utf-8")
-	print( '%s' % (outstr))
+	print('%s' % (outstr))
 	return outstr
 
 #Замена различных спецсимволов и тегов HTML на обычные символы,
@@ -152,7 +151,7 @@ def normilize_string(processingstring):
 
 def outXML(rootElm):
     outfile = sys.stdout
-    handle = unicode(etree.tostring(rootElm, pretty_print(=True, encoding='utf-8', xml_declaration=True), 'utf-8')
+    handle = unicode(etree.tostring(rootElm, pretty_print=True, encoding='utf-8', xml_declaration=True), 'utf-8')
     outfile.writelines(handle)
     outfile.close()
 
@@ -161,14 +160,14 @@ def outXML(rootElm):
 
 def get_page(address, data=0, title=''):
     try:
-        opener = urllib2.build_opener()
+        opener = urllib.request.build_opener()
 
         if data == 0:
-            #address = u'http://s.kinopoisk.ru' + address+urllib.quote(title.encode('utf8'))
-            address = u'http://www.kinopoisk.ru' + address + urllib.quote(title.encode('cp1251'))
+            #address = u'http://s.kinopoisk.ru' + address+urllib.parse.quote(title.encode('utf8'))
+            address = u'http://www.kinopoisk.ru' + address + urllib.parse.quote(title.encode('cp1251'))
         else:
-            #address = u'http://www.kinopoisk.ru' + address+urllib.quote(title.encode('utf8'))
-            address = u'http://www.kinopoisk.ru' + address + urllib.quote(title.encode('cp1251'))
+            #address = u'http://www.kinopoisk.ru' + address+urllib.parse.quote(title.encode('utf8'))
+            address = u'http://www.kinopoisk.ru' + address + urllib.parse.quote(title.encode('cp1251'))
 
         opener.addheaders = [("Host", "www.kinopoisk.ru"),
                                 ('User-agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.53.11 (KHTML, like Gecko) Version/5.1.3 Safari/534.53.10'),
@@ -182,7 +181,7 @@ def get_page(address, data=0, title=''):
         return f.read().decode('utf8')
 
     except:
-        print(_exception(traceback.format_exc())
+        print_exception(traceback.format_exc())
 
 #Ищем обои
 
@@ -202,7 +201,7 @@ def search_fanart(uid):
         return result
 
     except:
-        print(_exception(traceback.format_exc())
+        print_exception(traceback.format_exc())
 
 #Ищем обложки
 
@@ -224,7 +223,7 @@ def search_poster(uid):
         return result
 
     except:
-        print(_exception(traceback.format_exc())
+        print_exception(traceback.format_exc())
 
 #Получаем названия фильмов похожие на наш фильм
 
@@ -251,7 +250,7 @@ def search_title(title):
     #        idstr = '\nid:n/a'
     #    cur_movie = (title.encode("utf-8"), idstr.encode("utf-8"))
     #    search_results.append(cur_movie)
-        #print( '%s' % (search_results)
+        #print('%s' % (search_results))
     #    return search_results
     if result:
         titleNodes = doc.xpath("//div[@class='search_results' or @class='search_results search_results_simple']/div[@class='element most_wanted' or @class='element']/div[@class='info']")
@@ -282,7 +281,7 @@ def search_title(title):
                 genre = ''
             search = (title.encode("utf-8"), id.encode("utf-8"), genre.encode("utf-8"))
             search_results.append(search)
-            #print( '%s %s %s\n' % (title, id, genre)
+            #print('%s %s %s\n' % (title, id, genre))
     return search_results
 
 #Ищем и отдаем метаданные фильма
@@ -409,7 +408,7 @@ def search_data(uid):
 
         #filmdata['url'] = "http://www.kinopoisk.ru/level/1/film/"+uid
 
-#        print(("""\
+#        print("""\
 #            Title:%(title)s
 #            Year:%(year)s
 #            Director:%(directors)s
@@ -430,7 +429,7 @@ def search_data(uid):
         return filmdata
 
     except:
-        print(_exception(traceback.format_exc())
+        print_exception(traceback.format_exc())
 
 
 def main():
@@ -490,7 +489,7 @@ def main():
 #        search_fanart(unicode(options.fanart_search, "utf8"))
         #search_fanart(options.fanart_search)
 #    else:
-#        parser.print(_usage()
+#        parser.print_usage()
 #        sys.exit(1)
 
 
@@ -503,4 +502,4 @@ if __name__ == '__main__':
 	except SystemExit:
 		pass
 	except:
-		print(_exception(traceback.format_exc())
+		print_exception(traceback.format_exc())

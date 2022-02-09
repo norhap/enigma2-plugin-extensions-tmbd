@@ -7,8 +7,8 @@
 #-----------------------
 
 from copy import copy
-from locales import get_locale
-from tmdb_auth import get_session
+from Plugins.Extensions.TMBD.tmdb3.locales import get_locale
+from Plugins.Extensions.TMBD.tmdb3.tmdb_auth import get_session
 
 
 class NameRepr(object):
@@ -404,6 +404,5 @@ class ElementType(type):
         return obj
 
 
-class Element(object):
-    __metaclass__ = ElementType
+class Element(object, metaclass=ElementType):
     _lang = 'en'

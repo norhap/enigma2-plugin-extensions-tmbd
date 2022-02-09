@@ -6,7 +6,7 @@
 # Author: Raymond Wagner
 #-----------------------
 
-from collections import Sequence, Iterator
+from collections.abc import Sequence, Iterator
 
 
 class PagedIterator(Iterator):
@@ -18,7 +18,7 @@ class PagedIterator(Iterator):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         self._index += 1
         if self._index == self._len:
             raise StopIteration

@@ -440,7 +440,8 @@ class SWFInterpreter(object):
         if func_name in self._classes_by_name:
             return self._classes_by_name[func_name].make_object()
         if func_name not in avm_class.methods:
-            print('[SWFInterpreter] Cannot find function %s.%s' % (avm_class.name, func_name))
+            print('[SWFInterpreter] Cannot find function %s.%s' % (
+                avm_class.name, func_name))
             return None
         m = avm_class.methods[func_name]
 

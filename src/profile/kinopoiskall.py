@@ -1,13 +1,10 @@
 # -*- coding: UTF-8 -*-
 #BY Nikolasi for indb
 import re
-from urllib2 import Request, URLError, HTTPError, urlopen as urlopen2, quote as urllib2_quote, unquote as urllib2_unquote
 import urllib
 from socket import gaierror, error
-import httplib
-import urllib
+import http.client
 import re
-import urllib2
 import string
 import time
 import os
@@ -15,7 +12,7 @@ import socket
 import sys
 import traceback
 import codecs
-from httplib import HTTPConnection, CannotSendRequest, BadStatusLine, HTTPException
+from http.client import HTTPConnection, CannotSendRequest, BadStatusLine, HTTPException
 std_headers = {'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2',
  'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.7',
  'Accept': 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5',
@@ -29,7 +26,7 @@ def comment_out(str):
     except:
         pass
 
-    print('# %s' % (s))
+    print('# %s' % (s,))
 
 
 def debug_out(str):
@@ -48,7 +45,7 @@ def response_out(str):
         print(s)
 
 
-def print(_exception(str)):
+def print_exception(str):
     for line in str.splitlines():
         comment_out(line)
 
@@ -305,12 +302,12 @@ def search_title(title):
     genres = ''
     search = ''
     title = title.replace(' ', '%20').decode('utf8')
-    encoded_args = urllib.quote(title.encode('cp1251'))
+    encoded_args = urllib.parse.quote(title.encode('cp1251'))
     url = 'http://www.kinopoisk.ru/index.php?first=no&what=&kp_query=%s' % encoded_args
     watchrequest = Request(url, None, std_headers)
     try:
-        watchvideopage = urlopen2(watchrequest)
-    except (URLError, HTTPException, socket.error) as err:
+        watchvideopage = urllib.request.urlopen(watchrequest)
+    except (urllib.error.URLError, HTTPException, socket.error) as err:
         print('[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err))
 
     content = watchvideopage.read().decode('cp1251').encode('utf-8')
@@ -393,11 +390,11 @@ def search_title2(title):
     runtime = ''
     time = ''
     title = title.replace(' ', '%20').decode('utf8')
-    encoded_args = urllib.quote(title.encode('cp1251'))
+    encoded_args = urllib.parse.quote(title.encode('cp1251'))
     url = 'http://www.kinopoisk.ru/index.php?first=no&what=&kp_query=%s' % encoded_args
-    watchrequest = Request(url, None, std_headers)
+    watchrequest = urllib.request.Request(url, None, std_headers)
     try:
-        watchvideopage = urlopen2(watchrequest)
+        watchvideopage = urllib.request.urlopen(watchrequest)
     except (URLError, HTTPException, socket.error) as err:
         print('[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err))
 
@@ -505,7 +502,7 @@ def search_data(id):
     url = 'http://www.kinopoisk.ru/level/1/film/' + id
     watchrequest = Request(url, None, std_headers)
     try:
-        watchvideopage = urlopen2(watchrequest)
+        watchvideopage = urllib.request.urlopen(watchrequest)
     except (URLError, HTTPException, socket.error) as err:
         print('[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err))
 
@@ -576,7 +573,7 @@ def search_data(id):
             filmdata['cast'] = ''
 
         try:
-            movierating = string.split(singleValue(data, '<td class="type">?????????????? MPAA</td>.*?<img src.*?alt=(.*?) border=0>'))
+            movierating = string.split(singleValue(data, '<td class="type">рейтинг MPAA</td>.*?<img src.*?alt=(.*?) border=0>'))
             if len(movierating) > 0:
                 filmdata['movie_rating'] = movierating[1]
             else:
@@ -586,14 +583,14 @@ def search_data(id):
 
         return filmdata
     except:
-        print(_exception(traceback.format_exc())
+        print_exception(traceback.format_exc())
 
 
 def search_comets(id):
     url = 'http://www.kinopoisk.ru/level/1/film/' + id
     watchrequest = Request(url, None, std_headers)
     try:
-        watchvideopage = urlopen2(watchrequest)
+        watchvideopage = urllib.request.urlopen(watchrequest)
     except (URLError, HTTPException, socket.error) as err:
         print('[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err))
 
@@ -615,7 +612,7 @@ def search_poster(id):
     url = 'http://www.kinopoisk.ru/level/17/film/%s' % id
     watchrequest = Request(url, None, std_headers)
     try:
-        watchvideopage = urlopen2(watchrequest)
+        watchvideopage = urllib.request.urlopen(watchrequest)
     except (URLError, HTTPException, socket.error) as err:
         print('[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err))
 
@@ -628,7 +625,7 @@ def search_poster(id):
         url2 = 'http://www.kinopoisk.ru%s' % Coverart
         watchrequest2 = Request(url2, None, std_headers)
         try:
-            watchvideopage2 = urlopen2(watchrequest2)
+            watchvideopage2 = urllib.request.urlopen(watchrequest2)
         except (URLError, HTTPException, socket.error) as err:
             print('[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err))
 
@@ -645,7 +642,7 @@ def poster_save(id):
     url2 = 'http://www.kinopoisk.ru%s' % id
     watchrequest2 = Request(url2, None, std_headers)
     try:
-        watchvideopage2 = urlopen2(watchrequest2)
+        watchvideopage2 = urllib.request.urlopen(watchrequest2)
     except (URLError, HTTPException, socket.error) as err:
         print('[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err))
 
@@ -660,7 +657,7 @@ def poster_viem(id):
     url = 'http://www.kinopoisk.ru/level/17/film/%s' % id
     watchrequest = Request(url, None, std_headers)
     try:
-        watchvideopage = urlopen2(watchrequest)
+        watchvideopage = urllib.request.urlopen(watchrequest)
     except (URLError, HTTPException, socket.error) as err:
         print('[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err))
 
@@ -696,7 +693,7 @@ def search_tmbd(title):
     url = 'http://www.themoviedb.org/search?query=%s' % title
     watchrequest = Request(url, None, std_headers)
     try:
-        watchvideopage = urlopen2(watchrequest)
+        watchvideopage = urllib.request.urlopen(watchrequest)
     except (URLError, HTTPException, socket.error) as err:
         print('[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err))
 
@@ -739,7 +736,7 @@ def poster_viemtmbd(id):
     url = 'http://www.themoviedb.org%s' % id
     watchrequest = Request(url, None, std_headers)
     try:
-        watchvideopage = urlopen2(watchrequest)
+        watchvideopage = urllib.request.urlopen(watchrequest)
     except (URLError, HTTPException, socket.error) as err:
         print('[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err))
 
@@ -771,7 +768,7 @@ def CrewRoleList3(file):
 def search_postermp3(url):
     watchrequest = Request(url, None, std_headers)
     try:
-        watchvideopage = urlopen2(watchrequest)
+        watchvideopage = urllib.request.urlopen(watchrequest)
     except (URLError, HTTPException, socket.error) as err:
         print('[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err))
 

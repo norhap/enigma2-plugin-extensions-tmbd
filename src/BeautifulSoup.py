@@ -427,7 +427,7 @@ class NavigableString(unicode, PageElement):
         if attr == 'string':
             return self
         else:
-            raise AttributeError, "'%s' object has no attribute '%s'" % (self.__class__.__name__, attr)
+            raise AttributeError("'%s' object has no attribute '%s'" % (self.__class__.__name__, attr))
 
     def encode(self, encoding=DEFAULT_OUTPUT_ENCODING):
         return self.decode().encode(encoding)
@@ -595,12 +595,12 @@ class Tag(PageElement):
         return apply(self.findAll, args, kwargs)
 
     def __getattr__(self, tag):
-        #print( "Getattr %s.%s" % (self.__class__, tag)
+        #print "Getattr %s.%s" % (self.__class__, tag)
         if len(tag) > 3 and tag.rfind('Tag') == len(tag) - 3:
             return self.find(tag[:-3])
         elif tag.find('__') != 0:
             return self.find(tag)
-        raise AttributeError, "'%s' object has no attribute '%s'" % (self.__class__, tag)
+        raise AttributeError("'%s' object has no attribute '%s'" % (self.__class__, tag))
 
     def __eq__(self, other):
         """Returns true iff this tag has the same name, the same attributes,
@@ -909,7 +909,7 @@ class SoupStrainer:
         return found
 
     def search(self, markup):
-        #print( 'looking for %s in %s' % (self, markup)
+        #print 'looking for %s in %s' % (self, markup)
         found = None
         # If given a list of items, scan it for a text element that
         # matches.
@@ -930,12 +930,12 @@ class SoupStrainer:
             if self._matches(markup, self.text):
                 found = markup
         else:
-            raise Exception, "I don't know how to match against a %s" \
-                  % markup.__class__
+            raise Exception("I don't know how to match against a %s" \
+                  % markup.__class__)
         return found
 
     def _matches(self, markup, matchAgainst):
-        #print( "Matching %s against %s" % (markup, matchAgainst)
+        #print "Matching %s against %s" % (markup, matchAgainst)
         result = False
         if matchAgainst == True and type(matchAgainst) == types.BooleanType:
             result = markup != None
@@ -1305,13 +1305,13 @@ class BeautifulStoneSoup(Tag):
            isinstance(self.currentTag.contents[0], NavigableString):
             self.currentTag.string = self.currentTag.contents[0]
 
-        #print( "Pop", tag.name
+        #print "Pop", tag.name
         if self.tagStack:
             self.currentTag = self.tagStack[-1]
         return self.currentTag
 
     def pushTag(self, tag):
-        #print( "Push", tag.name
+        #print "Push", tag.name
         if self.currentTag:
             self.currentTag.contents.append(tag)
         self.tagStack.append(tag)
@@ -1344,7 +1344,7 @@ class BeautifulStoneSoup(Tag):
         instance of the given tag. If inclusivePop is false, pops the tag
         stack up to but *not* including the most recent instqance of
         the given tag."""
-        #print( "Popping to %s" % name
+        #print "Popping to %s" % name
         if name == self.ROOT_TAG_NAME:
             return
 
@@ -1407,10 +1407,10 @@ class BeautifulStoneSoup(Tag):
             self._popToTag(popTo, inclusive)
 
     def unknown_starttag(self, name, attrs, selfClosing=0):
-        #print( "Start tag %s: %s" % (name, attrs)
+        #print "Start tag %s: %s" % (name, attrs)
         if self.quoteStack:
             #This is not a real tag.
-            #print( "<%s> is not real!" % name
+            #print "<%s> is not real!" % name
             attrs = ''.join(map(lambda(x, y): ' %s="%s"' % (x, y), attrs))
             self.handle_data('<%s%s>' % (name, attrs))
             return
@@ -1431,16 +1431,16 @@ class BeautifulStoneSoup(Tag):
         if selfClosing or self.isSelfClosingTag(name):
             self.popTag()
         if name in self.QUOTE_TAGS:
-            #print( "Beginning quote (%s)" % name
+            #print "Beginning quote (%s)" % name
             self.quoteStack.append(name)
             self.literal = 1
         return tag
 
     def unknown_endtag(self, name):
-        #print( "End tag %s" % name
+        #print "End tag %s" % name
         if self.quoteStack and self.quoteStack[-1] != name:
             #This is not a real end tag.
-            #print( "</%s> is not real!" % name
+            #print "</%s> is not real!" % name
             self.handle_data('</%s>' % name)
             return
         self.endData()
@@ -1679,7 +1679,7 @@ class BeautifulSOAP(BeautifulStoneSoup):
 
     This is, of course, useful for scraping structures that tend to
     use subelements instead of attributes, such as SOAP messages. Note
-    that it modifies its input, so don't print( the modified version
+    that it modifies its input, so don't print the modified version
     out.
 
     I'm not sure how many people really want to use this class; let me
@@ -1840,15 +1840,15 @@ class UnicodeDammit:
             markup = smart_quotes_compiled.sub(self._subMSChar, markup)
 
         try:
-            # print( "Trying to convert document to %s" % proposed
+            # print "Trying to convert document to %s" % proposed
             u = self._toUnicode(markup, proposed)
             self.markup = u
             self.originalEncoding = proposed
-        except Exception, e:
-            # print( "That didn't work!"
-            # print( e
+        except Exception as e:
+            # print "That didn't work!"
+            # print e
             return None
-        #print( "Correct encoding: %s" % proposed
+        #print "Correct encoding: %s" % proposed
         return self.markup
 
     def _toUnicode(self, data, encoding):
@@ -2025,7 +2025,7 @@ class UnicodeDammit:
 #######################################################################
 
 
-#By default, act as an HTML pretty-print(er.
+#By default, act as an HTML pretty-printer.
 if __name__ == '__main__':
     import sys
     soup = BeautifulSoup(sys.stdin)
