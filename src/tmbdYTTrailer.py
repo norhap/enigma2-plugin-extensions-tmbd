@@ -117,7 +117,7 @@ class tmbdYTTrailer:
 		url = 'https://www.googleapis.com/youtube/v3/search?part=id%2Csnippet&maxResults=' + \
 			str(max_results) + '&q=' + urllib.parse.quote(query) + '&type=video&key=' + API_KEY
 		response = urllib.request.urlopen(url)
-		response = load(response).decode()
+		response = load(response)
 		for result in response.get('items', []):
 			videos.append((result['id']['videoId'],
 				str(result['snippet']['title']),
@@ -215,7 +215,7 @@ class TmbdYTTrailerList(Screen, tmbdYTTrailer):
 			if not entry[2]:
 				self.decodeThumbnail(entry[0])
 			else:
-				downloadPage(entry[2], os.path.join('/tmp/', str(entry[0]) + '.jpg'))\
+				downloadPage(entry[2].encode(), os.path.join('/tmp/', str(entry[0]) + '.jpg'))\
 					.addCallback(boundFunction(self.downloadFinished, entry[0]))\
 					.addErrback(boundFunction(self.downloadFailed, entry[0]))
 
